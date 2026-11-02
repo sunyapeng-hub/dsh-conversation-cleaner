@@ -1,0 +1,27 @@
+{
+  "version": "1.0.0-rc.4",
+  "source": "github:sunyapeng-hub/dsh-conversation-cleaner",
+  "status": "PASS",
+  "profile": "desktop",
+  "normalDesktop": true,
+  "operations": {
+    "status": 200,
+    "data": {
+      "ok": true,
+      "pending": []
+    }
+  },
+  "deepPreview": {
+    "status": 200,
+    "blockers": [],
+    "counts": {
+      "files": 4,
+      "bytes": 1988,
+      "outputs": 1,
+      "attachments": 2
+    }
+  },
+  "artifactVerification": "evidence/artifact-verification.json",
+  "screenshot": "evidence/screenshots/next-installed-from-public-github.png",
+  "finishedAt": "2026-11-02T13:47:34.367Z"
+}

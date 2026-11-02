@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0-rc.4",
+  "status": "PASS",
+  "comparisons": "Raw package bytes; installed UTF-8 code permits CRLF/LF normalization only. No checksums.",
+  "files": [
+    "dist/adapters/dsh.js",
+    "dist/client/index.js",
+    "dist/host/attachments.js",
+    "dist/host/cleaner.js",
+    "dist/host/coordinator.js",
+    "dist/host/index.js",
+    "dist/host/provenance.js"
+  ],
+  "newlineNormalized": [
+    ".test-data/next-normal/profiles/desktop/dist/host/attachments.js"
+  ],
+  "installedProfiles": [
+    "web",
+    "desktop"
+  ],
+  "publicDownload": "PASS",
+  "finishedAt": "2026-11-02T13:45:28.257Z"
+}
