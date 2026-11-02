@@ -1,0 +1,73 @@
+{
+  "hosts": [
+    "DSH NEXT 2.0.20-next/Core rc3 desktop",
+    "Official DSH Core rc3 web"
+  ],
+  "root": ".test-data/next-normal",
+  "startedAt": "2026-11-02T13:06:29.965Z",
+  "cases": [
+    {
+      "label": "NEXT owns session; DSH refuses",
+      "id": "session-9707d3f2-5981-4607-bb4d-70e3c21855df",
+      "status": "PASS",
+      "result": {
+        "status": 409,
+        "data": {
+          "ok": false,
+          "code": "SESSION_BUSY",
+          "message": "SESSION_BUSY: session-9707d3f2-5981-4607-bb4d-70e3c21855df"
+        }
+      }
+    },
+    {
+      "label": "DSH owns session; NEXT refuses",
+      "id": "session-83787fbe-1a5d-477a-a91b-726f1bc16612",
+      "status": "PASS",
+      "result": {
+        "status": 409,
+        "data": {
+          "ok": false,
+          "code": "SESSION_BUSY",
+          "message": "SESSION_BUSY: session-83787fbe-1a5d-477a-a91b-726f1bc16612"
+        }
+      }
+    },
+    {
+      "label": "Concurrent deletion serializes; one winner, stale competing host refuses; winner restores",
+      "id": "session-b49dee2d-282a-4945-81be-6725e507b82d",
+      "status": "PASS",
+      "results": [
+        {
+          "status": 409,
+          "data": {
+            "ok": false,
+            "code": "REGISTRY_EXTERNAL_CHANGE_RESTART_REQUIRED",
+            "message": "REGISTRY_EXTERNAL_CHANGE_RESTART_REQUIRED"
+          }
+        },
+        {
+          "status": 200,
+          "data": {
+            "ok": true,
+            "operationId": "c1b09edf-ce65-492b-9b32-e815901b3286",
+            "state": "VERIFIED",
+            "removed": 1,
+            "modified": 0,
+            "restorable": true,
+            "journal": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\.conversation-cleaner\\operations\\c1b09edf-ce65-492b-9b32-e815901b3286\\journal.json"
+          }
+        }
+      ],
+      "restore": {
+        "status": 200,
+        "data": {
+          "ok": true,
+          "operationId": "c1b09edf-ce65-492b-9b32-e815901b3286",
+          "state": "RESTORED"
+        }
+      }
+    }
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-11-02T13:06:30.996Z"
+}

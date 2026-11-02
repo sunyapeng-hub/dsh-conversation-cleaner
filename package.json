@@ -1,0 +1,51 @@
+{
+  "name": "dsh-conversation-cleaner",
+  "version": "1.0.0-rc.4",
+  "private": true,
+  "description": "Confirmed conversation cleanup for DSH and DSH NEXT",
+  "type": "module",
+  "main": "dist/host/index.js",
+  "exports": {
+    ".": "./dist/host/index.js",
+    "./client": "./dist/client/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "cordis.patch.yml",
+    "README.md",
+    "docs/INSTALL.md",
+    "docs/RESTORE.md",
+    "docs/RELEASE_NOTES.md",
+    "evidence/compatibility.md",
+    "evidence/acceptance-report.json",
+    "evidence/review.md",
+    "tools/offline-unlock.mjs",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22.19"
+  },
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "build": "node tools/build.mjs",
+    "pack:local": "npm run build && npm pack --silent --pack-destination release"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-workspace"
+      ]
+    }
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}

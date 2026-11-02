@@ -1,0 +1,1644 @@
+{
+  "artifact": "dsh-conversation-cleaner",
+  "version": "1.0.0-rc.4",
+  "report_status": "RC_VERIFIED",
+  "full_v1_acceptance": false,
+  "updated_at": "2026-11-02T13:35:25.481Z",
+  "timezone": "Asia/Shanghai",
+  "package": {
+    "path": "release/dsh-conversation-cleaner-1.0.0-rc.4.tgz",
+    "runtimeDependencies": 0
+  },
+  "checksum_policy": "Omitted by explicit user instruction. Existing provider attachment IDs are opaque identifiers.",
+  "hosts": {
+    "dsh": {
+      "core_version": "0.2.1-rc.3",
+      "app_version": null,
+      "profile": "web",
+      "data_root_test": ".test-data/web-v2",
+      "installed_plugin_version": "1.0.0-rc.4",
+      "installed_source_commit": "UNKNOWN",
+      "status": "ACTUAL_HOST_TESTED"
+    },
+    "next": {
+      "core_version": "0.2.1-rc.3",
+      "app_version": "2.0.20-next",
+      "profile": "desktop",
+      "data_root_test": ".test-data/next-normal",
+      "installed_plugin_version": "1.0.0-rc.4",
+      "installed_source_commit": "UNKNOWN",
+      "status": "ACTUAL_HOST_TESTED"
+    }
+  },
+  "gates": [
+    {
+      "id": "G01",
+      "host": "dsh",
+      "mode": "chat_only",
+      "status": "PASS",
+      "fixture": "session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+      "operationId": "0356dc55-7510-4dcb-b3c5-0cf08bf5227d",
+      "checks": [
+        "preview-read-only",
+        "confirmation-disabled-without-consent",
+        "cancel-preserves-session",
+        "live-sidebar-removal",
+        "session-removed",
+        "membership-removed",
+        "survivor-retained",
+        "existing-file-retained",
+        "shared-attachment-retained",
+        "mode-scope-correct"
+      ],
+      "inputs": {
+        "ok": true,
+        "fixture": {
+          "id": "session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "workspaceId": "66d8678d-e70b-41ea-a0f6-99685d120131",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\generated.txt",
+          "survivor": "session-d3a6138a-79c7-44e6-8251-ff0890730f39",
+          "orphan": {
+            "attachmentId": "sha256:d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\d2\\d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\25\\25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3\\shared-A.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterDeletion": {
+        "ok": true,
+        "fixture": {
+          "id": "session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "workspaceId": "66d8678d-e70b-41ea-a0f6-99685d120131",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\generated.txt",
+          "survivor": "session-d3a6138a-79c7-44e6-8251-ff0890730f39",
+          "orphan": {
+            "attachmentId": "sha256:d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\d2\\d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\25\\25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3\\shared-A.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterRestart": {
+        "ok": true,
+        "fixture": {
+          "id": "session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "workspaceId": "66d8678d-e70b-41ea-a0f6-99685d120131",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\generated.txt",
+          "survivor": "session-d3a6138a-79c7-44e6-8251-ff0890730f39",
+          "orphan": {
+            "attachmentId": "sha256:d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\d2\\d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\25\\25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3\\shared-A.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterRestore": {
+        "ok": true,
+        "fixture": {
+          "id": "session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9",
+          "workspaceId": "66d8678d-e70b-41ea-a0f6-99685d120131",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-0f1c7b09-f263-4f36-a166-836c0fef45f9\\generated.txt",
+          "survivor": "session-d3a6138a-79c7-44e6-8251-ff0890730f39",
+          "orphan": {
+            "attachmentId": "sha256:d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\d2\\d27d27f40c37360df96d7c6884f891845642e8c6965eb72bda84999789795770\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\25\\25f5d8c4c86ad9666eb042c228f23d10ede896c06391362f38715e0ec75e05b3\\shared-A.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "evidence": [
+        "evidence/web-v2-acceptance.json",
+        "evidence/web-v2-restart-restore.json",
+        "evidence/screenshots/web-v2-a-preview.png",
+        "evidence/screenshots/web-v2-a-verified.png",
+        "evidence/screenshots/web-v2-a-restored.png"
+      ]
+    },
+    {
+      "id": "G02",
+      "host": "dsh",
+      "mode": "chat_and_outputs",
+      "status": "PASS",
+      "fixture": "session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+      "operationId": "80be8bed-bb56-4615-8556-6eb1a7df25fa",
+      "checks": [
+        "preview-read-only",
+        "confirmation-disabled-without-consent",
+        "live-sidebar-removal",
+        "session-removed",
+        "membership-removed",
+        "survivor-retained",
+        "existing-file-retained",
+        "shared-attachment-retained",
+        "mode-scope-correct"
+      ],
+      "inputs": {
+        "ok": true,
+        "fixture": {
+          "id": "session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "workspaceId": "422f68a0-e8fa-411b-83ad-6e54896e5c55",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\generated.txt",
+          "survivor": "session-b2dd1773-5d39-4bf4-afca-bc6a42acc2ba",
+          "orphan": {
+            "attachmentId": "sha256:c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\c4\\c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\73\\733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243\\shared-B.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterDeletion": {
+        "ok": true,
+        "fixture": {
+          "id": "session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "workspaceId": "422f68a0-e8fa-411b-83ad-6e54896e5c55",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\generated.txt",
+          "survivor": "session-b2dd1773-5d39-4bf4-afca-bc6a42acc2ba",
+          "orphan": {
+            "attachmentId": "sha256:c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\c4\\c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\73\\733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243\\shared-B.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterRestart": {
+        "ok": true,
+        "fixture": {
+          "id": "session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "workspaceId": "422f68a0-e8fa-411b-83ad-6e54896e5c55",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\generated.txt",
+          "survivor": "session-b2dd1773-5d39-4bf4-afca-bc6a42acc2ba",
+          "orphan": {
+            "attachmentId": "sha256:c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\c4\\c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\73\\733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243\\shared-B.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterRestore": {
+        "ok": true,
+        "fixture": {
+          "id": "session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f",
+          "workspaceId": "422f68a0-e8fa-411b-83ad-6e54896e5c55",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-38bb636f-fd87-4dc3-9319-dbeb0e1ceb8f\\generated.txt",
+          "survivor": "session-b2dd1773-5d39-4bf4-afca-bc6a42acc2ba",
+          "orphan": {
+            "attachmentId": "sha256:c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\c4\\c4f04acc19490f9c47b6042269043f0374fbef1c2ebf941674fd722c58109d35\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\73\\733707ee1b1a88f9e95347eb2f57246acfff2cf080abf94fdc17938c70af8243\\shared-B.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "evidence": [
+        "evidence/web-v2-acceptance.json",
+        "evidence/web-v2-restart-restore.json",
+        "evidence/screenshots/web-v2-b-preview.png",
+        "evidence/screenshots/web-v2-b-verified.png",
+        "evidence/screenshots/web-v2-b-restored.png"
+      ]
+    },
+    {
+      "id": "G03",
+      "host": "dsh",
+      "mode": "full",
+      "status": "PASS",
+      "fixture": "session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+      "operationId": "a2d2e5a4-f05b-48a1-8738-1d08d6313865",
+      "checks": [
+        "preview-read-only",
+        "confirmation-disabled-without-consent",
+        "live-sidebar-removal",
+        "session-removed",
+        "membership-removed",
+        "survivor-retained",
+        "existing-file-retained",
+        "shared-attachment-retained",
+        "mode-scope-correct"
+      ],
+      "inputs": {
+        "ok": true,
+        "fixture": {
+          "id": "session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "workspaceId": "ceb3230e-4b75-4eed-8991-6214740ef912",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\generated.txt",
+          "survivor": "session-6ee154a2-c1aa-4e9e-9ffa-6f63799d9269",
+          "orphan": {
+            "attachmentId": "sha256:6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\6f\\6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\78\\786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d\\shared-C.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterDeletion": {
+        "ok": true,
+        "fixture": {
+          "id": "session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "workspaceId": "ceb3230e-4b75-4eed-8991-6214740ef912",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\generated.txt",
+          "survivor": "session-6ee154a2-c1aa-4e9e-9ffa-6f63799d9269",
+          "orphan": {
+            "attachmentId": "sha256:6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\6f\\6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\78\\786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d\\shared-C.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": false
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterRestart": {
+        "ok": true,
+        "fixture": {
+          "id": "session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "workspaceId": "ceb3230e-4b75-4eed-8991-6214740ef912",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\generated.txt",
+          "survivor": "session-6ee154a2-c1aa-4e9e-9ffa-6f63799d9269",
+          "orphan": {
+            "attachmentId": "sha256:6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\6f\\6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\78\\786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d\\shared-C.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": false
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "afterRestore": {
+        "ok": true,
+        "fixture": {
+          "id": "session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+          "workspaceId": "ceb3230e-4b75-4eed-8991-6214740ef912",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\e2e-workspaces\\session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4\\generated.txt",
+          "survivor": "session-6ee154a2-c1aa-4e9e-9ffa-6f63799d9269",
+          "orphan": {
+            "attachmentId": "sha256:6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\6f\\6fdca9892d686d403b4c787e28be669ba1455ce05d005dc5c735e6c479847ff0\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\web-v2\\attachments\\v1\\files\\78\\786e572729d42a07edc9a7a069557e161921216b816badc45a1c1acfbbd0cb8d\\shared-C.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+        "profile": "web"
+      },
+      "evidence": [
+        "evidence/web-v2-acceptance.json",
+        "evidence/web-v2-restart-restore.json",
+        "evidence/screenshots/web-v2-c-preview.png",
+        "evidence/screenshots/web-v2-c-verified.png",
+        "evidence/screenshots/web-v2-c-restored.png"
+      ]
+    },
+    {
+      "id": "G04",
+      "host": "next",
+      "mode": "chat_only",
+      "status": "PASS",
+      "fixture": "session-720c3e68-809c-4e7f-8147-3161138de8e7",
+      "operationId": "61d70fd5-0aac-41fa-b134-70cd919edadf",
+      "checks": [
+        "preview-read-only",
+        "confirmation-disabled-without-consent",
+        "cancel-preserves-session",
+        "live-sidebar-removal",
+        "session-removed",
+        "membership-removed",
+        "survivor-retained",
+        "existing-file-retained",
+        "shared-attachment-retained",
+        "mode-scope-correct"
+      ],
+      "inputs": {
+        "ok": true,
+        "fixture": {
+          "id": "session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "workspaceId": "79ee1c7f-7fb1-45bd-95e0-cbef5ab1edff",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\generated.txt",
+          "survivor": "session-0d07a8b4-9461-4ded-a7cb-c7d52b2ecd34",
+          "orphan": {
+            "attachmentId": "sha256:d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\d2\\d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\aa\\aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad\\shared-A.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterDeletion": {
+        "ok": true,
+        "fixture": {
+          "id": "session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "workspaceId": "79ee1c7f-7fb1-45bd-95e0-cbef5ab1edff",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\generated.txt",
+          "survivor": "session-0d07a8b4-9461-4ded-a7cb-c7d52b2ecd34",
+          "orphan": {
+            "attachmentId": "sha256:d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\d2\\d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\aa\\aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad\\shared-A.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterRestart": {
+        "ok": true,
+        "fixture": {
+          "id": "session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "workspaceId": "79ee1c7f-7fb1-45bd-95e0-cbef5ab1edff",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\generated.txt",
+          "survivor": "session-0d07a8b4-9461-4ded-a7cb-c7d52b2ecd34",
+          "orphan": {
+            "attachmentId": "sha256:d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\d2\\d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\aa\\aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad\\shared-A.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterRestore": {
+        "ok": true,
+        "fixture": {
+          "id": "session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7",
+          "workspaceId": "79ee1c7f-7fb1-45bd-95e0-cbef5ab1edff",
+          "kind": "A",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-720c3e68-809c-4e7f-8147-3161138de8e7\\generated.txt",
+          "survivor": "session-0d07a8b4-9461-4ded-a7cb-c7d52b2ecd34",
+          "orphan": {
+            "attachmentId": "sha256:d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b",
+            "name": "orphan-A.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad",
+            "name": "shared-A.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\d2\\d2d9e98d9613f2968035f0a4ebabfe79c4d9ef2e94aa0617d6e200539ada591b\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\aa\\aa8736b464db29bcb9e57e4d78eaf5597ee36d4a6bfd63f0de53af7232d7c4ad\\shared-A.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/next-restart-restore.json",
+        "evidence/screenshots/next-a-preview.png",
+        "evidence/screenshots/next-a-verified.png",
+        "evidence/screenshots/next-a-restored.png"
+      ]
+    },
+    {
+      "id": "G05",
+      "host": "next",
+      "mode": "chat_and_outputs",
+      "status": "PASS",
+      "fixture": "session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+      "operationId": "b5b19aa0-c248-4940-bdc0-e7978e5ea46c",
+      "checks": [
+        "preview-read-only",
+        "confirmation-disabled-without-consent",
+        "live-sidebar-removal",
+        "session-removed",
+        "membership-removed",
+        "survivor-retained",
+        "existing-file-retained",
+        "shared-attachment-retained",
+        "mode-scope-correct"
+      ],
+      "inputs": {
+        "ok": true,
+        "fixture": {
+          "id": "session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "workspaceId": "d9433b2b-42ff-4df1-8b49-ca2133af18d3",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\generated.txt",
+          "survivor": "session-7d532b94-c7e6-4837-b4c1-73a0ff367f53",
+          "orphan": {
+            "attachmentId": "sha256:fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\fc\\fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\a8\\a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28\\shared-B.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterDeletion": {
+        "ok": true,
+        "fixture": {
+          "id": "session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "workspaceId": "d9433b2b-42ff-4df1-8b49-ca2133af18d3",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\generated.txt",
+          "survivor": "session-7d532b94-c7e6-4837-b4c1-73a0ff367f53",
+          "orphan": {
+            "attachmentId": "sha256:fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\fc\\fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\a8\\a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28\\shared-B.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterRestart": {
+        "ok": true,
+        "fixture": {
+          "id": "session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "workspaceId": "d9433b2b-42ff-4df1-8b49-ca2133af18d3",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\generated.txt",
+          "survivor": "session-7d532b94-c7e6-4837-b4c1-73a0ff367f53",
+          "orphan": {
+            "attachmentId": "sha256:fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\fc\\fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\a8\\a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28\\shared-B.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterRestore": {
+        "ok": true,
+        "fixture": {
+          "id": "session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183",
+          "workspaceId": "d9433b2b-42ff-4df1-8b49-ca2133af18d3",
+          "kind": "B",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-5f7fbbab-91f3-46c6-9779-2dff559ee183\\generated.txt",
+          "survivor": "session-7d532b94-c7e6-4837-b4c1-73a0ff367f53",
+          "orphan": {
+            "attachmentId": "sha256:fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b",
+            "name": "orphan-B.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28",
+            "name": "shared-B.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\fc\\fcbad3c351db885c098a6e9eac2f2f47aebe5e21a3d05d3823249b3751f1f09b\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\a8\\a8a81da044991b1e67821bd0ccf3d59382c64053cea1bbd2eaf8ce79474bde28\\shared-B.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/next-restart-restore.json",
+        "evidence/screenshots/next-b-preview.png",
+        "evidence/screenshots/next-b-verified.png",
+        "evidence/screenshots/next-b-restored.png"
+      ]
+    },
+    {
+      "id": "G06",
+      "host": "next",
+      "mode": "full",
+      "status": "PASS",
+      "fixture": "session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+      "operationId": "158226ad-6c28-49bf-b078-4d49d1abbc2f",
+      "checks": [
+        "preview-read-only",
+        "confirmation-disabled-without-consent",
+        "live-sidebar-removal",
+        "session-removed",
+        "membership-removed",
+        "survivor-retained",
+        "existing-file-retained",
+        "shared-attachment-retained",
+        "mode-scope-correct"
+      ],
+      "inputs": {
+        "ok": true,
+        "fixture": {
+          "id": "session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "workspaceId": "71b02824-2088-452d-a60f-6f82ae56ca4e",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\generated.txt",
+          "survivor": "session-9c20d0f7-b9e8-4b0f-b155-cc486609772e",
+          "orphan": {
+            "attachmentId": "sha256:9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\9e\\9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\23\\23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331\\shared-C.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterDeletion": {
+        "ok": true,
+        "fixture": {
+          "id": "session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "workspaceId": "71b02824-2088-452d-a60f-6f82ae56ca4e",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\generated.txt",
+          "survivor": "session-9c20d0f7-b9e8-4b0f-b155-cc486609772e",
+          "orphan": {
+            "attachmentId": "sha256:9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\9e\\9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\23\\23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331\\shared-C.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": false
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterRestart": {
+        "ok": true,
+        "fixture": {
+          "id": "session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "workspaceId": "71b02824-2088-452d-a60f-6f82ae56ca4e",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\generated.txt",
+          "survivor": "session-9c20d0f7-b9e8-4b0f-b155-cc486609772e",
+          "orphan": {
+            "attachmentId": "sha256:9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\9e\\9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\23\\23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331\\shared-C.txt"
+        },
+        "session": false,
+        "survivor": true,
+        "member": false,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": false
+        },
+        "orphan": {
+          "exists": false
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "afterRestore": {
+        "ok": true,
+        "fixture": {
+          "id": "session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5",
+          "workspaceId": "71b02824-2088-452d-a60f-6f82ae56ca4e",
+          "kind": "C",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c3351ac-0e35-46ac-acdb-782130b554a5\\generated.txt",
+          "survivor": "session-9c20d0f7-b9e8-4b0f-b155-cc486609772e",
+          "orphan": {
+            "attachmentId": "sha256:9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5",
+            "name": "orphan-C.txt",
+            "bytes": 65
+          },
+          "shared": {
+            "attachmentId": "sha256:23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331",
+            "name": "shared-C.txt",
+            "bytes": 62
+          },
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\9e\\9e2cc22ebf0ecfa775ee3270d56467482b8279ed0a8b240b289c53879a75cec5\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\23\\23ce52cf602b2d48c471b2b372d0d830b9509321f86c7d1d80f517627042b331\\shared-C.txt"
+        },
+        "session": true,
+        "survivor": true,
+        "member": true,
+        "keep": "Existing workspace file; preserve this.",
+        "output": {
+          "exists": true,
+          "size": 87,
+          "links": 1
+        },
+        "orphan": {
+          "exists": true,
+          "size": 65,
+          "links": 2
+        },
+        "shared": {
+          "exists": true,
+          "size": 62,
+          "links": 2
+        },
+        "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+        "profile": "desktop"
+      },
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/next-restart-restore.json",
+        "evidence/screenshots/next-c-preview.png",
+        "evidence/screenshots/next-c-verified.png",
+        "evidence/screenshots/next-c-restored.png"
+      ]
+    }
+  ],
+  "automated_tests": {
+    "total": 75,
+    "passed": 74,
+    "failed": 0,
+    "skipped": 1,
+    "skip_reason": "Windows symlink creation privilege unavailable; junction test passed"
+  },
+  "cases": [
+    {
+      "id": "U01",
+      "status": "PASS",
+      "scope": "Actual host menu, exact row ID, A default, consent gate and cancel; synthetic fixtures only",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "U02",
+      "status": "PASS",
+      "scope": "Actual host menu, exact row ID, A default, consent gate and cancel; synthetic fixtures only",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "U03",
+      "status": "PASS",
+      "scope": "Actual host menu, exact row ID, A default, consent gate and cancel; synthetic fixtures only",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "U04",
+      "status": "PASS",
+      "scope": "Actual host menu, exact row ID, A default, consent gate and cancel; synthetic fixtures only",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "U05",
+      "status": "PASS",
+      "scope": "Actual host menu, exact row ID, A default, consent gate and cancel; synthetic fixtures only",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "U06",
+      "status": "PASS",
+      "scope": "Actual scope switch clears consent before permanent UI test",
+      "evidence": [
+        "evidence/next-safety-check.json"
+      ]
+    },
+    {
+      "id": "U07",
+      "status": "PARTIAL",
+      "scope": "Server single-use plans/replay covered; no claim of a physical rapid double-click acceptance",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "U08",
+      "status": "NOT_IMPLEMENTED",
+      "scope": "Current held target is intentionally refused. Automatic current-session close/switch is not implemented.",
+      "evidence": []
+    },
+    {
+      "id": "U09",
+      "status": "PASS",
+      "scope": "Actual Edge English dark, Chinese light, 1x/1.25x device scale, bounded modal, focus and Esc",
+      "evidence": [
+        "evidence/ui-locale-check.json",
+        "evidence/screenshots/web-en-US-dark.png",
+        "evidence/screenshots/web-zh-CN-light.png"
+      ]
+    },
+    {
+      "id": "U10",
+      "status": "PASS",
+      "scope": "Actual Edge English dark, Chinese light, 1x/1.25x device scale, bounded modal, focus and Esc",
+      "evidence": [
+        "evidence/ui-locale-check.json",
+        "evidence/screenshots/web-en-US-dark.png",
+        "evidence/screenshots/web-zh-CN-light.png"
+      ]
+    },
+    {
+      "id": "S01",
+      "status": "PASS",
+      "scope": "Actual durable log/membership deletion and restore; projection domain cleanup uses host APIs",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "S02",
+      "status": "NOT_RUN",
+      "scope": "Multi-workspace/pinned/archive restoration logic implemented; dedicated actual-host combinations not accepted",
+      "evidence": []
+    },
+    {
+      "id": "S03",
+      "status": "NOT_RUN",
+      "scope": "Multi-workspace/pinned/archive restoration logic implemented; dedicated actual-host combinations not accepted",
+      "evidence": []
+    },
+    {
+      "id": "S04",
+      "status": "PASS",
+      "scope": "Real Agent observed running against local blocked synthetic provider; deletion refused before mutation",
+      "evidence": [
+        "evidence/running-agent-check.json"
+      ]
+    },
+    {
+      "id": "S05",
+      "status": "PASS",
+      "scope": "Real idle ownership in both running hosts; foreign native lease refuses deletion",
+      "evidence": [
+        "evidence/shared-host-check.json"
+      ]
+    },
+    {
+      "id": "S06",
+      "status": "PASS",
+      "scope": "Real idle ownership in both running hosts; foreign native lease refuses deletion",
+      "evidence": [
+        "evidence/shared-host-check.json"
+      ]
+    },
+    {
+      "id": "S07",
+      "status": "PASS",
+      "scope": "Real idle ownership in both running hosts; foreign native lease refuses deletion",
+      "evidence": [
+        "evidence/shared-host-check.json"
+      ]
+    },
+    {
+      "id": "S08",
+      "status": "PASS",
+      "scope": "Both real hosts restarted; each A/B/C target absent before restoration",
+      "evidence": [
+        "evidence/next-restart-restore.json",
+        "evidence/web-v2-restart-restore.json"
+      ]
+    },
+    {
+      "id": "F01",
+      "status": "PASS",
+      "scope": "Actual DSH write tool creation evidence; B/C removes generated file while existing keep.txt remains",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "F02",
+      "status": "PASS",
+      "scope": "Actual DSH write tool creation evidence; B/C removes generated file while existing keep.txt remains",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "F03",
+      "status": "PASS",
+      "scope": "Filesystem/adapter suite: real Git index, cross-cwd survivor references, historical unknown-call rejection",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "F04",
+      "status": "PASS",
+      "scope": "Filesystem/adapter suite: real Git index, cross-cwd survivor references, historical unknown-call rejection",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "F05",
+      "status": "PASS",
+      "scope": "Filesystem/adapter suite: real Git index, cross-cwd survivor references, historical unknown-call rejection",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "F06",
+      "status": "PASS",
+      "scope": "Bounded IDs/paths, same-size byte changes, root targets and confirmation mismatch refused",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "F07",
+      "status": "PASS_WINDOWS_SCOPE",
+      "scope": "Windows junction and hardlink checks pass; unprivileged symlink creation skipped; Unix not claimed",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "F08",
+      "status": "PASS",
+      "scope": "Bounded IDs/paths, same-size byte changes, root targets and confirmation mismatch refused",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "F09",
+      "status": "PASS",
+      "scope": "Bounded IDs/paths, same-size byte changes, root targets and confirmation mismatch refused",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "A01",
+      "status": "PASS",
+      "scope": "Actual orphan file hardlinks removed together; shared attachment retained in both hosts",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "A02",
+      "status": "PASS",
+      "scope": "Actual orphan file hardlinks removed together; shared attachment retained in both hosts",
+      "evidence": [
+        "evidence/next-acceptance.json",
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "A03",
+      "status": "PASS_HARNESS",
+      "scope": "Nonselected child reference retained in attachment planner; fork excluded from descendant selection; actual fork orchestration not claimed",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "A04",
+      "status": "PASS",
+      "scope": "Real compressed survivor made unreadable: C returns CORPUS_REFERENCE_UNREADABLE; synthetic log restored from memory",
+      "evidence": [
+        "evidence/corrupt-log-check.json"
+      ]
+    },
+    {
+      "id": "A05",
+      "status": "PASS_HARNESS",
+      "scope": "Bounded/corrupt durable JSON scan rejects; real local attachment store and reversible mixed upload cache index exercised",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "A06",
+      "status": "PASS_HARNESS",
+      "scope": "Bounded/corrupt durable JSON scan rejects; real local attachment store and reversible mixed upload cache index exercised",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "A07",
+      "status": "PASS",
+      "scope": "Actual same-root two-process ownership/race and staged upload receipt retention; unknown external writer not coordinated",
+      "evidence": [
+        "evidence/shared-host-check.json",
+        "evidence/next-safety-check.json"
+      ]
+    },
+    {
+      "id": "H01",
+      "status": "PASS",
+      "scope": "Official CLI install/update and earlier real uninstall/reinstall; final same tgz boots web profile",
+      "evidence": [
+        "evidence/web-v2-acceptance.json"
+      ]
+    },
+    {
+      "id": "H02",
+      "status": "PASS",
+      "scope": "NEXT native uninstall, rc.4 install and enable, then restart; desktop CLI management restriction respected",
+      "evidence": [
+        "evidence/screenshots/next-installed-rc4.png",
+        "evidence/next-acceptance.json"
+      ]
+    },
+    {
+      "id": "H03",
+      "status": "OVERRIDDEN_BY_USER",
+      "scope": "No checksums generated or validated. Both installed manifests identify the same rc.4 package.",
+      "evidence": []
+    },
+    {
+      "id": "H04",
+      "status": "PASS",
+      "scope": "Actual host anonymous/cross-origin/invalid-session/JSON/body-limit HTTP rejection plus HTTP harness",
+      "evidence": [
+        "evidence/next-safety-check.json",
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "H05",
+      "status": "PASS",
+      "scope": "Actual host anonymous/cross-origin/invalid-session/JSON/body-limit HTTP rejection plus HTTP harness",
+      "evidence": [
+        "evidence/next-safety-check.json",
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "H06",
+      "status": "PASS_HARNESS",
+      "scope": "Replay, nonce mismatch and expiry rejection in filesystem/HTTP suites",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "H07",
+      "status": "PASS_HARNESS",
+      "scope": "Replay, nonce mismatch and expiry rejection in filesystem/HTTP suites",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "H08",
+      "status": "PASS",
+      "scope": "Two actual hosts same root race: one winner, other refuses; native child-process lease and HTTP lifetime cases",
+      "evidence": [
+        "evidence/shared-host-check.json",
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "H09",
+      "status": "PASS_HARNESS",
+      "scope": "Injected registry/index failure, staged pre-purge recovery and real child-process abrupt lock-owner exit; not every OS kill point claimed",
+      "evidence": [
+        "evidence/logs/final-unit-tests.log"
+      ]
+    },
+    {
+      "id": "H10",
+      "status": "PASS",
+      "scope": "Both hosts restore all three modes; actual permanent UI rejects restore; full-unit identity and cross-volume checks",
+      "evidence": [
+        "evidence/next-restart-restore.json",
+        "evidence/web-v2-restart-restore.json",
+        "evidence/next-safety-check.json",
+        "evidence/logs/final-unit-tests.log"
+      ]
+    }
+  ],
+  "limitations": [
+    "Windows and exact host versions only",
+    "Current held targets require closing/switching; no automatic current-session close",
+    "Dedicated multi-workspace/pinned/archive acceptance not run",
+    "Recovery API has no dedicated UI",
+    "Unknown third-party stores/external processes not coordinated",
+    "Foreign cached registry requires host restart",
+    "Unmapped image variants retained"
+  ],
+  "test_deployment": {
+    "next": "Original installed Electron runtime and unmodified extracted NEXT source, normal desktop profile and safeMode=false; unpackaged isolated app launcher. Office runtime/packaged native launcher not accepted.",
+    "formal_user_data": "No formal conversations were deleted or modified.",
+    "original_backup": "backups/DSH_Conversation_Cleaner_V1_original.zip; only initial backup"
+  },
+  "local_only_evidence": [
+    "evidence/traces/next-acceptance.zip",
+    "evidence/traces/web-v2-acceptance.zip"
+  ],
+  "note": "Six real-host gates pass. RC scope is explicit; incomplete UI/platform combinations are not presented as full V1.0 acceptance."
+}

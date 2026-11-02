@@ -1,0 +1,6 @@
+- id: ui-settings-general
+  config:
+    welcomeNoticeVersion: 2026-09-28.1
+- insert:
+    - id: cleaner-e2e-driver
+      name: 'file:///F:/Projects/PLUS%20Project/tests/fixtures/host-v2.mjs'

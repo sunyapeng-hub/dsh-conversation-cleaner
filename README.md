@@ -1,32 +1,52 @@
 # DSH Conversation Cleaner
 
-当前上传为 **1.0.0-dev.3 开发包**，整体验收状态 **BLOCKED**，不是双宿主三档全部完成的 V1.0。
+`1.0.0-rc.4`：同一插件包在 Windows 的 **NEXT 2.0.20-next / Core 0.2.1-rc.3** 和 **官方 DSH Web 0.2.1-rc.3** 完成了三种模式的实际删除、重启核验和恢复。
 
-## 下载
+| 范围 | 实际行为 |
+|---|---|
+| 仅删除对话 | 清理日志、索引和工作区归属，保留文件与附件 |
+| 对话 + 产出文件 | 另清理有创建证明的文件，保留已有、Git 跟踪及共享文件 |
+| 全部清理 | 另清理无其他引用的附件和有映射的缓存，保留共享及未发送附件 |
 
-[下载插件开发包](packages/dsh-conversation-cleaner-1.0.0-dev.3.tgz)
-
-安装、卸载、恢复说明以及验收摘要已包含在 tgz 内。
-
-## 已验证
-
-- 自动化测试：31 项通过，1 项因 Windows 符号链接权限跳过。
-- 官方 DSH/Core 0.2.1-rc.3 + Edge：A 档仅对话删除、非目标文件保留、多客户端刷新、重启、恢复、卸载和重装。
-
-## 当前限制
-
-- B/C 实际产出文件与附件清理因宿主缺少全局引用协调能力而被阻止。
-- DSH NEXT 2.0.20-next / Core 0.2.1-rc.3 尚未通过 desktop profile 实机验收。
-- 默认允许预览；提交删除需要按包内安装文档确认独占数据目录并启用配置。共享数据根目录尚不受支持。
+侧栏会话行 `···` → **删除对话**。先预览，再勾选风险确认；永久删除还需输入 `DELETE`。默认使用可恢复隔离区。
 
 ## 安装
 
-下载 tgz 后，在对应 DSH 环境执行：
+NEXT：插件 → 添加插件，输入本仓库地址或下载包的本地路径；安装后启用并重启。
+
+- [仓库](https://github.com/sunyapeng-hub/dsh-conversation-cleaner)
+- [下载 rc.4](https://github.com/sunyapeng-hub/dsh-conversation-cleaner/raw/refs/heads/main/packages/dsh-conversation-cleaner-1.0.0-rc.4.tgz)
+
+官方 DSH：
 
 ```powershell
-dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-dev.3.tgz"
+dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.4.tgz"
 ```
 
-NEXT 安装步骤见包内说明，当前尚未验收通过。
+NEXT 的 `desktop` profile 由 Electron 管理，使用应用内安装器。升级旧开发包时先卸载再安装，隔离区不会随卸载清空。
 
-按项目要求，本次上传不提供校验和文件。仓库已公开，可下载安装验证。
+## 验证与边界
+
+- 两个真实宿主 × 三种模式：6 项实际删除通过，重启无回潮；日志、文件、附件与会话行恢复通过。
+- 自动测试 75 项：74 通过、1 项 Windows 符号链接创建权限跳过；junction 防护和真实跨磁盘恢复通过。
+- 真实运行中 Agent、跨宿主持有、并发删除、未发送上传保护、永久删除与 HTTP 鉴权拒绝均有记录。
+- 仅声明上述 Windows 版本的结果。其他版本的协调桥接默认拒绝深度清理；未做 macOS/Linux 验收。
+- 宿主持有的目标会被拒绝，须先关闭或切换。历史工具缺少完整归属证明时 B/C 拒绝提交，A 可独立使用。
+- 共享根要求所有写入宿主安装兼容插件。索引缓存落后的宿主拒绝后续修改并要求重启；不协调未安装插件的进程、未知插件存储或任意外部写入者。
+- 未映射的图片派生缓存保留；不会猜测归属。恢复目前使用已登录页面的同源接口，步骤见文档。
+
+这是完成本机双宿主核心验收的候选版本，不宣称所有平台、全部 UI 场景和任意插件组合都已通过完整 V1.0 验收。
+
+## 文档与开发
+
+[安装](docs/INSTALL.md) · [恢复](docs/RESTORE.md) · [发布说明](docs/RELEASE_NOTES.md) · [兼容性](evidence/compatibility.md) · [验收记录](evidence/acceptance-report.json) · [复核修复](evidence/review.md)
+
+```powershell
+npm ci --ignore-scripts
+npm run build
+npm test
+```
+
+运行时无第三方依赖，React/UI 来自宿主。集成测试还需本机官方运行时位于 `research/installed-next`；仓库不分发 DSH/Electron 本体。普通用例可独立运行：`node --test tests/core.test.mjs tests/http.test.mjs tests/adapter.test.mjs tests/provenance.test.mjs`。
+
+遵守 [AGENTS.md](AGENTS.md)：只在最开始备份原始输入包一次，不生成或验证校验和。附件 ID 使用宿主已有标识，不重新计算内容摘要。

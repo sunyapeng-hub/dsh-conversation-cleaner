@@ -1,0 +1,9 @@
+node_modules/
+research/
+backups/
+.test-data/
+release/*.tgz
+evidence/traces/
+evidence/.auth/
+evidence/logs/*
+!evidence/logs/final-unit-tests.log

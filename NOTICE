@@ -1,0 +1,1 @@
+This implementation uses the public DSH/Cordis interfaces. No community plugin source files are redistributed. Interface research: deepseek-ai/deepseek-harness (MIT); anywhere-labs/dsh-desktop (MIT); DDDMUC/dsh-delete-session (MIT); fufu1437/dsh-delete-chat (MIT); ljp888/dsh-session-delete-next (MIT). Host-supplied React and UI primitives are external runtime modules.

@@ -1,0 +1,18 @@
+{
+  "host": "Official DSH Web rc3",
+  "artifactVersion": "1.0.0-rc.4",
+  "startedAt": "2026-11-02T13:30:39.139Z",
+  "target": "session-21904bdb-7a0c-4eac-979a-bb1b0a5303c4",
+  "corruptedSyntheticSurvivor": "session-6ee154a2-c1aa-4e9e-9ffa-6f63799d9269",
+  "rejected": {
+    "status": 422,
+    "data": {
+      "ok": false,
+      "code": "CORPUS_REFERENCE_UNREADABLE",
+      "message": "CORPUS_REFERENCE_UNREADABLE"
+    }
+  },
+  "status": "PASS",
+  "repaired": "PASS",
+  "finishedAt": "2026-11-02T13:30:39.557Z"
+}

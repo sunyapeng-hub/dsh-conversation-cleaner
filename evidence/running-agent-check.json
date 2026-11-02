@@ -1,0 +1,62 @@
+{
+  "host": "DSH NEXT 2.0.20-next/Core rc3",
+  "startedAt": "2026-11-02T13:30:51.503Z",
+  "fixture": "session-3db73213-a9d8-4124-8dd8-96ab777d472c",
+  "observedAgentStatus": "running",
+  "provider": "local synthetic blocked stream; no network/model invocation",
+  "commit": {
+    "status": 422,
+    "data": {
+      "ok": false,
+      "code": "SESSION_BUSY",
+      "message": "SESSION_BUSY"
+    }
+  },
+  "status": "PASS",
+  "after": {
+    "ok": true,
+    "fixture": {
+      "id": "session-3db73213-a9d8-4124-8dd8-96ab777d472c",
+      "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-3db73213-a9d8-4124-8dd8-96ab777d472c",
+      "workspaceId": "7f828460-8e96-4e62-af7b-7b8202e82440",
+      "kind": "A",
+      "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-3db73213-a9d8-4124-8dd8-96ab777d472c\\keep.txt",
+      "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-3db73213-a9d8-4124-8dd8-96ab777d472c\\generated.txt",
+      "survivor": "session-18167254-8f7b-41e9-b0c6-07e1f1a95d63",
+      "orphan": {
+        "attachmentId": "sha256:ca4ea1939ac1fb8d9971789f93bbe9cdcdc4bc0a0d72c024437663cef6e79520",
+        "name": "orphan-A.txt",
+        "bytes": 65
+      },
+      "shared": {
+        "attachmentId": "sha256:2fb19bae1049be9b34935715246f9020889c08edb41fcad9d2e13e9008a99336",
+        "name": "shared-A.txt",
+        "bytes": 62
+      },
+      "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\ca\\ca4ea1939ac1fb8d9971789f93bbe9cdcdc4bc0a0d72c024437663cef6e79520\\orphan-A.txt",
+      "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\2f\\2fb19bae1049be9b34935715246f9020889c08edb41fcad9d2e13e9008a99336\\shared-A.txt"
+    },
+    "session": true,
+    "survivor": true,
+    "member": true,
+    "keep": "Existing workspace file; preserve this.",
+    "output": {
+      "exists": true,
+      "size": 87,
+      "links": 1
+    },
+    "orphan": {
+      "exists": true,
+      "size": 65,
+      "links": 2
+    },
+    "shared": {
+      "exists": true,
+      "size": 62,
+      "links": 2
+    },
+    "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+    "profile": "desktop"
+  },
+  "finishedAt": "2026-11-02T13:30:52.513Z"
+}

@@ -1,0 +1,49 @@
+{
+  "host": "DSH NEXT 2.0.20-next/Core rc3",
+  "startedAt": "2026-11-02T13:30:39.519Z",
+  "cases": [
+    {
+      "id": "staged-upload",
+      "status": "PASS",
+      "fixture": "session-3f5845f5-93e0-4e0c-8f23-b07eddca6d37",
+      "receiptOwner": "session-b60fdadf-122b-4826-996e-2b71febefd7f",
+      "blockedAttachmentCandidates": 0,
+      "releasedAttachmentCandidates": 2,
+      "restored": "RESTORED"
+    },
+    {
+      "id": "scope-reset-and-permanent-ui",
+      "status": "PASS",
+      "fixture": "session-5ac1e598-618f-4cf4-8e4f-d5f86a595679",
+      "operationId": "86597749-72dd-409d-9581-8495e0d392ac",
+      "restorable": false
+    },
+    {
+      "id": "anonymous",
+      "status": "PASS",
+      "http": 401
+    },
+    {
+      "id": "cross-origin",
+      "status": "PASS",
+      "http": 403
+    },
+    {
+      "id": "invalid-session",
+      "status": "PASS",
+      "http": 400
+    },
+    {
+      "id": "invalid-json",
+      "status": "PASS",
+      "http": 400
+    },
+    {
+      "id": "body-limit",
+      "status": "PASS",
+      "http": 413
+    }
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-11-02T13:30:50.934Z"
+}

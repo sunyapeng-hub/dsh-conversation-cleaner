@@ -1,0 +1,38 @@
+{
+  "host": "Official DSH Web rc3 + installed Edge",
+  "startedAt": "2026-11-02T13:28:41.512Z",
+  "cases": [
+    {
+      "locale": "en-US",
+      "colorScheme": "dark",
+      "deviceScaleFactor": 1,
+      "viewportWidth": 1280,
+      "modal": {
+        "x": 330,
+        "y": 16,
+        "width": 620,
+        "height": 868
+      },
+      "keyboardFocus": "PASS",
+      "escapePreservesSession": "PASS",
+      "status": "PASS"
+    },
+    {
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "deviceScaleFactor": 1.25,
+      "viewportWidth": 1024,
+      "modal": {
+        "x": 202,
+        "y": 16,
+        "width": 620,
+        "height": 868
+      },
+      "keyboardFocus": "PASS",
+      "escapePreservesSession": "PASS",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-11-02T13:28:49.896Z"
+}
