@@ -29,4 +29,4 @@ dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-dev.3.tgz"
 
 NEXT 安装步骤见包内说明，当前尚未验收通过。
 
-按项目要求，本次上传不提供校验和文件。仓库为私有。
+按项目要求，本次上传不提供校验和文件。仓库已公开，可下载安装验证。
