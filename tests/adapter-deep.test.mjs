@@ -76,3 +76,8 @@ test('deep modes refuse an unreadable physical log omitted by the persistence li
  const f=await fixture(t);const unreadable=path.join(f.services.sessionPersistence.root,'project','unreadable-session');await fs.mkdir(unreadable,{recursive:true});await fs.writeFile(path.join(unreadable,'session.v4.jsonl.zstd'),'invalid compressed data');
  for(const mode of ['chat_and_outputs','full'])await assert.rejects(f.adapter.inspect(id,{mode}),e=>e.code==='CORPUS_REFERENCE_UNREADABLE');const a=await f.adapter.inspect(id,{mode:'chat_only'});assert.deepEqual(a.blockers,[]);
 });
+
+test('ordinary reference scans support a corpus larger than 32 MiB without dropping survivors',async t=>{
+ const f=await fixture(t);await f.add(other);const text='x'.repeat(17*1024*1024);f.events.set(id,[{type:'user/message',data:{text}}]);f.events.set(other,[{type:'user/message',data:{text}}]);
+ const plan=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.deepEqual(plan.blockers,[]);assert.equal(f.reads.get(id),1);assert.equal(f.reads.get(other),1);assert.equal(plan.metadata.corpus.length,2);
+});

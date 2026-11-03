@@ -1,0 +1,61 @@
+{
+  "purpose": "Real NEXT Modal, failed-preview layout regression; no deletion requests",
+  "mockedResponse": "plan returns 422 SCAN_LIMIT",
+  "checks": [
+    {
+      "id": "no-typed-confirmation",
+      "pass": false
+    },
+    {
+      "id": "footer-800",
+      "pass": false,
+      "cancel": {
+        "x": 715.875,
+        "y": 871.5,
+        "width": 65.0625,
+        "height": 34
+      },
+      "remove": {
+        "x": 790.9375,
+        "y": 871.5,
+        "width": 135.0625,
+        "height": 34
+      }
+    },
+    {
+      "id": "footer-720",
+      "pass": false,
+      "cancel": {
+        "x": 715.875,
+        "y": 871.5,
+        "width": 65.0625,
+        "height": 34
+      },
+      "remove": {
+        "x": 790.9375,
+        "y": 871.5,
+        "width": 135.0625,
+        "height": 34
+      }
+    },
+    {
+      "id": "footer-600",
+      "pass": false,
+      "cancel": {
+        "x": 715.875,
+        "y": 871.5,
+        "width": 65.0625,
+        "height": 34
+      },
+      "remove": {
+        "x": 790.9375,
+        "y": 871.5,
+        "width": 135.0625,
+        "height": 34
+      }
+    }
+  ],
+  "startedAt": "2026-11-03T01:48:28.316Z",
+  "status": "FAIL",
+  "finishedAt": "2026-11-03T01:48:29.011Z"
+}

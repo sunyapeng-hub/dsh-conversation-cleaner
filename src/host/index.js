@@ -24,7 +24,7 @@ export function makeHandler(ctx,cleaner,action) {
       if(!body || typeof body!=='object'||Array.isArray(body))return send(400,{ok:false,code:'INVALID_REQUEST'});
       let result;
       if(action==='plan')result=await cleaner.plan({sessionId:body.sessionId,mode:body.mode,includeDescendants:body.includeDescendants});
-      else if(action==='commit')result=await cleaner.commit({planId:body.planId,confirmation:body.confirmation,acknowledged:body.acknowledged,permanent:body.permanent,permanentConfirmation:body.permanentConfirmation});
+      else if(action==='commit')result=await cleaner.commit({planId:body.planId,confirmation:body.confirmation,acknowledged:body.acknowledged,permanent:body.permanent});
       else if(action==='restore'){if(body.acknowledged!==true)throw new CleanerError('ACK_REQUIRED',400);result=await cleaner.restore(body.operationId);}
       else result={pending:await cleaner.pending()};
       send(200,{ok:true,...result});

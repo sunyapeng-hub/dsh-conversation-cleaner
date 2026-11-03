@@ -5,6 +5,7 @@ import { promisify } from 'node:util';
 import { CleanerError, inside, safeFile } from '../host/cleaner.js';
 import { planAttachments } from '../host/attachments.js';
 const run=promisify(execFile);
+const MAX_REFERENCE_BYTES=256*1024*1024;
 const bare=id=>id.replace(/^session-/, '');
 const matches=(a,b)=>bare(a)===bare(b);
 export function descendants(headers,id) {
@@ -108,7 +109,7 @@ export class DshAdapter {
   }
   async events(id) {
     const h=await this.persistence.open(id,'read');
-    try {const {events}=await h.read(0,100001);if(events.length>100000||Buffer.byteLength(JSON.stringify(events))>32*1024*1024)throw new CleanerError('SCAN_LIMIT',422);return events;}finally{await h.close();}
+    try {const {events}=await h.read(0,100001);if(events.length>100000||Buffer.byteLength(JSON.stringify(events))>MAX_REFERENCE_BYTES)throw new CleanerError('SCAN_LIMIT',422);return events;}finally{await h.close();}
   }
   recordPath(id) {return path.join(this.root,'.conversation-cleaner','provenance',id+'.json');}
   metadata(ids) {
@@ -134,7 +135,7 @@ export class DshAdapter {
       let decodedBytes=0;
       for(const row of all) {
         const events=await this.events(row.header.id),proof=await optionalJson(this.recordPath(row.header.id));
-        decodedBytes+=Buffer.byteLength(JSON.stringify(events));if(decodedBytes>32*1024*1024)throw new CleanerError('SCAN_LIMIT',422);
+        decodedBytes+=Buffer.byteLength(JSON.stringify(events));if(decodedBytes>MAX_REFERENCE_BYTES)throw new CleanerError('SCAN_LIMIT',422);
         rows.push({...row,events,proof});
         if(!completeProof(events,proof))blockers.push(ids.includes(row.header.id)?'PROVENANCE_UNKNOWN':'OTHER_SESSION_PROVENANCE_UNKNOWN');
       }

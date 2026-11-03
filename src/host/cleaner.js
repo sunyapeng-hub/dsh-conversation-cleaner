@@ -93,10 +93,9 @@ export class Cleaner {
     return pending;
   }
   commit(input={}) {return this.adapter.coordinator?this.adapter.coordinator.run(()=>this.executeCommit(input)):this.executeCommit(input);}
-  async executeCommit({planId,confirmation,acknowledged,permanent=false,permanentConfirmation}={}) {
+  async executeCommit({planId,confirmation,acknowledged,permanent=false}={}) {
     if(acknowledged!==true)throw new CleanerError('ACK_REQUIRED',400);
     if(typeof permanent!=='boolean')throw new CleanerError('INVALID_REQUEST',400);
-    if(permanent && permanentConfirmation!=='DELETE')throw new CleanerError('PERMANENT_CONFIRM_REQUIRED',400);
     const plan=this.plans.get(planId);
     if(!plan)throw new CleanerError('PLAN_MISSING');
     if(plan.expiresAt<Date.now())throw new CleanerError('PLAN_EXPIRED');

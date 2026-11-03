@@ -1,6 +1,6 @@
 {
   "name": "dsh-conversation-cleaner",
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "private": true,
   "description": "Confirmed conversation cleanup for DSH and DSH NEXT",
   "type": "module",

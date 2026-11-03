@@ -1,6 +1,6 @@
 # 安装、升级与卸载
 
-当前包：`dsh-conversation-cleaner-1.0.0-rc.4.tgz`。验证范围：Windows、NEXT 2.0.20-next / Core 0.2.1-rc.3，以及官方 DSH Web 0.2.1-rc.3。
+当前包：`dsh-conversation-cleaner-1.0.0-rc.5.tgz`。验证范围：Windows、NEXT 2.0.20-next / Core 0.2.1-rc.3，以及官方 DSH Web 0.2.1-rc.3。
 
 ## NEXT
 
@@ -14,7 +14,7 @@
 ## 官方 DSH
 
 ```powershell
-dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.4.tgz"
+dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.5.tgz"
 dsh --profile web
 ```
 
