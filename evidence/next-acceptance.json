@@ -3,16 +3,16 @@
   "shell": "2.0.20-next",
   "dsh": "0.2.1-rc.3",
   "dataRoot": ".test-data/next-normal",
-  "startedAt": "2026-11-03T01:54:02.459Z",
+  "startedAt": "2026-11-03T02:14:46.921Z",
   "cases": [
     {
       "kind": "A",
       "mode": "chat_only",
-      "id": "session-d6310d1f-a639-4021-904f-73e9800386e9",
-      "survivor": "session-25d6d46f-539e-4e31-a285-d1f68e2201c2",
+      "id": "session-d759bc3c-ec0f-428f-9b9d-0caf470691b5",
+      "survivor": "session-5f000bc6-9b52-4af6-a30f-948c1b02d40e",
       "checks": [
         "preview-read-only",
-        "confirmation-disabled-without-consent",
+        "delete-click-is-the-confirmation",
         "cancel-preserves-session",
         "live-sidebar-removal",
         "session-removed",
@@ -25,25 +25,25 @@
       "before": {
         "ok": true,
         "fixture": {
-          "id": "session-d6310d1f-a639-4021-904f-73e9800386e9",
-          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d6310d1f-a639-4021-904f-73e9800386e9",
-          "workspaceId": "3e4d3913-de03-464c-9b3f-57928773f461",
+          "id": "session-d759bc3c-ec0f-428f-9b9d-0caf470691b5",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d759bc3c-ec0f-428f-9b9d-0caf470691b5",
+          "workspaceId": "887b7e42-1978-4822-b744-6d985c6f5ad2",
           "kind": "A",
-          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d6310d1f-a639-4021-904f-73e9800386e9\\keep.txt",
-          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d6310d1f-a639-4021-904f-73e9800386e9\\generated.txt",
-          "survivor": "session-25d6d46f-539e-4e31-a285-d1f68e2201c2",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d759bc3c-ec0f-428f-9b9d-0caf470691b5\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d759bc3c-ec0f-428f-9b9d-0caf470691b5\\generated.txt",
+          "survivor": "session-5f000bc6-9b52-4af6-a30f-948c1b02d40e",
           "orphan": {
-            "attachmentId": "sha256:515e5ef85ce03c6befcecedebb12bf106a6014170eaa4c959400200a404dfbd2",
+            "attachmentId": "sha256:156c250764799ae32da37231ace26a63c78a47f63d0d3990af05b132d2050707",
             "name": "orphan-A.txt",
             "bytes": 65
           },
           "shared": {
-            "attachmentId": "sha256:f325071a12258e0046b88a2b06ac2fb016a9814ba89ec66c460cd7f848eb8781",
+            "attachmentId": "sha256:c27b8ff1e1b30a2335afdf11bf46c2f7e422651c19da8f99af8672e52560385d",
             "name": "shared-A.txt",
             "bytes": 62
           },
-          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\51\\515e5ef85ce03c6befcecedebb12bf106a6014170eaa4c959400200a404dfbd2\\orphan-A.txt",
-          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\f3\\f325071a12258e0046b88a2b06ac2fb016a9814ba89ec66c460cd7f848eb8781\\shared-A.txt"
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\15\\156c250764799ae32da37231ace26a63c78a47f63d0d3990af05b132d2050707\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\c2\\c27b8ff1e1b30a2335afdf11bf46c2f7e422651c19da8f99af8672e52560385d\\shared-A.txt"
         },
         "session": true,
         "survivor": true,
@@ -69,35 +69,35 @@
       },
       "result": {
         "ok": true,
-        "operationId": "bd488b84-a7b5-409a-9d20-23cb730e3d5e",
+        "operationId": "af25cefc-ec69-4fa1-b75a-8d1e6f2e0ef3",
         "state": "VERIFIED",
         "removed": 1,
         "modified": 0,
         "restorable": true,
-        "journal": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\.conversation-cleaner\\operations\\bd488b84-a7b5-409a-9d20-23cb730e3d5e\\journal.json"
+        "journal": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\.conversation-cleaner\\operations\\af25cefc-ec69-4fa1-b75a-8d1e6f2e0ef3\\journal.json"
       },
       "after": {
         "ok": true,
         "fixture": {
-          "id": "session-d6310d1f-a639-4021-904f-73e9800386e9",
-          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d6310d1f-a639-4021-904f-73e9800386e9",
-          "workspaceId": "3e4d3913-de03-464c-9b3f-57928773f461",
+          "id": "session-d759bc3c-ec0f-428f-9b9d-0caf470691b5",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d759bc3c-ec0f-428f-9b9d-0caf470691b5",
+          "workspaceId": "887b7e42-1978-4822-b744-6d985c6f5ad2",
           "kind": "A",
-          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d6310d1f-a639-4021-904f-73e9800386e9\\keep.txt",
-          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d6310d1f-a639-4021-904f-73e9800386e9\\generated.txt",
-          "survivor": "session-25d6d46f-539e-4e31-a285-d1f68e2201c2",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d759bc3c-ec0f-428f-9b9d-0caf470691b5\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-d759bc3c-ec0f-428f-9b9d-0caf470691b5\\generated.txt",
+          "survivor": "session-5f000bc6-9b52-4af6-a30f-948c1b02d40e",
           "orphan": {
-            "attachmentId": "sha256:515e5ef85ce03c6befcecedebb12bf106a6014170eaa4c959400200a404dfbd2",
+            "attachmentId": "sha256:156c250764799ae32da37231ace26a63c78a47f63d0d3990af05b132d2050707",
             "name": "orphan-A.txt",
             "bytes": 65
           },
           "shared": {
-            "attachmentId": "sha256:f325071a12258e0046b88a2b06ac2fb016a9814ba89ec66c460cd7f848eb8781",
+            "attachmentId": "sha256:c27b8ff1e1b30a2335afdf11bf46c2f7e422651c19da8f99af8672e52560385d",
             "name": "shared-A.txt",
             "bytes": 62
           },
-          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\51\\515e5ef85ce03c6befcecedebb12bf106a6014170eaa4c959400200a404dfbd2\\orphan-A.txt",
-          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\f3\\f325071a12258e0046b88a2b06ac2fb016a9814ba89ec66c460cd7f848eb8781\\shared-A.txt"
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\15\\156c250764799ae32da37231ace26a63c78a47f63d0d3990af05b132d2050707\\orphan-A.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\c2\\c27b8ff1e1b30a2335afdf11bf46c2f7e422651c19da8f99af8672e52560385d\\shared-A.txt"
         },
         "session": false,
         "survivor": true,
@@ -126,11 +126,11 @@
     {
       "kind": "B",
       "mode": "chat_and_outputs",
-      "id": "session-4442697c-a018-42a7-908e-42a02b910746",
-      "survivor": "session-9f489c41-90e6-4f03-a96d-f197aacdee03",
+      "id": "session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357",
+      "survivor": "session-03d13f38-dfd2-4835-bf84-6e6b59a963d0",
       "checks": [
         "preview-read-only",
-        "confirmation-disabled-without-consent",
+        "delete-click-is-the-confirmation",
         "live-sidebar-removal",
         "session-removed",
         "membership-removed",
@@ -142,25 +142,25 @@
       "before": {
         "ok": true,
         "fixture": {
-          "id": "session-4442697c-a018-42a7-908e-42a02b910746",
-          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4442697c-a018-42a7-908e-42a02b910746",
-          "workspaceId": "5b4fb350-449c-44b8-b4ba-8e63d3f6fc66",
+          "id": "session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357",
+          "workspaceId": "ff8182ec-da28-4be1-bffa-5c476f49b8df",
           "kind": "B",
-          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4442697c-a018-42a7-908e-42a02b910746\\keep.txt",
-          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4442697c-a018-42a7-908e-42a02b910746\\generated.txt",
-          "survivor": "session-9f489c41-90e6-4f03-a96d-f197aacdee03",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357\\generated.txt",
+          "survivor": "session-03d13f38-dfd2-4835-bf84-6e6b59a963d0",
           "orphan": {
-            "attachmentId": "sha256:a9bebc6cb4cca0958bcdc28e1bdf2478e7243321e200f34968026be4a24252c6",
+            "attachmentId": "sha256:d7268e3567cfea76c2176200dc7ac5efe5ac2f988a96450cb7ff384fb6a89eea",
             "name": "orphan-B.txt",
             "bytes": 65
           },
           "shared": {
-            "attachmentId": "sha256:8804acc37917cb13493dbe20f93f403a0a60566856d532eebffb8e1dd9daa089",
+            "attachmentId": "sha256:5ee3618b1fe08e105de7f6c9cb7cdefb0b9c7298763663137ea9c2201d49eef6",
             "name": "shared-B.txt",
             "bytes": 62
           },
-          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\a9\\a9bebc6cb4cca0958bcdc28e1bdf2478e7243321e200f34968026be4a24252c6\\orphan-B.txt",
-          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\88\\8804acc37917cb13493dbe20f93f403a0a60566856d532eebffb8e1dd9daa089\\shared-B.txt"
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\d7\\d7268e3567cfea76c2176200dc7ac5efe5ac2f988a96450cb7ff384fb6a89eea\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\5e\\5ee3618b1fe08e105de7f6c9cb7cdefb0b9c7298763663137ea9c2201d49eef6\\shared-B.txt"
         },
         "session": true,
         "survivor": true,
@@ -186,35 +186,35 @@
       },
       "result": {
         "ok": true,
-        "operationId": "005c112b-d839-45a2-a8d1-8111c8722aba",
+        "operationId": "6089c443-7f13-416f-9490-a4711c6435f4",
         "state": "VERIFIED",
         "removed": 2,
         "modified": 0,
         "restorable": true,
-        "journal": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\.conversation-cleaner\\operations\\005c112b-d839-45a2-a8d1-8111c8722aba\\journal.json"
+        "journal": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\.conversation-cleaner\\operations\\6089c443-7f13-416f-9490-a4711c6435f4\\journal.json"
       },
       "after": {
         "ok": true,
         "fixture": {
-          "id": "session-4442697c-a018-42a7-908e-42a02b910746",
-          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4442697c-a018-42a7-908e-42a02b910746",
-          "workspaceId": "5b4fb350-449c-44b8-b4ba-8e63d3f6fc66",
+          "id": "session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357",
+          "workspaceId": "ff8182ec-da28-4be1-bffa-5c476f49b8df",
           "kind": "B",
-          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4442697c-a018-42a7-908e-42a02b910746\\keep.txt",
-          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4442697c-a018-42a7-908e-42a02b910746\\generated.txt",
-          "survivor": "session-9f489c41-90e6-4f03-a96d-f197aacdee03",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-8b82ec26-ed90-43dc-a6fd-30a4a52c4357\\generated.txt",
+          "survivor": "session-03d13f38-dfd2-4835-bf84-6e6b59a963d0",
           "orphan": {
-            "attachmentId": "sha256:a9bebc6cb4cca0958bcdc28e1bdf2478e7243321e200f34968026be4a24252c6",
+            "attachmentId": "sha256:d7268e3567cfea76c2176200dc7ac5efe5ac2f988a96450cb7ff384fb6a89eea",
             "name": "orphan-B.txt",
             "bytes": 65
           },
           "shared": {
-            "attachmentId": "sha256:8804acc37917cb13493dbe20f93f403a0a60566856d532eebffb8e1dd9daa089",
+            "attachmentId": "sha256:5ee3618b1fe08e105de7f6c9cb7cdefb0b9c7298763663137ea9c2201d49eef6",
             "name": "shared-B.txt",
             "bytes": 62
           },
-          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\a9\\a9bebc6cb4cca0958bcdc28e1bdf2478e7243321e200f34968026be4a24252c6\\orphan-B.txt",
-          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\88\\8804acc37917cb13493dbe20f93f403a0a60566856d532eebffb8e1dd9daa089\\shared-B.txt"
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\d7\\d7268e3567cfea76c2176200dc7ac5efe5ac2f988a96450cb7ff384fb6a89eea\\orphan-B.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\5e\\5ee3618b1fe08e105de7f6c9cb7cdefb0b9c7298763663137ea9c2201d49eef6\\shared-B.txt"
         },
         "session": false,
         "survivor": true,
@@ -241,11 +241,11 @@
     {
       "kind": "C",
       "mode": "full",
-      "id": "session-4c934296-d857-4650-b42c-d3365d252ec4",
-      "survivor": "session-0392f9b5-0ff9-4aaf-baf2-0f9a2c8142b5",
+      "id": "session-120a5800-82b2-4de9-8fb1-8429fb2b7983",
+      "survivor": "session-ae597342-15f7-4801-9be7-5a47dc64122f",
       "checks": [
         "preview-read-only",
-        "confirmation-disabled-without-consent",
+        "delete-click-is-the-confirmation",
         "live-sidebar-removal",
         "session-removed",
         "membership-removed",
@@ -257,25 +257,25 @@
       "before": {
         "ok": true,
         "fixture": {
-          "id": "session-4c934296-d857-4650-b42c-d3365d252ec4",
-          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c934296-d857-4650-b42c-d3365d252ec4",
-          "workspaceId": "6f26fc83-a2cd-45cb-a235-b99ae9817609",
+          "id": "session-120a5800-82b2-4de9-8fb1-8429fb2b7983",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-120a5800-82b2-4de9-8fb1-8429fb2b7983",
+          "workspaceId": "ba68305b-0591-4814-9e4e-99aeb86a8729",
           "kind": "C",
-          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c934296-d857-4650-b42c-d3365d252ec4\\keep.txt",
-          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c934296-d857-4650-b42c-d3365d252ec4\\generated.txt",
-          "survivor": "session-0392f9b5-0ff9-4aaf-baf2-0f9a2c8142b5",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-120a5800-82b2-4de9-8fb1-8429fb2b7983\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-120a5800-82b2-4de9-8fb1-8429fb2b7983\\generated.txt",
+          "survivor": "session-ae597342-15f7-4801-9be7-5a47dc64122f",
           "orphan": {
-            "attachmentId": "sha256:1a98d94e19d3e410a8a82af6e0e0d7b0cea6d92cb0ff49a9682d6a7b59ce54ce",
+            "attachmentId": "sha256:87a80f43e88501413ef8129620a9ecd4e5f6d6851c761959dd5ffeffe03850d5",
             "name": "orphan-C.txt",
             "bytes": 65
           },
           "shared": {
-            "attachmentId": "sha256:ebc3e533963e11b68c11ec57ba6aef699d6f23058b472bf1c9e4ea3cca17a509",
+            "attachmentId": "sha256:66503c864575a495c34e9e9ebbb8a46b65f797053e0cb5a10c7471cc9e01106a",
             "name": "shared-C.txt",
             "bytes": 62
           },
-          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\1a\\1a98d94e19d3e410a8a82af6e0e0d7b0cea6d92cb0ff49a9682d6a7b59ce54ce\\orphan-C.txt",
-          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\eb\\ebc3e533963e11b68c11ec57ba6aef699d6f23058b472bf1c9e4ea3cca17a509\\shared-C.txt"
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\87\\87a80f43e88501413ef8129620a9ecd4e5f6d6851c761959dd5ffeffe03850d5\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\66\\66503c864575a495c34e9e9ebbb8a46b65f797053e0cb5a10c7471cc9e01106a\\shared-C.txt"
         },
         "session": true,
         "survivor": true,
@@ -301,35 +301,35 @@
       },
       "result": {
         "ok": true,
-        "operationId": "fe887387-2dfa-4f59-a12e-bee85c17c36b",
+        "operationId": "47916ca7-0b31-4bc7-92d1-78cbfdd90a79",
         "state": "VERIFIED",
         "removed": 4,
         "modified": 0,
         "restorable": true,
-        "journal": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\.conversation-cleaner\\operations\\fe887387-2dfa-4f59-a12e-bee85c17c36b\\journal.json"
+        "journal": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\.conversation-cleaner\\operations\\47916ca7-0b31-4bc7-92d1-78cbfdd90a79\\journal.json"
       },
       "after": {
         "ok": true,
         "fixture": {
-          "id": "session-4c934296-d857-4650-b42c-d3365d252ec4",
-          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c934296-d857-4650-b42c-d3365d252ec4",
-          "workspaceId": "6f26fc83-a2cd-45cb-a235-b99ae9817609",
+          "id": "session-120a5800-82b2-4de9-8fb1-8429fb2b7983",
+          "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-120a5800-82b2-4de9-8fb1-8429fb2b7983",
+          "workspaceId": "ba68305b-0591-4814-9e4e-99aeb86a8729",
           "kind": "C",
-          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c934296-d857-4650-b42c-d3365d252ec4\\keep.txt",
-          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-4c934296-d857-4650-b42c-d3365d252ec4\\generated.txt",
-          "survivor": "session-0392f9b5-0ff9-4aaf-baf2-0f9a2c8142b5",
+          "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-120a5800-82b2-4de9-8fb1-8429fb2b7983\\keep.txt",
+          "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-120a5800-82b2-4de9-8fb1-8429fb2b7983\\generated.txt",
+          "survivor": "session-ae597342-15f7-4801-9be7-5a47dc64122f",
           "orphan": {
-            "attachmentId": "sha256:1a98d94e19d3e410a8a82af6e0e0d7b0cea6d92cb0ff49a9682d6a7b59ce54ce",
+            "attachmentId": "sha256:87a80f43e88501413ef8129620a9ecd4e5f6d6851c761959dd5ffeffe03850d5",
             "name": "orphan-C.txt",
             "bytes": 65
           },
           "shared": {
-            "attachmentId": "sha256:ebc3e533963e11b68c11ec57ba6aef699d6f23058b472bf1c9e4ea3cca17a509",
+            "attachmentId": "sha256:66503c864575a495c34e9e9ebbb8a46b65f797053e0cb5a10c7471cc9e01106a",
             "name": "shared-C.txt",
             "bytes": 62
           },
-          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\1a\\1a98d94e19d3e410a8a82af6e0e0d7b0cea6d92cb0ff49a9682d6a7b59ce54ce\\orphan-C.txt",
-          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\eb\\ebc3e533963e11b68c11ec57ba6aef699d6f23058b472bf1c9e4ea3cca17a509\\shared-C.txt"
+          "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\87\\87a80f43e88501413ef8129620a9ecd4e5f6d6851c761959dd5ffeffe03850d5\\orphan-C.txt",
+          "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\66\\66503c864575a495c34e9e9ebbb8a46b65f797053e0cb5a10c7471cc9e01106a\\shared-C.txt"
         },
         "session": false,
         "survivor": true,
@@ -353,5 +353,5 @@
     }
   ],
   "status": "PASS",
-  "finishedAt": "2026-11-03T01:54:23.823Z"
+  "finishedAt": "2026-11-03T02:15:16.391Z"
 }

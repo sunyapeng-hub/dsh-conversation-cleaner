@@ -6,7 +6,7 @@
 
 ## 恢复
 
-保存成功弹窗的操作 ID，在已登录 DSH/NEXT 页面的开发者工具执行：
+展开成功弹窗的“恢复信息”，复制操作 ID，在已登录 DSH/NEXT 页面的开发者工具执行：
 
 ```javascript
 await fetch('/dsh-conversation-cleaner/v1/restore', {
@@ -43,6 +43,6 @@ await fetch('/dsh-conversation-cleaner/v1/operations', {
 
 ## 永久删除
 
-选择永久删除、勾选风险并点击“永久删除对话”即可，不再输入文字。进入 `PURGING` / `PERMANENT` 后拒绝恢复；尚未清空隔离文件的中断允许恢复。永久清空途中失败须依据 journal 人工继续清理剩余精确隔离文件，不自动改变删除策略。
+选择永久删除后点击“永久删除”即可，不再输入文字或单独勾选风险。进入 `PURGING` / `PERMANENT` 后拒绝恢复；尚未清空隔离文件的中断允许恢复。永久清空途中失败须依据 journal 人工继续清理剩余精确隔离文件，不自动改变删除策略。
 
 不使用系统回收站，不承诺擦除云端、备份或其他设备副本。

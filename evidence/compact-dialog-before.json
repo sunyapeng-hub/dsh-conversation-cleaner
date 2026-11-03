@@ -1,0 +1,20 @@
+{
+  "checks": [
+    {
+      "id": "no-extra-acknowledgement",
+      "pass": false
+    },
+    {
+      "id": "metadata-collapsed-by-default",
+      "pass": false
+    },
+    {
+      "id": "compact-height",
+      "pass": false,
+      "height": 688
+    }
+  ],
+  "startedAt": "2026-11-03T02:09:45.870Z",
+  "status": "FAIL",
+  "finishedAt": "2026-11-03T02:09:47.691Z"
+}

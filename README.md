@@ -1,6 +1,6 @@
 # DSH Conversation Cleaner
 
-`1.0.0-rc.5`：同一插件包在 Windows 的 **NEXT 2.0.20-next / Core 0.2.1-rc.3** 和 **官方 DSH Web 0.2.1-rc.3** 完成了三种模式的实际删除、重启核验和恢复。
+`1.0.0-rc.6`：同一插件包在 Windows 的 **NEXT 2.0.20-next / Core 0.2.1-rc.3** 和 **官方 DSH Web 0.2.1-rc.3** 完成了三种模式的实际删除、重启核验和恢复。
 
 | 范围 | 实际行为 |
 |---|---|
@@ -8,19 +8,19 @@
 | 对话 + 产出文件 | 另清理有创建证明的文件，保留已有、Git 跟踪及共享文件 |
 | 全部清理 | 另清理无其他引用的附件和有映射的缓存，保留共享及未发送附件 |
 
-侧栏会话行 `···` → **删除对话**。先预览，再勾选风险确认；永久删除不再要求输入文字，仅保留一次风险勾选和最终删除按钮。默认使用可恢复隔离区。
+侧栏会话行 `···` → **删除对话**。选择范围后点击删除即确认，不再勾选风险。路径、统计和清单收进详情；永久删除直接在选项和按钮上标识。默认使用可恢复隔离区。
 
 ## 安装
 
 NEXT：插件 → 添加插件，输入本仓库地址或下载包的本地路径；安装后启用并重启。
 
 - [仓库](https://github.com/sunyapeng-hub/dsh-conversation-cleaner)
-- [下载 rc.5](https://github.com/sunyapeng-hub/dsh-conversation-cleaner/raw/refs/heads/main/packages/dsh-conversation-cleaner-1.0.0-rc.5.tgz)
+- [下载 rc.6](https://github.com/sunyapeng-hub/dsh-conversation-cleaner/raw/refs/heads/main/packages/dsh-conversation-cleaner-1.0.0-rc.6.tgz)
 
 官方 DSH：
 
 ```powershell
-dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.5.tgz"
+dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.6.tgz"
 ```
 
 NEXT 的 `desktop` profile 由 Electron 管理，使用应用内安装器。升级旧开发包时先卸载再安装，隔离区不会随卸载清空。

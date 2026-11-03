@@ -2,7 +2,7 @@
 
 Verified: Windows, official DSH Web Core 0.2.1-rc.3; DSH NEXT 2.0.20-next with Core rc.3, Electron 44.7.0 / Node 24.21.0. CLI/tests use Node 22.19.0. Installed artifact source commit is not published in its local metadata and remains UNKNOWN.
 
-The same 1.0.0-rc.5 tgz was installed in both profiles. NEXT used its native installer; desktop profile CLI edits were rejected and not bypassed. The isolated desktop app uses original installed runtime binaries and unmodified extracted source, normal desktop profile and safeMode=false; it is an unpackaged test deployment. Its Office integration and native packaged directory-transition launcher are outside this acceptance.
+The same 1.0.0-rc.6 tgz was installed in both profiles. NEXT used its native installer; desktop profile CLI edits were rejected and not bypassed. The isolated desktop app uses original installed runtime binaries and unmodified extracted source, normal desktop profile and safeMode=false; it is an unpackaged test deployment. Its Office integration and native packaged directory-transition launcher are outside this acceptance.
 
 Data roots: F:/Projects/PLUS Project/.test-data/web-v2 and .test-data/next-normal, confirmed by live fixture responses. Formal user conversations were not altered.
 

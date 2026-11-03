@@ -4,7 +4,7 @@ Read-only reviewer findings were addressed in runtime code and regression tests.
 
 - Scan survivors across cwd; verify durable call IDs; treat unsupported tools/PTC as unknown; canonicalize read paths.
 - Serialize participating hosts through native root leases; keep every required cold-session lease; protect unsent upload receipts for exempt blank drafts.
-- Await real matched HTTP route completion, including early response/abort; restore hooks without an HMR unload/request waiting cycle. Native rc.5 uninstall/reinstall passed.
+- Await real matched HTTP route completion, including early response/abort; restore hooks without an HMR unload/request waiting cycle. Native rc.6 uninstall/reinstall passed.
 - Include attachment alias/canonical paths and provenance references; require a complete hardlink group and preserve external aliases.
 - Protect dependencies recorded by recoverable operations; old transactions missing reference metadata block deep cleanup.
 - Recover pre-purge permanent intent; refuse missing or changed files and occupied destinations. Validate every unit identity before and after recovery; refresh restored output identity.

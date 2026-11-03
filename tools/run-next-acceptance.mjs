@@ -25,8 +25,8 @@ try{
   const open=async()=>{await session.hover();await session.getByRole('button',{name:'Session actions for Cleaner '+kind+' populated fixture',exact:true}).click();await p.getByRole('menuitem',{name:'Delete conversation',exact:true}).click();};
   await open();let dialog=p.getByRole('dialog',{name:'Delete conversation',exact:true});
   await expect(dialog.getByRole('status')).toHaveCount(0);
-  await expect(dialog.getByRole('button',{name:'Delete conversation',exact:true})).toBeDisabled();
-  assert.equal((await fixture({action:'state',id:f.id})).session,true);row.checks.push('preview-read-only','confirmation-disabled-without-consent');
+  await expect(dialog.getByRole('button',{name:'Delete',exact:true})).toBeEnabled();
+  assert.equal((await fixture({action:'state',id:f.id})).session,true);row.checks.push('preview-read-only','delete-click-is-the-confirmation');
   if(kind==='A'){
    await dialog.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal((await fixture({action:'state',id:f.id})).session,true);row.checks.push('cancel-preserves-session');await open();dialog=p.getByRole('dialog',{name:'Delete conversation',exact:true});await expect(dialog.getByRole('status')).toHaveCount(0);
   }
@@ -34,10 +34,10 @@ try{
   await expect(dialog.getByRole('status')).toHaveCount(0);await expect(dialog.getByRole('alert')).toHaveCount(0);
   await expect(dialog.locator('details')).toBeVisible();await dialog.locator('summary').click();
   await p.screenshot({path:'evidence/screenshots/'+tag+'-'+kind.toLowerCase()+'-preview.png',fullPage:true});
-  await dialog.getByRole('checkbox',{name:'I understand: deletion may be irreversible',exact:true}).check();
+  assert.equal(await dialog.getByRole('checkbox',{name:'I understand: deletion may be irreversible',exact:true}).count(),0);
   const response=p.waitForResponse(r=>r.url().endsWith('/dsh-conversation-cleaner/v1/commit')&&r.request().method()==='POST');
-  await dialog.getByRole('button',{name:'Delete conversation',exact:true}).click();const http=await response;row.result=await http.json();assert.equal(http.status(),200,JSON.stringify(row.result));
-  await expect(dialog.getByRole('status')).toContainText('Deletion verified');await expect(session).toHaveCount(0);row.checks.push('live-sidebar-removal');
+  await dialog.getByRole('button',{name:'Delete',exact:true}).click();const http=await response;row.result=await http.json();assert.equal(http.status(),200,JSON.stringify(row.result));
+  await expect(dialog.getByRole('status')).toContainText('Deleted');await expect(session).toHaveCount(0);row.checks.push('live-sidebar-removal');
   row.after=await fixture({action:'state',id:f.id});
   assert.equal(row.after.session,false);assert.equal(row.after.member,false);assert.equal(row.after.survivor,true);assert.equal(row.after.keep,before.keep);assert.equal(row.after.shared.exists,true);
   assert.equal(row.after.output.exists,kind==='A');assert.equal(row.after.orphan.exists,kind!=='C');

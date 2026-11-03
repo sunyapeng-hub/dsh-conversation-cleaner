@@ -1,0 +1,24 @@
+{
+  "checks": [
+    {
+      "id": "no-extra-acknowledgement",
+      "pass": true
+    },
+    {
+      "id": "metadata-collapsed-by-default",
+      "pass": true
+    },
+    {
+      "id": "compact-height",
+      "pass": true,
+      "height": 449.1875
+    },
+    {
+      "id": "cancel-no-deletion-and-direct-confirmed-delete-and-permanent",
+      "pass": true
+    }
+  ],
+  "startedAt": "2026-11-03T02:12:52.765Z",
+  "status": "PASS",
+  "finishedAt": "2026-11-03T02:12:57.570Z"
+}

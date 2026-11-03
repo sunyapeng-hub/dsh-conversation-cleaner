@@ -23,6 +23,8 @@ window.__ModuleLoader__.load({
     zh.permanentWarning='永久删除后无法恢复。';zh.permanentRemove='永久删除对话';
     reasons.SCAN_LIMIT=['扫描超过数量或大小额度：引用内容上限 256 MiB，单个文件及本次隔离总量上限 32 MiB。','The scan exceeds its count or size limit: 256 MiB for references, 32 MiB per file and quarantine transaction.'];
     reasons.ATTACHMENT_SCAN_LIMIT=['附件引用扫描超过大小或对象数量额度，未执行删除。','The attachment reference scan exceeds its size or object limit. Nothing was deleted.'];
+    Object.assign(en,{remove:'Delete',permanentRemove:'Permanently delete',permanent:'Permanently delete (cannot be restored)',done:'Deleted',loading:'Checking…',list:'Details',recoveryInfo:'Recovery details',a:'Workspace files and attachments stay.',b:'Only proven, unshared generated files are removed.',c:'Also remove orphan attachments; shared content stays.'});
+    Object.assign(zh,{chat_only:'仅对话',full:'对话 + 产出 + 孤儿附件',remove:'删除',permanentRemove:'永久删除',permanent:'永久删除（无法恢复）',done:'已删除',loading:'正在检查…',list:'详情',recoveryInfo:'恢复信息',a:'保留工作区文件和附件。',b:'仅清理有归属证明、未被共享的产出文件。',c:'另清理孤儿附件，共享内容保留。'});
     let request=null;const listeners=new Set();
     const notify=()=>listeners.forEach(f=>f(request));
     async function post(action,body,signal) {
@@ -39,40 +41,41 @@ window.__ModuleLoader__.load({
       return selected?h(DialogBody,{key:selected.nonce,selected,t}):null;
     }
     function DialogBody({selected,t}) {
-      const [mode,setMode]=React.useState('chat_only'),[children,setChildren]=React.useState(false),[plan,setPlan]=React.useState(null),[ack,setAck]=React.useState(false),[busy,setBusy]=React.useState(false),[error,setError]=React.useState(''),[revision,setRevision]=React.useState(0),[permanent,setPermanent]=React.useState(false),[result,setResult]=React.useState(null);
-      const inFlight=React.useRef(false);
-      const chinese=t('menu')==='删除对话';
+      const [mode,setMode]=React.useState('chat_only'),[children,setChildren]=React.useState(false),[plan,setPlan]=React.useState(null),[busy,setBusy]=React.useState(false),[error,setError]=React.useState(''),[revision,setRevision]=React.useState(0),[permanent,setPermanent]=React.useState(false),[result,setResult]=React.useState(null);
+      const inFlight=React.useRef(false),chinese=t('menu')==='删除对话';
       const reason=code=>reasons[code]?.[chinese?0:1]??code;
       React.useEffect(()=>{
-        const controller=new AbortController();setPlan(null);setAck(false);setError('');
+        const controller=new AbortController();setPlan(null);setError('');
         post('plan',{sessionId:selected.sessionId,mode,includeDescendants:children},controller.signal).then(setPlan).catch(e=>{if(e.name!=='AbortError')setError(e.message);});
         return()=>controller.abort();
       },[mode,children,revision]);
       const close=()=>{if(!inFlight.current){request=null;notify();}};
+      const ready=!!plan&&!plan.blockers.length&&!error;
       const submit=async()=>{
-        if(inFlight.current || !plan || !ack || plan.blockers.length)return;
-        inFlight.current=true;setBusy(true);setError('');
-        try{const response=await post('commit',{planId:plan.planId,confirmation:plan.confirmation,acknowledged:true,permanent});setResult(response);}
-        catch(e){setError(e.message);setAck(false);}
+        if(inFlight.current||!ready)return;
+        inFlight.current=true;setBusy(true);
+        try{setResult(await post('commit',{planId:plan.planId,confirmation:plan.confirmation,acknowledged:true,permanent}));}
+        catch(e){setError(e.message);}
         finally{inFlight.current=false;setBusy(false);}
       };
       const fmt=n=>n==null?t('unknown'):new Intl.NumberFormat().format(n)+' B';
-      const body=result?h('div',{className:'dcc-success',role:'status'},h('p',null,t('done')),h('p',null,t('restore')),h('code',null,result.operationId),h('p',null,result.restorable?t('quarantine'):t('permanent'))):h(React.Fragment,null,
+      const body=result?h('div',{className:'dcc-success'},h('p',{role:'status'},t('done')),result.restorable&&h('details',null,h('summary',null,t('recoveryInfo')),h('p',null,t('quarantine')),h('code',null,result.operationId))):h(React.Fragment,null,
         h('p',{className:'dcc-sub'},selected.title),
-        h('dl',{className:'dcc-meta'},h('dt',null,t('id')),h('dd',null,selected.sessionId),h('dt',null,t('cwd')),h('dd',null,plan?.session.cwd??t('unknown')),h('dt',null,t('logs')),h('dd',null,fmt(plan?.session.logBytes)),h('dt',null,t('outputs')),h('dd',null,mode==='chat_only'?t('unknown'):String(plan?.counts.outputs??t('unknown'))),h('dt',null,t('attachments')),h('dd',null,mode==='full'&&plan?String(plan.session.attachmentCount):t('unknown'))),
-        h('fieldset',{disabled:busy,className:'dcc-modes'},h('legend',null,t('scope')),['chat_only','chat_and_outputs','full'].map((value,i)=>h('label',{key:value,className:'dcc-mode'},h('input',{type:'radio',name:'dcc-mode',value,checked:mode===value,onChange:()=>{setAck(false);setPlan(null);setMode(value);}}),h('span',null,h('strong',null,t(value)),h('small',null,t(['a','b','c'][i])))))),
-        (plan?.children?.length>0 || children)&&h('label',{className:'dcc-check'},h('input',{type:'checkbox',checked:children,disabled:busy,onChange:e=>{setAck(false);setPlan(null);setChildren(e.target.checked);}}),t('children')+' ('+(plan?.children?.length??'…')+')'),
-        !plan&&!error&&h('p',{role:'status'},t('loading')),
-        plan&&h('details',null,h('summary',null,t('list')+' · '+plan.counts.files+' '+t('files')+' · '+fmt(plan.counts.bytes)),h('ul',{className:'dcc-list'},plan.candidates.map(u=>h('li',{key:u.path},h('code',null,u.path),' · '+fmt(u.size))),plan.preserved.map(u=>h('li',{key:u.path},t('keep')+': ',h('code',null,u.path),' — '+reason(u.reason))))),
-        plan?.blockers?.length>0&&h('div',{className:'dcc-warning',role:'alert'},h('strong',null,t('blocked')),h('ul',null,plan.blockers.map(code=>h('li',{key:code},reason(code))))),
-        h('p',{className:'dcc-warning'},t(permanent?'permanentWarning':'quarantine')),
-        h('label',{className:'dcc-check'},h('input',{type:'checkbox',checked:permanent,disabled:busy,onChange:e=>{setPermanent(e.target.checked);setAck(false);}}),t('permanent')),
-        error&&h('p',{className:'dcc-error',role:'alert'},t('error')+': '+reason(error)),
-        !busy&&h('button',{type:'button',className:'dcc-refresh',onClick:()=>setRevision(r=>r+1)},t('retry'))
+        h('fieldset',{disabled:busy,className:'dcc-modes'},h('legend',null,t('scope')),['chat_only','chat_and_outputs','full'].map(value=>h('label',{key:value,className:'dcc-mode'},h('input',{type:'radio',name:'dcc-mode',value,checked:mode===value,onChange:()=>{setPlan(null);setMode(value);}}),t(value)))),
+        h('p',{className:'dcc-help'},t({chat_only:'a',chat_and_outputs:'b',full:'c'}[mode])),
+        (plan?.children?.length>0||children)&&h('label',{className:'dcc-check'},h('input',{type:'checkbox',checked:children,disabled:busy,onChange:e=>{setPlan(null);setChildren(e.target.checked);}}),t('children')+' ('+(plan?.children?.length??'…')+')'),
+        !plan&&!error&&h('p',{role:'status',className:'dcc-help'},t('loading')),
+        plan&&h('details',{className:'dcc-details'},h('summary',null,t('list')+' · '+plan.counts.files+' '+t('files')+' · '+fmt(plan.counts.bytes)),
+          h('dl',{className:'dcc-meta'},h('dt',null,t('id')),h('dd',null,selected.sessionId),h('dt',null,t('cwd')),h('dd',null,plan.session.cwd),h('dt',null,t('logs')),h('dd',null,fmt(plan.session.logBytes)),h('dt',null,t('outputs')),h('dd',null,mode==='chat_only'?t('unknown'):String(plan.counts.outputs)),h('dt',null,t('attachments')),h('dd',null,mode==='full'?String(plan.session.attachmentCount):t('unknown'))),
+          h('ul',{className:'dcc-list'},plan.candidates.map(u=>h('li',{key:u.path},h('code',null,u.path),' · '+fmt(u.size))),plan.preserved.map(u=>h('li',{key:u.path},t('keep')+': ',h('code',null,u.path),' — '+reason(u.reason))))),
+        plan?.blockers?.length>0&&h('div',{className:'dcc-warning',role:'alert'},plan.blockers.map(code=>h('p',{key:code},reason(code)))),
+        error&&h('p',{className:'dcc-error',role:'alert'},reason(error)),
+        !busy&&(error||plan?.blockers?.length>0)&&h('button',{type:'button',className:'dcc-refresh',onClick:()=>setRevision(r=>r+1)},t('retry')),
+        h('label',{className:'dcc-check'},h('input',{type:'checkbox',checked:permanent,disabled:busy,onChange:e=>setPermanent(e.target.checked)}),t('permanent'))
       );
-      return h(ui.Modal,{open:true,onClose:close,title:t('title'),closeLabel:t('close'),className:'dcc-modal',contentClassName:'dcc-content',footer:h('div',{className:'dcc-footer'},!result&&h('label',{className:'dcc-check'},h('input',{type:'checkbox',checked:ack,disabled:busy||!plan||plan.blockers.length>0,onChange:e=>setAck(e.target.checked)}),t('ack')),h('div',{className:'dcc-actions'},h('button',{type:'button',disabled:busy,onClick:close},t(result?'close':'cancel')),!result&&h('button',{type:'button',className:'dcc-danger',disabled:busy||!plan||!ack||plan.blockers.length>0,onClick:submit},t(busy?'busy':permanent?'permanentRemove':'remove'))))},body);
+      return h(ui.Modal,{open:true,onClose:close,title:t('title'),closeLabel:t('close'),className:'dcc-modal',contentClassName:'dcc-content',footer:h('div',{className:'dcc-footer'},h('button',{type:'button',disabled:busy,onClick:close},t(result?'close':'cancel')),!result&&h('button',{type:'button',className:'dcc-danger',disabled:busy||!ready,onClick:submit},t(busy?'busy':permanent?'permanentRemove':'remove')))},body);
     }
-    const css=`.dcc-modal{width:min(620px,calc(100vw - 28px));max-height:calc(100dvh - 32px);display:flex;flex-direction:column;min-height:0;overflow:hidden}.dcc-modal .dcc-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}.dcc-modal>:last-child{flex:0 0 auto}.dcc-modal *{box-sizing:border-box}.dcc-sub{opacity:.7;overflow-wrap:anywhere}.dcc-meta{display:grid;grid-template-columns:130px minmax(0,1fr);gap:8px;font-size:12px}.dcc-meta dt{opacity:.65}.dcc-meta dd{margin:0;overflow-wrap:anywhere}.dcc-modes{border:0;padding:0;margin:22px 0 12px}.dcc-modes legend{font-size:13px;font-weight:600;margin-bottom:8px}.dcc-mode{display:flex;gap:10px;cursor:pointer;padding:12px;border:1px solid transparent;border-radius:8px}.dcc-mode:has(input:checked){background:color-mix(in srgb,currentColor 5%,transparent);border-color:color-mix(in srgb,currentColor 12%,transparent)}.dcc-mode strong{font-size:13px}.dcc-mode small{display:block;opacity:.65;line-height:1.6;margin-top:4px}.dcc-mode input{margin-top:3px;accent-color:#dc433b}.dcc-warning{font-size:12px;line-height:1.6;padding:10px 12px;background:#e8a82e18;border:1px solid #e8a82e45;border-radius:8px}.dcc-check{display:flex;align-items:flex-start;gap:8px;font-size:12px;margin:14px 0;line-height:1.6}.dcc-check input{accent-color:#d6423a;margin-top:3px}.dcc-modal details{font-size:12px;margin:12px 0}.dcc-list{max-height:180px;overflow:auto;padding-left:20px;overflow-wrap:anywhere}.dcc-list li{padding:5px 0}.dcc-footer{display:flex;flex-direction:column;gap:10px}.dcc-footer .dcc-check{margin:0}.dcc-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px}.dcc-footer button,.dcc-refresh{font:inherit;font-size:12px;border:1px solid color-mix(in srgb,currentColor 18%,transparent);border-radius:7px;background:transparent;color:inherit;padding:8px 14px;cursor:pointer}.dcc-footer .dcc-danger{background:#d6423a;border-color:#d6423a;color:#fff}.dcc-footer button:disabled{opacity:.4;cursor:not-allowed}.dcc-error{font-size:12px;color:#e65c52;overflow-wrap:anywhere}.dcc-confirm{display:grid;gap:6px;font-size:12px}.dcc-confirm input{padding:7px;color:inherit;background:transparent;border:1px solid #9998;border-radius:5px}.dcc-success{padding:16px 0;overflow-wrap:anywhere}`;
+    const css=`.dcc-modal{width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 32px);display:flex;flex-direction:column;min-height:0;overflow:hidden}.dcc-modal *{box-sizing:border-box}.dcc-modal .dcc-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}.dcc-content>:last-child{margin-top:18px}.dcc-modal>:last-child{flex:0 0 auto}.dcc-sub{margin:0 0 16px;overflow-wrap:anywhere;font-weight:500}.dcc-modes{border:0;padding:0;margin:0}.dcc-modes legend{font-size:12px;opacity:.65;margin-bottom:6px}.dcc-mode{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid transparent;border-radius:7px;font-size:13px;cursor:pointer}.dcc-mode:has(input:checked){background:color-mix(in srgb,currentColor 5%,transparent);border-color:color-mix(in srgb,currentColor 12%,transparent)}.dcc-mode input,.dcc-check input{accent-color:#d6423a;margin:0;flex-shrink:0}.dcc-help{font-size:12px;opacity:.65;line-height:1.6;margin:8px 0 14px}.dcc-details,.dcc-success details{font-size:12px;margin:12px 0}.dcc-details summary,.dcc-success summary{cursor:pointer;opacity:.75}.dcc-meta{display:grid;grid-template-columns:100px minmax(0,1fr);gap:7px;margin:12px 0}.dcc-meta dt{opacity:.6}.dcc-meta dd{margin:0;overflow-wrap:anywhere}.dcc-list{padding-left:18px;overflow-wrap:anywhere}.dcc-list li{padding:4px 0}.dcc-check{display:flex;align-items:center;gap:8px;font-size:12px;margin:16px 0 0;line-height:1.5;opacity:.8}.dcc-warning,.dcc-error{font-size:12px;line-height:1.6;color:#d55d45;overflow-wrap:anywhere;margin:12px 0}.dcc-warning p{margin:5px 0}.dcc-footer{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}.dcc-footer button,.dcc-refresh{font:inherit;font-size:12px;border:1px solid color-mix(in srgb,currentColor 18%,transparent);border-radius:7px;background:transparent;color:inherit;padding:8px 16px;cursor:pointer}.dcc-footer .dcc-danger{background:#d6423a;border-color:#d6423a;color:#fff}.dcc-footer button:disabled{opacity:.4;cursor:not-allowed}.dcc-success{font-size:13px;overflow-wrap:anywhere}.dcc-refresh{padding:5px 10px}`;
     function apply(ctx) {
       ctx.effect(()=>ctx.locale.register(NS,{en,zh}),'conversation-cleaner locale');
       ctx.effect(()=>{const style=document.createElement('style');style.textContent=css;document.head.append(style);return()=>{style.remove();request=null;listeners.clear();};});
