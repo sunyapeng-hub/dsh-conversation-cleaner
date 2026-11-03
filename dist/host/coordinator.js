@@ -18,7 +18,7 @@ function installedVersions(ctx) {
   const bases=[ctx.get('baseDir'),process.argv[1]&&path.dirname(process.argv[1]),process.cwd(),path.dirname(fileURLToPath(import.meta.url))].filter(Boolean);
   for(const base of bases) {
     const require=createRequire(path.join(path.resolve(base),'__cleaner_resolve__.cjs'));
-    for(const [key,name] of [['webServerVersion','@deepseek-ai/dsh-host-webserver'],['fileUploadVersion','@deepseek-ai/dsh-client-file-upload'],['desktopNextVersion','dsh-desktop-next']]) {
+    for(const [key,name] of [['webServerVersion','@deepseek-ai/dsh-host-webserver'],['fileUploadVersion','@deepseek-ai/dsh-client-file-upload'],['agentLoopVersion','@deepseek-ai/dsh-agent-loop'],['desktopNextVersion','dsh-desktop-next']]) {
       try{facts[key]??=require(name+'/package.json').version;}catch{}
     }
     // Desktop shell is the entry package, not necessarily a node_modules child.
@@ -94,6 +94,7 @@ export class RootCoordinator {
     }
     if(typeof this.persistence?.acquireWriteLease!=='function'){this.reason='ROOT_LEASE_UNAVAILABLE';return false;}
     this.installed=true;
+    this.agentLoopVersion=metadata.agentLoopVersion;
     this.receiptBridgeSupported=metadata.fileUploadVersion===BRIDGE_VERSION;
     this.ctx.effect(()=>{
       const original=server.rawListeners('request')[0];

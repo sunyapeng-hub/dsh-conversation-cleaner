@@ -1,5 +1,6 @@
 import {chromium} from 'playwright';
-import {expect} from 'playwright/test';
+import {expect as baseExpect} from 'playwright/test';
+const expect=baseExpect.configure({timeout:20000});
 import * as fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const web=process.argv.includes('--web'),tag=web?'web-v2':'next';
@@ -13,6 +14,7 @@ const fixture=body=>api('/cleaner-e2e',body);
 await fs.mkdir('evidence/screenshots',{recursive:true});await fs.mkdir('evidence/traces',{recursive:true});
 await context.tracing.start({screenshots:true,snapshots:true,sources:false});
 try{
+ await p.keyboard.press('Escape');
  if(await p.locator('.dcc-modal .dcc-success').count())await p.locator('.dcc-footer').getByRole('button',{name:'Close',exact:true}).click();
  for(const [kind,mode] of [['A','chat_only'],['B','chat_and_outputs'],['C','full']]) {
   if(report.cases.some(c=>c.kind===kind&&c.status==='PASS'))continue;
@@ -25,7 +27,7 @@ try{
   const open=async()=>{await session.hover();await session.getByRole('button',{name:'Session actions for Cleaner '+kind+' populated fixture',exact:true}).click();await p.getByRole('menuitem',{name:'Delete conversation',exact:true}).click();};
   await open();let dialog=p.getByRole('dialog',{name:'Delete conversation',exact:true});
   await expect(dialog.getByRole('status')).toHaveCount(0);
-  await expect(dialog.getByRole('button',{name:'Delete',exact:true})).toBeEnabled();
+  await expect(dialog.getByRole('button',{name:'Delete',exact:true})).toBeEnabled({timeout:20000});
   assert.equal((await fixture({action:'state',id:f.id})).session,true);row.checks.push('preview-read-only','delete-click-is-the-confirmation');
   if(kind==='A'){
    await dialog.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal((await fixture({action:'state',id:f.id})).session,true);row.checks.push('cancel-preserves-session');await open();dialog=p.getByRole('dialog',{name:'Delete conversation',exact:true});await expect(dialog.getByRole('status')).toHaveCount(0);

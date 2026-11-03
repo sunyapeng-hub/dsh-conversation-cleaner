@@ -145,7 +145,9 @@ export class DshAdapter {
     const recoveryRows=mode==='chat_only'?[]:await this.quarantinedReferences();
     const survivors=rows.filter(r=>!ids.includes(r.header.id)).concat(recoveryRows);
     for(const id of ids) {
-      if(this.ctx.get('sessions')?.get(id) || (!locked && this.persistence.hasPendingSession?.(id)))blockers.push('SESSION_BUSY');
+      if(this.ctx.get('sessions')?.get(id)){
+        const code=this.releaseBridge?this.releaseBridge.blocker(id):'SESSION_BUSY';if(code)blockers.push(code);
+      }else if(!locked&&this.persistence.hasPendingSession?.(id))blockers.push('SESSION_BUSY');
       const stored=all.find(s=>s.header.id===id) ?? await this.persistence.stat(id);
       const location=this.persistence.locate(stored.header);
       if(!location?.path || !inside(this.persistence.root,location.path))throw new CleanerError('HOST_LOCATION_UNSAFE',422);
@@ -179,6 +181,7 @@ export class DshAdapter {
     const recoveryReferences=rows.filter(r=>ids.includes(r.header.id)).map(row=>{const references=[],pending=[row.events,row.proof?.references??[]];while(pending.length){const node=pending.pop();if(typeof node==='string')references.push(node);else if(node&&typeof node==='object')pending.push(...Object.values(node));}return {id:row.header.id,cwd:row.header.cwd,references:[...new Set(references)]};});
     return {session:{id:snapshot.header.id,title:summary?.title??snapshot.header.title??sessionId,cwd:snapshot.header.cwd??'',logBytes:snapshot.sizeBytes??null,attachmentCount},attachmentCount,ids,children:children.map(h=>({id:h.id,cwd:h.cwd})),candidates,indexEdits,preserved,blockers:[...new Set(blockers)],metadata:{...this.metadata(ids),headers:headers.filter(h=>ids.includes(h.id)),corpus,recoveryReferences}};
   }
+  async releaseTargets(ids) {await this.releaseBridge?.release(ids);}
   async acquire(ids,plan={}) {
     const handles=[];let acquiringId;
     try{

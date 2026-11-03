@@ -2,6 +2,7 @@ import { Cleaner, CleanerError } from './cleaner.js';
 import { DshAdapter } from '../adapters/dsh.js';
 import { installProvenance } from './provenance.js';
 import { RootCoordinator } from './coordinator.js';
+import { SessionReleaseBridge } from './session-release.js';
 export const name='dsh-conversation-cleaner';
 export const inject=['webServer','connection','sessionPersistence','sessions','workspaceRegistry','storageDomain'];
 const prefix='/dsh-conversation-cleaner/v1/';
@@ -35,6 +36,8 @@ export function apply(ctx,config={}) {
   const coordinator=new RootCoordinator(ctx);
   coordinator.install();
   const adapter=new DshAdapter(ctx,{exclusiveDataRoot:config.exclusiveDataRoot===true,coordinator}),cleaner=new Cleaner(adapter);
+  adapter.releaseBridge=new SessionReleaseBridge(ctx,coordinator);
+  adapter.releaseBridge.install();
   coordinator.beforeMutation=()=>adapter.checkRegistry?.();
   installProvenance(ctx,adapter);
   for(const action of ['plan','commit','restore','operations'])ctx.effect(()=>ctx.webServer.register({kind:'exact',path:prefix+action,handler:makeHandler(ctx,cleaner,action)}),'conversation-cleaner: '+action);

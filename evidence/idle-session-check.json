@@ -1,0 +1,50 @@
+{
+  "host": "DSH NEXT 2.0.20-next/Core rc3",
+  "startedAt": "2026-11-03T02:42:40.957Z",
+  "cases": [
+    {
+      "mode": "chat_only",
+      "id": "session-e85cd284-3135-4bb3-88be-5856791f4ab1",
+      "status": "PASS",
+      "checks": [
+        "current-selected",
+        "preview-and-cancel-preserve-live-owner",
+        "automatic-idle-dispose",
+        "no-extra-confirmation",
+        "mode-scope",
+        "other-session-preserved",
+        "restore"
+      ]
+    },
+    {
+      "mode": "chat_and_outputs",
+      "id": "session-42a31d29-bffa-4145-93d8-b240d61ce234",
+      "status": "PASS",
+      "checks": [
+        "current-selected",
+        "preview-and-cancel-preserve-live-owner",
+        "automatic-idle-dispose",
+        "no-extra-confirmation",
+        "mode-scope",
+        "other-session-preserved",
+        "restore"
+      ]
+    },
+    {
+      "mode": "full",
+      "id": "session-0f315850-5c11-491d-8574-b875f71b1a48",
+      "status": "PASS",
+      "checks": [
+        "current-selected",
+        "preview-and-cancel-preserve-live-owner",
+        "automatic-idle-dispose",
+        "no-extra-confirmation",
+        "mode-scope",
+        "other-session-preserved",
+        "restore"
+      ]
+    }
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-11-03T02:44:06.545Z"
+}

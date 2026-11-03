@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-11-03T02:37:45.432Z",
+  "cases": [
+    {
+      "action": "queue",
+      "status": "PASS",
+      "commit": "SESSION_BUSY"
+    },
+    {
+      "action": "maintenance",
+      "status": "PASS",
+      "commit": "SESSION_BUSY"
+    },
+    {
+      "action": "stage-held",
+      "status": "PASS",
+      "commit": "SESSION_BUSY"
+    },
+    {
+      "action": "stale-plan-after-release",
+      "status": "PASS",
+      "commit": "PLAN_CHANGED",
+      "retainedRowVisible": true
+    }
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-11-03T02:37:51.337Z"
+}

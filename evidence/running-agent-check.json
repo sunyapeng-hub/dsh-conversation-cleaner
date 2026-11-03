@@ -1,7 +1,7 @@
 {
   "host": "DSH NEXT 2.0.20-next/Core rc3",
-  "startedAt": "2026-11-02T13:30:51.503Z",
-  "fixture": "session-3db73213-a9d8-4124-8dd8-96ab777d472c",
+  "startedAt": "2026-11-03T02:38:02.710Z",
+  "fixture": "session-6608fd55-f315-4ce7-9dd1-4aba2887f68a",
   "observedAgentStatus": "running",
   "provider": "local synthetic blocked stream; no network/model invocation",
   "commit": {
@@ -16,25 +16,25 @@
   "after": {
     "ok": true,
     "fixture": {
-      "id": "session-3db73213-a9d8-4124-8dd8-96ab777d472c",
-      "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-3db73213-a9d8-4124-8dd8-96ab777d472c",
-      "workspaceId": "7f828460-8e96-4e62-af7b-7b8202e82440",
+      "id": "session-6608fd55-f315-4ce7-9dd1-4aba2887f68a",
+      "cwd": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-6608fd55-f315-4ce7-9dd1-4aba2887f68a",
+      "workspaceId": "2e2c46d2-5f3d-4d40-a297-1508c302db9a",
       "kind": "A",
-      "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-3db73213-a9d8-4124-8dd8-96ab777d472c\\keep.txt",
-      "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-3db73213-a9d8-4124-8dd8-96ab777d472c\\generated.txt",
-      "survivor": "session-18167254-8f7b-41e9-b0c6-07e1f1a95d63",
+      "keep": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-6608fd55-f315-4ce7-9dd1-4aba2887f68a\\keep.txt",
+      "output": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\e2e-workspaces\\session-6608fd55-f315-4ce7-9dd1-4aba2887f68a\\generated.txt",
+      "survivor": "session-ce8a98a7-b7a5-4a3d-9fe6-406acb6a0ffd",
       "orphan": {
-        "attachmentId": "sha256:ca4ea1939ac1fb8d9971789f93bbe9cdcdc4bc0a0d72c024437663cef6e79520",
+        "attachmentId": "sha256:67c638061e6202bfaa9f356326e6181e044c9d330b1f4effb8a4a73c7e75e969",
         "name": "orphan-A.txt",
         "bytes": 65
       },
       "shared": {
-        "attachmentId": "sha256:2fb19bae1049be9b34935715246f9020889c08edb41fcad9d2e13e9008a99336",
+        "attachmentId": "sha256:e1926f7954ce4ff97e323f8cf5a822ad5bb55eaf4c0c12bc8e8856f489bf6902",
         "name": "shared-A.txt",
         "bytes": 62
       },
-      "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\ca\\ca4ea1939ac1fb8d9971789f93bbe9cdcdc4bc0a0d72c024437663cef6e79520\\orphan-A.txt",
-      "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\2f\\2fb19bae1049be9b34935715246f9020889c08edb41fcad9d2e13e9008a99336\\shared-A.txt"
+      "orphanPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\67\\67c638061e6202bfaa9f356326e6181e044c9d330b1f4effb8a4a73c7e75e969\\orphan-A.txt",
+      "sharedPath": "F:\\Projects\\PLUS Project\\.test-data\\next-normal\\attachments\\v1\\files\\e1\\e1926f7954ce4ff97e323f8cf5a822ad5bb55eaf4c0c12bc8e8856f489bf6902\\shared-A.txt"
     },
     "session": true,
     "survivor": true,
@@ -58,5 +58,5 @@
     "root": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
     "profile": "desktop"
   },
-  "finishedAt": "2026-11-02T13:30:52.513Z"
+  "finishedAt": "2026-11-03T02:38:04.271Z"
 }

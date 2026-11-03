@@ -101,9 +101,11 @@ export class Cleaner {
     if(plan.expiresAt<Date.now())throw new CleanerError('PLAN_EXPIRED');
     if(confirmation!==plan.confirmation)throw new CleanerError('PLAN_CONFIRMATION_INVALID',403);
     if(plan.blockers.length)throw new CleanerError(plan.blockers.join('; '),422);
-    const unlock=await this.lock();let release;
+    const unlock=await this.lock();let release,closingTargets=false;
     try {
       if((await this.pending()).length)throw new CleanerError('RECOVERY_REQUIRED');
+      closingTargets=typeof this.adapter.releaseTargets==='function';
+      await this.adapter.releaseTargets?.(plan.ids);
       release=await this.adapter.acquire(plan.ids,plan);
       const fresh=await this.adapter.inspect(plan.sessionId,{...plan,locked:true});
       if(fresh.blockers.length)throw new CleanerError(fresh.blockers.join('; '),422);
@@ -147,6 +149,11 @@ export class Cleaner {
       let refreshWarning;
       try{await this.adapter.broadcast(plan.ids);}catch(e){refreshWarning=e.message;}
       return {operationId,state:journal.state,removed:journal.units.filter(u=>u.replacement===undefined).length,modified:journal.units.filter(u=>u.replacement!==undefined).length,restorable:!permanent,journal:journalFile,refreshWarning};
+    }catch(error){
+      // Closing emits the host's removed notification. If deletion is refused,
+      // republish only rows that still exist; never leave retained data hidden.
+      if(closingTargets)try{await this.adapter.broadcast(plan.ids,{restored:true});}catch{}
+      throw error;
     }finally{try{await release?.();}finally{await unlock();}}
   }
   async restoreFiles(journal) {

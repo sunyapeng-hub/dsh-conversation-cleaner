@@ -1,5 +1,6 @@
 import {chromium,} from 'playwright';
-import {expect} from 'playwright/test';
+import {expect as baseExpect} from 'playwright/test';
+const expect=baseExpect.configure({timeout:20000});
 import * as fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const b=await chromium.connectOverCDP('http://127.0.0.1:39119'),p=b.contexts()[0].pages().find(p=>p.url()==='dsh-app://app/');

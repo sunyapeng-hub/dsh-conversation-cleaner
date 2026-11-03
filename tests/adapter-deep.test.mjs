@@ -81,3 +81,10 @@ test('ordinary reference scans support a corpus larger than 32 MiB without dropp
  const f=await fixture(t);await f.add(other);const text='x'.repeat(17*1024*1024);f.events.set(id,[{type:'user/message',data:{text}}]);f.events.set(other,[{type:'user/message',data:{text}}]);
  const plan=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.deepEqual(plan.blockers,[]);assert.equal(f.reads.get(id),1);assert.equal(f.reads.get(other),1);assert.equal(plan.metadata.corpus.length,2);
 });
+
+test('selected idle local handle is releasable at commit; preview never closes it',async t=>{
+ const f=await fixture(t);f.live.set(id,{});let closes=0;
+ f.adapter.releaseBridge={blocker:()=>undefined,async release(ids){assert.deepEqual(ids,[id]);closes++;f.live.delete(id);}};
+ const plan=await f.adapter.inspect(id);assert.deepEqual(plan.blockers,[]);assert.equal(closes,0);
+ await f.adapter.releaseTargets([id]);const release=await f.adapter.acquire([id],plan);await release();assert.equal(closes,1);
+});

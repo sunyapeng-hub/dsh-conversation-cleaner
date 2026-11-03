@@ -40,6 +40,12 @@ test('preview is read-only and A preserves unrelated files', async t=>{
 });
 test('unacknowledged request cannot delete', async t=>{const f=await fixture(t);const p=await f.cleaner.plan({sessionId:ID});await assert.rejects(f.cleaner.commit({planId:p.planId,confirmation:p.confirmation}),/ACK_REQUIRED/);assert.ok(await fs.stat(f.log));});
 test('changed bytes invalidate plan even if size is unchanged',async t=>{const f=await fixture(t);const p=await f.cleaner.plan({sessionId:ID});await fs.writeFile(f.log,'CONVERSATION');await assert.rejects(f.cleaner.commit({planId:p.planId,confirmation:p.confirmation,acknowledged:true}),/PLAN_CHANGED/);assert.ok(await fs.stat(f.log));});
+test('closing an idle target never bypasses stale-plan checks and failure republishes its retained row',async t=>{
+ const f=await fixture(t),events=[];f.adapter.releaseTargets=async ids=>events.push(['close',ids]);f.adapter.broadcast=async(ids,options)=>events.push(['broadcast',ids,options]);
+ const p=await f.cleaner.plan({sessionId:ID});assert.deepEqual(events,[]);await fs.writeFile(f.log,'CONVERSATION');
+ await assert.rejects(f.cleaner.commit({planId:p.planId,confirmation:p.confirmation,acknowledged:true}),/PLAN_CHANGED/);
+ assert.deepEqual(events,[['close',[ID]],['broadcast',[ID],{restored:true}]]);assert.equal(f.state.indexed,true);assert.equal(await fs.readFile(f.log,'utf8'),'CONVERSATION');
+});
 test('active writer blocks transaction before mutation',async t=>{const f=await fixture(t);const p=await f.cleaner.plan({sessionId:ID});f.state.busy=true;await assert.rejects(f.cleaner.commit({planId:p.planId,confirmation:p.confirmation,acknowledged:true}),/SESSION_BUSY/);assert.ok(await fs.stat(f.log));});
 test('registry failure compensates files and membership',async t=>{const f=await fixture(t);const p=await f.cleaner.plan({sessionId:ID});f.state.fail=true;await assert.rejects(f.cleaner.commit({planId:p.planId,confirmation:p.confirmation,acknowledged:true}),/injected registry failure/);assert.equal(await fs.readFile(f.log,'utf8'),'conversation');assert.equal(f.state.indexed,true);});
 test('plan is single-use',async t=>{const f=await fixture(t);const p=await f.cleaner.plan({sessionId:ID});const req={planId:p.planId,confirmation:p.confirmation,acknowledged:true};await f.cleaner.commit(req);await assert.rejects(f.cleaner.commit(req),/PLAN_MISSING/);});

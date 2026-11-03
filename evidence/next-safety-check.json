@@ -1,12 +1,12 @@
 {
   "host": "DSH NEXT 2.0.20-next/Core rc3",
-  "startedAt": "2026-11-03T02:15:56.712Z",
+  "startedAt": "2026-11-03T02:46:39.717Z",
   "cases": [
     {
       "id": "staged-upload",
       "status": "PASS",
-      "fixture": "session-7fe70d88-ce0a-45d6-ac90-648ea7e95bc0",
-      "receiptOwner": "session-b60fdadf-122b-4826-996e-2b71febefd7f",
+      "fixture": "session-dc019f9e-70ef-4a32-b345-6e53964a1346",
+      "receiptOwner": "session-25bba796-0a32-46f0-a856-79c402f5c00c",
       "blockedAttachmentCandidates": 0,
       "releasedAttachmentCandidates": 2,
       "restored": "RESTORED"
@@ -14,8 +14,8 @@
     {
       "id": "scope-reset-and-permanent-ui",
       "status": "PASS",
-      "fixture": "session-5c111278-49e5-42ee-aa9b-1ba8ff0fb80c",
-      "operationId": "b3e0f682-89c2-4f3e-9244-17847b8cdfa1",
+      "fixture": "session-14b7afb1-5f24-40ea-bca3-0d31e82c046b",
+      "operationId": "2ff987f2-965c-4105-81b3-4c19b4eb60d4",
       "restorable": false
     },
     {
@@ -45,5 +45,5 @@
     }
   ],
   "status": "PASS",
-  "finishedAt": "2026-11-03T02:16:19.356Z"
+  "finishedAt": "2026-11-03T02:47:29.872Z"
 }

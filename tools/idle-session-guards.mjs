@@ -1,0 +1,16 @@
+import {chromium} from 'playwright';import {expect} from 'playwright/test';import fs from 'node:fs/promises';import assert from 'node:assert/strict';
+const b=await chromium.connectOverCDP('http://127.0.0.1:39119'),p=b.contexts()[0].pages().find(p=>p.url()==='dsh-app://app/'),report={startedAt:new Date().toISOString(),cases:[]};
+const api=(route,body)=>p.evaluate(async({route,body})=>{const r=await fetch(route,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});return {status:r.status,data:await r.json()};},{route,body});
+const fixture=async body=>{const r=await api('/cleaner-e2e',body);assert.equal(r.status,200,JSON.stringify(r));return r.data;};let held,staged=false;
+try{
+ for(const action of ['queue','maintenance','stage-held']){
+  const f=await fixture({action:'create',kind:'A'});held=f.id;await fixture({action:'hold',id:f.id});const state=await fixture({action,id:f.id});staged=action==='stage-held';
+  if(action==='maintenance'){assert.equal(state.status,'idle');assert.equal(state.phase,'maintenance');}
+  const preview=await api('/dsh-conversation-cleaner/v1/plan',{sessionId:f.id,mode:'chat_only'});assert.equal(preview.status,200,JSON.stringify(preview));assert.ok(preview.data.blockers.includes('SESSION_BUSY'));
+  const commit=await api('/dsh-conversation-cleaner/v1/commit',{planId:preview.data.planId,confirmation:preview.data.confirmation,acknowledged:true});assert.equal(commit.status,422);assert.equal((await fixture({action:'diagnose'})).rows.find(r=>r.id===f.id).live,true);assert.equal((await fixture({action:'state',id:f.id})).session,true);
+  if(staged){await fixture({action:'unstage',id:f.id});staged=false;}await fixture({action:'release',id:f.id});held=undefined;report.cases.push({action,status:'PASS',commit:commit.data.code});
+ }
+ const f=await fixture({action:'create',kind:'A'});held=f.id;await fixture({action:'hold',id:f.id});const w=p.locator('[data-row-key="workspace:'+f.workspaceId+'"]');if(await w.getAttribute('aria-expanded')==='false')await w.click();const row=p.locator('[data-row-key="session:'+f.id+'"]');await row.click();
+ const preview=await api('/dsh-conversation-cleaner/v1/plan',{sessionId:f.id,mode:'chat_only'});assert.deepEqual(preview.data.blockers,[]);await fixture({action:'rename-held',id:f.id});const commit=await api('/dsh-conversation-cleaner/v1/commit',{planId:preview.data.planId,confirmation:preview.data.confirmation,acknowledged:true});assert.equal(commit.status,409,JSON.stringify(commit));assert.equal(commit.data.code,'PLAN_CHANGED');
+ assert.equal((await fixture({action:'state',id:f.id})).session,true);await expect(row).toBeVisible();await fixture({action:'release',id:f.id});held=undefined;report.cases.push({action:'stale-plan-after-release',status:'PASS',commit:'PLAN_CHANGED',retainedRowVisible:true});report.status='PASS';console.log('Actual NEXT queued input, maintenance, staged upload and stale-plan retained row: PASS.');
+}catch(e){report.status='FAIL';report.error=e.stack;throw e;}finally{if(staged)await fixture({action:'unstage',id:held});if(held)await fixture({action:'release',id:held});report.finishedAt=new Date().toISOString();await fs.writeFile('evidence/idle-session-guards.json',JSON.stringify(report,null,2));await b.close();}

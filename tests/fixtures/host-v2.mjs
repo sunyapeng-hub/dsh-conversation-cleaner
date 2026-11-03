@@ -15,6 +15,7 @@ export async function apply(ctx) {
  let fixtures;try{fixtures=JSON.parse(await fs.readFile(receipt,'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;fixtures={};}
  const handles=new Map();
  const staged=new Map();
+ const maintenance=new Map();
  class HoldAdapter extends LlmAdapter {async *stream({signal}){await new Promise((_resolve,reject)=>{if(signal.aborted)reject(signal.reason);else signal.addEventListener('abort',()=>reject(signal.reason),{once:true});});}}
  ctx.llm.registerAdapter(['cleaner-e2e-local-hold'],new HoldAdapter());
  const save=()=>fs.writeFile(receipt,JSON.stringify(fixtures,null,2));
@@ -69,9 +70,12 @@ export async function apply(ctx) {
    else if(body.action==='state')result=await state(body.id);
    else if(body.action==='hold'){if(!fixtures[body.id])throw new Error('Unknown synthetic fixture');const h=await ctx.agents.resume({resumeSessionId:body.id});handles.set(body.id,h);result={held:true};}
    else if(body.action==='run'){if(!fixtures[body.id])throw new Error('Unknown synthetic fixture');const h=await ctx.agents.resume({resumeSessionId:body.id,agentOptions:{provider:'cleaner-e2e-local-hold',model:'local-no-network'}});handles.set(body.id,h);h.agent.send(createUserMessage({content:[{type:'text',text:'Synthetic running-agent safety check; local blocked adapter only.'}],source:{kind:'user'}}),'next-turn',true);result={held:true,status:h.agent.status};}
-   else if(body.action==='release'){await handles.get(body.id)?.dispose();handles.delete(body.id);result={held:false};}
+   else if(body.action==='queue'){const h=handles.get(body.id);if(!h)throw new Error('Not held');h.agent.send(createUserMessage({content:[{type:'text',text:'Synthetic unsent queue protection.'}],source:{kind:'user'}}),'next-turn',false);result={pending:h.agent.inbox.hasPending};}
+   else if(body.action==='maintenance'){const h=handles.get(body.id);if(!h)throw new Error('Not held');const done=Promise.withResolvers(),task=h.agent.runMaintenance(()=>done.promise);maintenance.set(body.id,{done,task});result={status:h.agent.status,phase:h.agent.phase.kind};}
+   else if(body.action==='rename-held'){const h=handles.get(body.id);if(!h)throw new Error('Not held');h.agent.session.append('session/title',{title:'Synthetic changed after preview',messageSeqs:[],source:{kind:'user'}});await ctx.sessionPersistence.flush();result={changed:true};}
+   else if(body.action==='release'){const m=maintenance.get(body.id);if(m){m.done.resolve();await m.task;maintenance.delete(body.id);}await handles.get(body.id)?.dispose();handles.delete(body.id);result={held:false};}
    else if(body.action==='diagnose'){const rows=await ctx.sessionPersistence.list({});result={rows:await Promise.all(rows.map(async r=>{const agent=ctx.agents.get(r.header.id),live=ctx.get('sessions')?.get(r.header.id);return {id:r.header.id,size:r.sizeBytes,live:!!live,status:agent?.status,pending:agent?.inbox?.hasPending};}))};}
-   else if(body.action==='stage'){const f=fixtures[body.id];if(!f)throw new Error('Unknown synthetic fixture');const owner=ctx.agents.list().find(a=>a.status==='idle'&&a.inbox.hasPending===false&&!fixtures[a.id]);if(!owner)throw new Error('No isolated blank draft');const upload=await ctx.get('fileUploads').uploadStream({sessionId:owner.id,name:f.orphan.name,data:[await fs.readFile(f.orphanPath)]});staged.set(body.id,{owner,receiptId:upload.receiptId});result={owner:owner.id,receiptId:upload.receiptId,file:upload.file};}
+   else if(body.action==='stage'||body.action==='stage-held'){const f=fixtures[body.id];if(!f)throw new Error('Unknown synthetic fixture');const owner=body.action==='stage-held'?handles.get(body.id)?.agent:ctx.agents.list().find(a=>a.status==='idle'&&a.inbox.hasPending===false&&!fixtures[a.id]);if(!owner)throw new Error('No isolated idle owner');const upload=await ctx.get('fileUploads').uploadStream({sessionId:owner.id,name:f.orphan.name,data:[await fs.readFile(f.orphanPath)]});staged.set(body.id,{owner,receiptId:upload.receiptId});result={owner:owner.id,receiptId:upload.receiptId,file:upload.file};}
    else if(body.action==='unstage'){const entry=staged.get(body.id);if(!entry)throw new Error('No test receipt');const uploads=ctx.get('fileUploads'),requestId='cleaner-e2e-'+randomUUID();const guard=uploads.bindPrompt(entry.owner,[entry.receiptId],requestId);guard.commit();uploads.retirePrompt(entry.owner,requestId);staged.delete(body.id);result={released:true};}
    else result={root,profile:ctx.get('desktopProfiles')?.current?.name??'web',fixtures:Object.keys(fixtures)};
    send(200,{ok:true,...result});
