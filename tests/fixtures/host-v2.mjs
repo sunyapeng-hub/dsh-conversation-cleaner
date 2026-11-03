@@ -21,11 +21,11 @@ export async function apply(ctx) {
  ctx.llm.registerAdapter(['cleaner-e2e-local-hold'],new HoldAdapter());
  const save=()=>fs.writeFile(receipt,JSON.stringify(fixtures,null,2));
  async function create(kind) {
-  if(!['A','B','C','D'].includes(kind))throw new Error('Invalid synthetic fixture kind');
+  if(!['A','B','C','D','E'].includes(kind))throw new Error('Invalid synthetic fixture kind');
   const id='session-'+randomUUID(),cwd=path.join(root,'e2e-workspaces',id);
   await fs.mkdir(cwd,{recursive:true});const keep=path.join(cwd,'keep.txt'),output=path.join(cwd,'generated.txt');
   await fs.writeFile(keep,'Existing workspace file; preserve this.');
-  if(kind==='D')await fs.writeFile(output,'Existing before the tool call; never a generated output.');
+  if(['D','E'].includes(kind))await fs.writeFile(output,'Existing before the tool call; never a generated output.');
   const workspace=await ctx.workspaceRegistry.create(cwd,'Cleaner '+kind+' '+id.slice(-6));
   const orphan=await ctx.attachments.saveFile({name:'orphan-'+kind+'.txt',data:Buffer.from('Synthetic attachment '+id)});
   const shared=await ctx.attachments.saveFile({name:'shared-'+kind+'.txt',data:Buffer.from('Shared attachment '+id)});
@@ -39,8 +39,8 @@ export async function apply(ctx) {
    session.append('turn/start',{turn:1});
    session.append('step/start',{turn:1,step:1});
    session.append('system/message',{turn:1,step:1,message:createSystemMessage('Synthetic cleanup fixture system head.')},{surfaceOp:'append'});
-   session.append('user/message',createUserMessage({content:[{type:'text',text:'Synthetic cleanup fixture. No real user data.'},{type:'file',attachment:orphan},{type:'file',attachment:shared}],source:{kind:'user'}}),{surfaceOp:'append'});
-   if(kind==='D'){
+   session.append('user/message',createUserMessage({content:[{type:'text',text:'Synthetic cleanup fixture. No real user data.'},...(kind==='E'?[]:[{type:'file',attachment:orphan},{type:'file',attachment:shared}])],source:{kind:'user'}}),{surfaceOp:'append'});
+   if(['D','E'].includes(kind)){
     const readId='cleaner-read-'+randomUUID(),args={file_path:output};
     session.append('assistant/message',{turn:1,step:1,stream:[],message:createAssistantMessage({source:{provider:'cleaner-e2e',model:'synthetic'},content:[{type:'tool-call',id:readId,name:'read',arguments:JSON.stringify(args)}]})},{surfaceOp:'append'});
     const call=session.append('tool/call',{turn:1,step:1,callId:readId,name:'read',arguments:JSON.stringify(args)});
@@ -78,6 +78,7 @@ export async function apply(ctx) {
    if(body.action==='create')result=await create(body.kind);
    else if(body.action==='state')result=await state(body.id);
    else if(body.action==='hold'){if(!fixtures[body.id])throw new Error('Unknown synthetic fixture');const h=await ctx.agents.resume({resumeSessionId:body.id});handles.set(body.id,h);result={held:true};}
+   else if(body.action==='hold-startup'){if(!fixtures[body.id])throw new Error('Unknown synthetic fixture');const h=await ctx.agents.requireFactory().target.resumeWith(ctx,ctx.sessionPersistence,{resumeSessionId:body.id});handles.set(body.id,h);result={held:true};}
    else if(body.action==='run'){if(!fixtures[body.id])throw new Error('Unknown synthetic fixture');const h=await ctx.agents.resume({resumeSessionId:body.id,agentOptions:{provider:'cleaner-e2e-local-hold',model:'local-no-network'}});handles.set(body.id,h);h.agent.send(createUserMessage({content:[{type:'text',text:'Synthetic running-agent safety check; local blocked adapter only.'}],source:{kind:'user'}}),'next-turn',true);result={held:true,status:h.agent.status};}
    else if(body.action==='queue'){const h=handles.get(body.id);if(!h)throw new Error('Not held');h.agent.send(createUserMessage({content:[{type:'text',text:'Synthetic unsent queue protection.'}],source:{kind:'user'}}),'next-turn',false);result={pending:h.agent.inbox.hasPending};}
    else if(body.action==='unknown-proof'){if(!fixtures[body.id])throw new Error('Unknown synthetic fixture');const file=path.join(root,'.conversation-cleaner','provenance',body.id+'.json'),bytes=await fs.readFile(file);originalProofs.set(body.id,{file,bytes});const proof=JSON.parse(bytes);proof.complete=false;proof.unknown=true;await fs.writeFile(file,JSON.stringify(proof));result={unknown:true};}

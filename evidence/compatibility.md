@@ -2,7 +2,7 @@
 
 Verified: Windows, official DSH Web Core 0.2.1-rc.3; DSH NEXT 2.0.20-next with Core rc.3, Electron 44.7.0 / Node 24.21.0. CLI/tests use Node 22.19.0. Installed artifact source commit is not published in its local metadata and remains UNKNOWN.
 
-The same 1.0.0-rc.8 tgz was installed in both profiles. NEXT used its native installer; desktop profile CLI edits were rejected and not bypassed. The isolated desktop app uses original installed runtime binaries and unmodified extracted source, normal desktop profile and safeMode=false; it is an unpackaged test deployment. Its Office integration and native packaged directory-transition launcher are outside this acceptance.
+The same 1.0.0-rc.9 tgz was installed in both profiles. NEXT used its native installer; desktop profile CLI edits were rejected and not bypassed. The isolated desktop app uses original installed runtime binaries and unmodified extracted source, normal desktop profile and safeMode=false; it is an unpackaged test deployment. Its Office integration and native packaged directory-transition launcher are outside this acceptance.
 
 Data roots: F:/Projects/PLUS Project/.test-data/web-v2 and .test-data/next-normal, confirmed by live fixture responses. Formal user conversations were not altered.
 
@@ -14,4 +14,4 @@ Attachment planning covers full canonical survivor logs, proven paths, staged up
 
 No attachment content digest is recomputed. Identity and preview/commit raw bytes establish stability after planning, not that a store modified before preview still matches its original content. No macOS/Linux or other host-version result is claimed. See acceptance-report.json for per-case scope.
 
-rc.8 scope: both profiles installed rc.8. Fresh focused actual NEXT/Web zero-output B deletion and restoration passed with an unrelated live unknown-proof session retained. Actual-output B and full remain blocked. The six full-mode restart/restore gates above are explicitly rc.7 baseline evidence.
+rc.9 fresh scope: both profiles installed rc.9. Original Cordis 4.0.5 owner lifecycle release (not captured public handles), zero-resource full deletion, restore, explicit permanent deletion, queued input, maintenance and staged uploads passed in actual NEXT and Web. Six full-mode gates remain rc.7 baseline. Formal user preview was checked locally without executing real deletion; no private formal evidence is published.

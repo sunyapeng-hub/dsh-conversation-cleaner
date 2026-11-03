@@ -29,3 +29,9 @@ test('all selected owners are checked before closing any; failures leave ownersh
  await assert.rejects(f.bridge.release(['a','b']),e=>e.code==='SESSION_BUSY');assert.deepEqual(f.closed,[]);
  b.agent.phase.kind='idle';b.dispose=async()=>{throw new Error('close failed');};await assert.rejects(f.bridge.release(['b']),/close failed/);assert.ok(f.sessions.has('b'));
 });
+test('already loaded rc3 agent closes through its original labeled lifecycle effect',async t=>{
+ const f=fixture(t),agent={id:'startup',session:{},phase:{kind:'idle'},inbox:{hasPending:false}};f.agents.set(agent.id,agent);f.sessions.set(agent.id,agent.session);
+ const dispose=async()=>{f.closed.push(agent.id);f.agents.delete(agent.id);f.sessions.delete(agent.id);};dispose[Symbol.for('cordis.effect')]={label:'agentLoop.lifecycle(startup)'};
+ const owner={_disposables:[dispose]};f.factory.runtime={ctx:{root:{fiber:{_disposables:[]}},registry:new Map([['owner',{fibers:[owner]}]])}};f.bridge.coordinator.cordisVersion='4.0.5';
+ assert.equal(f.bridge.blocker(agent.id),undefined);assert.deepEqual(f.closed,[]);await f.bridge.release([agent.id]);assert.deepEqual(f.closed,['startup']);
+});

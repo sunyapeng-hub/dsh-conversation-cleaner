@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0-rc.9",
+  "startedAt": "2026-11-03T03:21:00.549Z",
+  "checks": [
+    "original-lifecycle-protects-queue",
+    "original-lifecycle-protects-maintenance",
+    "original-lifecycle-protects-stage-held",
+    "original-host-lifecycle-closes-preloaded-target",
+    "zero-resources-full-deletes-only-selected-log",
+    "unrelated-live-unknown-proof-owner-kept",
+    "existing-file-and-unreferenced-attachments-kept",
+    "restore",
+    "explicit-permanent-delete"
+  ],
+  "before": {
+    "release": {
+      "live": true,
+      "status": "idle",
+      "pending": false,
+      "source": "lifecycle-effect",
+      "blocker": null
+    },
+    "counts": {
+      "files": 1,
+      "bytes": 2858,
+      "outputs": 0,
+      "attachments": 0
+    },
+    "blockers": []
+  },
+  "status": "PASS",
+  "finishedAt": "2026-11-03T03:22:33.748Z"
+}

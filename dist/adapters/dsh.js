@@ -125,7 +125,7 @@ export class DshAdapter {
     const all=await this.corpus();
     const headers=all.map(s=>s.header),children=descendants(headers,sessionId);
     const ids=[snapshot.header.id,...(includeDescendants?children.map(h=>h.id):[])];
-    const candidates=[],preserved=[],blockers=[],rows=[];
+    const candidates=[],preserved=[],blockers=[],rows=[];let otherProofIncomplete=false;
     const coordinated=this.coordinator?.supported===true;
     if(!coordinated&&!this.exclusiveDataRoot)blockers.push('DATA_ROOT_EXCLUSIVITY_REQUIRED');
     if(coordinated){try{await this.checkRegistry();}catch(e){blockers.push(e.code??'REGISTRY_BACKEND_UNSUPPORTED');}}
@@ -141,8 +141,7 @@ export class DshAdapter {
       }
       // A B-plan with no owned output only removes the selected conversation.
       // Unrelated legacy ownership gaps cannot make a nonexistent file shared.
-      const needsReferences=mode==='full'||rows.some(row=>ids.includes(row.header.id)&&row.proof?.outputs?.length);
-      if(needsReferences&&rows.some(row=>!ids.includes(row.header.id)&&!completeProof(row.events,row.proof)))blockers.push('OTHER_SESSION_PROVENANCE_UNKNOWN');
+      otherProofIncomplete=rows.some(row=>!ids.includes(row.header.id)&&!completeProof(row.events,row.proof));
     }else{
       for(const row of all.filter(r=>ids.includes(r.header.id)))rows.push({...row,events:await this.events(row.header.id)});
     }
@@ -179,11 +178,13 @@ export class DshAdapter {
       const attachmentPlan=await planAttachments(this.ctx,{root:this.root,targets:rows.filter(r=>ids.includes(r.header.id)),survivors:survivors.concat(this.stagedReferences()),targetIds:ids});
       candidates.push(...attachmentPlan.candidates);preserved.push(...attachmentPlan.preserved);blockers.push(...attachmentPlan.blockers);indexEdits=attachmentPlan.indexEdits;attachmentCount=attachmentPlan.attachmentCount;
     }
+    const hasOwnedOutputs=rows.some(row=>ids.includes(row.header.id)&&row.proof?.outputs?.length);
+    if(otherProofIncomplete&&(hasOwnedOutputs||(mode==='full'&&attachmentCount!==0)))blockers.push('OTHER_SESSION_PROVENANCE_UNKNOWN');
     const controller=this.ctx.get('sessionController');
     const summary=controller?.list?(await controller.list({},new AbortController().signal)).items.find(s=>s.sessionId===sessionId):undefined;
     const corpus=all.map(r=>({id:r.header.id,revision:r.revision,sizeBytes:r.sizeBytes,header:r.header}));
     const recoveryReferences=rows.filter(r=>ids.includes(r.header.id)).map(row=>{const references=[],pending=[row.events,row.proof?.references??[]];while(pending.length){const node=pending.pop();if(typeof node==='string')references.push(node);else if(node&&typeof node==='object')pending.push(...Object.values(node));}return {id:row.header.id,cwd:row.header.cwd,references:[...new Set(references)]};});
-    return {session:{id:snapshot.header.id,title:summary?.title??snapshot.header.title??sessionId,cwd:snapshot.header.cwd??'',logBytes:snapshot.sizeBytes??null,attachmentCount},attachmentCount,ids,children:children.map(h=>({id:h.id,cwd:h.cwd})),candidates,indexEdits,preserved,blockers:[...new Set(blockers)],metadata:{...this.metadata(ids),requiresReferenceLease:mode==='full'||candidates.some(c=>c.kind==='output'),headers:headers.filter(h=>ids.includes(h.id)),corpus,recoveryReferences}};
+    return {session:{id:snapshot.header.id,title:summary?.title??snapshot.header.title??sessionId,cwd:snapshot.header.cwd??'',logBytes:snapshot.sizeBytes??null,attachmentCount},attachmentCount,ids,children:children.map(h=>({id:h.id,cwd:h.cwd})),candidates,indexEdits,preserved,blockers:[...new Set(blockers)],metadata:{...this.metadata(ids),requiresReferenceLease:(mode==='full'&&attachmentCount!==0)||candidates.some(c=>c.kind==='output'),headers:headers.filter(h=>ids.includes(h.id)),corpus,recoveryReferences}};
   }
   async releaseTargets(ids) {await this.releaseBridge?.release(ids);}
   async acquire(ids,plan={}) {
