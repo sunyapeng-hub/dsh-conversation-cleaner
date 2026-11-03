@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "status": "PASS",
   "comparisons": "Raw package bytes; installed UTF-8 code permits CRLF/LF normalization only. No checksums.",
   "files": [
@@ -19,5 +19,5 @@
     "desktop"
   ],
   "publicDownload": "PASS",
-  "finishedAt": "2026-11-02T13:45:28.257Z"
+  "finishedAt": "2026-11-03T02:02:09.790Z"
 }

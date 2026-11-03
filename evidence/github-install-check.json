@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-rc.4",
+  "version": "1.0.0-rc.5",
   "source": "github:sunyapeng-hub/dsh-conversation-cleaner",
   "status": "PASS",
   "profile": "desktop",
@@ -16,12 +16,12 @@
     "blockers": [],
     "counts": {
       "files": 4,
-      "bytes": 1988,
+      "bytes": 1983,
       "outputs": 1,
       "attachments": 2
     }
   },
   "artifactVerification": "evidence/artifact-verification.json",
   "screenshot": "evidence/screenshots/next-installed-from-public-github.png",
-  "finishedAt": "2026-11-02T13:47:34.367Z"
+  "finishedAt": "2026-11-03T02:02:12.776Z"
 }
