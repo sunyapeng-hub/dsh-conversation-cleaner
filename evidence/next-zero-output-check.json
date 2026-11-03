@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0-rc.8",
+  "host": "DSH NEXT 2.0.20-next/Core rc3",
+  "startedAt": "2026-11-03T03:05:03.457Z",
+  "checks": [
+    "zero-owned-output-allows-B",
+    "actual-output-and-full-still-require-survivor-proof",
+    "cancel-preserves-owner",
+    "selected-idle-auto-release",
+    "delete-and-restore",
+    "existing-output-and-all-attachments-kept",
+    "unrelated-live-owner-kept"
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-11-03T03:06:11.471Z"
+}

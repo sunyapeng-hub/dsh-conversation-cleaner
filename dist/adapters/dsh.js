@@ -137,8 +137,12 @@ export class DshAdapter {
         const events=await this.events(row.header.id),proof=await optionalJson(this.recordPath(row.header.id));
         decodedBytes+=Buffer.byteLength(JSON.stringify(events));if(decodedBytes>MAX_REFERENCE_BYTES)throw new CleanerError('SCAN_LIMIT',422);
         rows.push({...row,events,proof});
-        if(!completeProof(events,proof))blockers.push(ids.includes(row.header.id)?'PROVENANCE_UNKNOWN':'OTHER_SESSION_PROVENANCE_UNKNOWN');
+        if(ids.includes(row.header.id)&&!completeProof(events,proof))blockers.push('PROVENANCE_UNKNOWN');
       }
+      // A B-plan with no owned output only removes the selected conversation.
+      // Unrelated legacy ownership gaps cannot make a nonexistent file shared.
+      const needsReferences=mode==='full'||rows.some(row=>ids.includes(row.header.id)&&row.proof?.outputs?.length);
+      if(needsReferences&&rows.some(row=>!ids.includes(row.header.id)&&!completeProof(row.events,row.proof)))blockers.push('OTHER_SESSION_PROVENANCE_UNKNOWN');
     }else{
       for(const row of all.filter(r=>ids.includes(r.header.id)))rows.push({...row,events:await this.events(row.header.id)});
     }
@@ -179,13 +183,13 @@ export class DshAdapter {
     const summary=controller?.list?(await controller.list({},new AbortController().signal)).items.find(s=>s.sessionId===sessionId):undefined;
     const corpus=all.map(r=>({id:r.header.id,revision:r.revision,sizeBytes:r.sizeBytes,header:r.header}));
     const recoveryReferences=rows.filter(r=>ids.includes(r.header.id)).map(row=>{const references=[],pending=[row.events,row.proof?.references??[]];while(pending.length){const node=pending.pop();if(typeof node==='string')references.push(node);else if(node&&typeof node==='object')pending.push(...Object.values(node));}return {id:row.header.id,cwd:row.header.cwd,references:[...new Set(references)]};});
-    return {session:{id:snapshot.header.id,title:summary?.title??snapshot.header.title??sessionId,cwd:snapshot.header.cwd??'',logBytes:snapshot.sizeBytes??null,attachmentCount},attachmentCount,ids,children:children.map(h=>({id:h.id,cwd:h.cwd})),candidates,indexEdits,preserved,blockers:[...new Set(blockers)],metadata:{...this.metadata(ids),headers:headers.filter(h=>ids.includes(h.id)),corpus,recoveryReferences}};
+    return {session:{id:snapshot.header.id,title:summary?.title??snapshot.header.title??sessionId,cwd:snapshot.header.cwd??'',logBytes:snapshot.sizeBytes??null,attachmentCount},attachmentCount,ids,children:children.map(h=>({id:h.id,cwd:h.cwd})),candidates,indexEdits,preserved,blockers:[...new Set(blockers)],metadata:{...this.metadata(ids),requiresReferenceLease:mode==='full'||candidates.some(c=>c.kind==='output'),headers:headers.filter(h=>ids.includes(h.id)),corpus,recoveryReferences}};
   }
   async releaseTargets(ids) {await this.releaseBridge?.release(ids);}
   async acquire(ids,plan={}) {
     const handles=[];let acquiringId;
     try{
-      const deep=plan.mode&&plan.mode!=='chat_only'&&!plan.restore;
+      const deep=plan.mode&&plan.mode!=='chat_only'&&!plan.restore&&plan.metadata?.requiresReferenceLease!==false;
       const all=deep?await this.corpus():[];
       const leaseIds=deep?all.map(row=>row.header.id):ids;
       for(const id of [...leaseIds].sort()) {

@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0-rc.8",
+  "host": "DSH Web rc3",
+  "startedAt": "2026-11-03T03:05:08.314Z",
+  "checks": [
+    "zero-owned-output-allows-B",
+    "actual-output-and-full-still-require-survivor-proof",
+    "cancel-preserves-owner",
+    "selected-idle-auto-release",
+    "delete-and-restore",
+    "existing-output-and-all-attachments-kept",
+    "unrelated-live-owner-kept"
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-11-03T03:05:27.221Z"
+}

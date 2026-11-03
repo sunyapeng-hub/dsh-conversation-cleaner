@@ -11,6 +11,6 @@ Read-only reviewer findings were addressed in runtime code and regression tests.
 - Use owner PID/offline stale-lock handling, tested with real process exit. Use same-volume side quarantine for cross-volume output, tested on actual C:/F: volumes.
 - Compare cached/persisted registry before writes. Detect physical logs omitted from host listing; a real corrupt compressed survivor test now returns 422.
 
-Validation: six real host/mode gates plus restart/restore, actual running-agent refusal, actual staged receipts, two-real-host race, actual permanent confirmation and HTTP rejection; 81/82 automatic tests passed, 1 privilege skip. Limits and unrun UI/index combinations remain explicit in acceptance-report.json.
+Validation: six real host/mode gates plus restart/restore, actual running-agent refusal, actual staged receipts, two-real-host race, actual permanent confirmation and HTTP rejection; 83/84 automatic tests passed, 1 privilege skip. Limits and unrun UI/index combinations remain explicit in acceptance-report.json.
 
-rc.7 read-only review confirmed original caller/handle preservation, exact selected targets, pending-work gates and HMR hook restoration. Failed commit after idle disposal republishes only existing rows. Actual NEXT idle A/B/C delete/restore and queued/maintenance/upload/stale-plan checks passed.
+rc.8 read-only review found no important issue in the narrow proof/lease change: the flag is server-owned, fresh metadata is compared, actual-output/full barriers stay strict, and old plans default to strict leasing. Both actual hosts passed the focused zero-output regression.

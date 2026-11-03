@@ -23,9 +23,18 @@ test('coordinated plain historical sessions support B and C and expose the curre
  const f=await fixture(t);await f.add(other);const b=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.deepEqual(b.blockers,[]);assert.equal(b.session.title,'Authoritative latest title');assert.equal(f.reads.get(id),1);assert.equal(f.reads.get(other),1);
  const c=await f.adapter.inspect(id,{mode:'full'});assert.deepEqual(c.blockers,[]);assert.equal(c.session.attachmentCount,0);assert.equal(c.candidates.length,1);
 });
-test('untracked target and survivor operations block strict deep deletion',async t=>{
+test('untracked target operations and full cleanup still block unknown ownership',async t=>{
  const f=await fixture(t);f.events.set(id,[call('target-call')]);const b=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.ok(b.blockers.includes('PROVENANCE_UNKNOWN'));
- f.events.set(id,[]);await f.add(other,{toolEvents:[call('unrecorded','bash')]});const survivor=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.ok(survivor.blockers.includes('OTHER_SESSION_PROVENANCE_UNKNOWN'));
+ f.events.set(id,[]);await f.add(other,{toolEvents:[call('unrecorded','bash')]});const survivor=await f.adapter.inspect(id,{mode:'full'});assert.ok(survivor.blockers.includes('OTHER_SESSION_PROVENANCE_UNKNOWN'));
+});
+test('B with no owned outputs ignores unrelated ownership gaps and leases only the selected conversation',async t=>{
+ const f=await fixture(t);await f.add(other,{toolEvents:[call('legacy','bash')]});f.live.set(other,{});
+ const plan=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.deepEqual(plan.blockers,[]);assert.equal(plan.candidates.filter(c=>c.kind==='output').length,0);
+ const release=await f.adapter.acquire([id],{...plan,mode:'chat_and_outputs'});await release();assert.deepEqual(f.writes,[id]);assert.ok(f.live.has(other));
+});
+test('B with actual owned outputs still requires complete survivor evidence',async t=>{
+ const f=await fixture(t),output=path.join(f.rows[0].header.cwd,'generated.txt');await fs.writeFile(output,'created');f.events.set(id,[call('created')]);await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});
+ await f.add(other,{toolEvents:[call('legacy','bash')]});const plan=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.ok(plan.blockers.includes('OTHER_SESSION_PROVENANCE_UNKNOWN'));
 });
 test('complete call ownership in a different cwd preserves structural cross-session references',async t=>{
  const f=await fixture(t);const output=path.join(f.rows[0].header.cwd,'generated.txt');await fs.writeFile(output,'created');f.events.set(id,[call('created')]);await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});
