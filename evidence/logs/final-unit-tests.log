@@ -1,530 +1,794 @@
 
-> dsh-conversation-cleaner@1.0.0-rc.9 test
+> dsh-conversation-cleaner@1.0.0-rc.10 test
 > node --test tests/*.test.mjs
 
 TAP version 13
 # Subtest: coordinated plain historical sessions support B and C and expose the current public title
 ok 1 - coordinated plain historical sessions support B and C and expose the current public title
   ---
-  duration_ms: 101.9586
+  duration_ms: 101.6513
   type: 'test'
   ...
 # Subtest: untracked target operations and full cleanup with actual outputs still block unknown ownership
 ok 2 - untracked target operations and full cleanup with actual outputs still block unknown ownership
   ---
-  duration_ms: 200.5578
+  duration_ms: 242.2938
   type: 'test'
   ...
 # Subtest: full cleanup with zero outputs and zero attachments is only selected-session cleanup
 ok 3 - full cleanup with zero outputs and zero attachments is only selected-session cleanup
   ---
-  duration_ms: 17.3417
+  duration_ms: 15.1272
   type: 'test'
   ...
 # Subtest: B with no owned outputs ignores unrelated ownership gaps and leases only the selected conversation
 ok 4 - B with no owned outputs ignores unrelated ownership gaps and leases only the selected conversation
   ---
-  duration_ms: 19.7439
+  duration_ms: 12.4797
   type: 'test'
   ...
 # Subtest: B with actual owned outputs still requires complete survivor evidence
 ok 5 - B with actual owned outputs still requires complete survivor evidence
   ---
-  duration_ms: 135.0974
+  duration_ms: 133.2817
   type: 'test'
   ...
 # Subtest: complete call ownership in a different cwd preserves structural cross-session references
 ok 6 - complete call ownership in a different cwd preserves structural cross-session references
   ---
-  duration_ms: 185.5486
+  duration_ms: 201.8284
   type: 'test'
   ...
 # Subtest: unshared proven generated output is planned while Git tracked output is preserved
 ok 7 - unshared proven generated output is planned while Git tracked output is preserved
   ---
-  duration_ms: 385.9082
+  duration_ms: 493.2915
   type: 'test'
   ...
 # Subtest: C integrates file attachment planner and preserves unselected attachment refs
 ok 8 - C integrates file attachment planner and preserves unselected attachment refs
   ---
-  duration_ms: 65.3232
+  duration_ms: 66.2874
   type: 'test'
   ...
 # Subtest: deep acquire leases every materialized session and ignores an empty unmaterialized pending session
 ok 9 - deep acquire leases every materialized session and ignores an empty unmaterialized pending session
   ---
-  duration_ms: 8.8708
+  duration_ms: 9.5765
   type: 'test'
   ...
 # Subtest: deep acquisition closes acquired handles if a foreign writer owns a survivor
 ok 10 - deep acquisition closes acquired handles if a foreign writer owns a survivor
   ---
-  duration_ms: 8.6737
+  duration_ms: 8.9977
   type: 'test'
   ...
 # Subtest: host-owned empty draft with only initial policy events is exempt, queued input is not
 ok 11 - host-owned empty draft with only initial policy events is exempt, queued input is not
   ---
-  duration_ms: 9.0108
+  duration_ms: 8.9607
   type: 'test'
   ...
 # Subtest: staged unsent upload receipts and recoverable quarantined references retain attachments
 ok 12 - staged unsent upload receipts and recoverable quarantined references retain attachments
   ---
-  duration_ms: 32.4637
+  duration_ms: 38.6826
   type: 'test'
   ...
 # Subtest: registry comparison detects stale foreign globals and records before any overwrite
 ok 13 - registry comparison detects stale foreign globals and records before any overwrite
   ---
-  duration_ms: 9.699
+  duration_ms: 11.3469
   type: 'test'
   ...
-# Subtest: coordinated cleanup blocks unknown registry backend and snapshots the persisted corpus
-ok 14 - coordinated cleanup blocks unknown registry backend and snapshots the persisted corpus
+# Subtest: coordinated cleanup blocks unknown registry backend and snapshots only selected sessions without resources
+ok 14 - coordinated cleanup blocks unknown registry backend and snapshots only selected sessions without resources
   ---
-  duration_ms: 11.7364
+  duration_ms: 12.2542
   type: 'test'
   ...
-# Subtest: deep modes refuse an unreadable physical log omitted by the persistence list
-ok 15 - deep modes refuse an unreadable physical log omitted by the persistence list
+# Subtest: deep modes with owned outputs refuse an unreadable physical log omitted by the persistence list
+ok 15 - deep modes with owned outputs refuse an unreadable physical log omitted by the persistence list
   ---
-  duration_ms: 10.725
+  duration_ms: 14.3879
   type: 'test'
   ...
 # Subtest: ordinary reference scans support a corpus larger than 32 MiB without dropping survivors
 ok 16 - ordinary reference scans support a corpus larger than 32 MiB without dropping survivors
   ---
-  duration_ms: 274.0464
+  duration_ms: 619.4774
   type: 'test'
   ...
 # Subtest: selected idle local handle is releasable at commit; preview never closes it
 ok 17 - selected idle local handle is releasable at commit; preview never closes it
   ---
-  duration_ms: 10.6313
+  duration_ms: 10.7025
+  type: 'test'
+  ...
+# Subtest: zero-resource modes bind only selected snapshots and ignore unrelated revisions
+ok 18 - zero-resource modes bind only selected snapshots and ignore unrelated revisions
+  ---
+  duration_ms: 41.5342
+  type: 'test'
+  ...
+# Subtest: zero-resource deep plans do not inspect foreign logs, quarantine, staged uploads or stores
+ok 19 - zero-resource deep plans do not inspect foreign logs, quarantine, staged uploads or stores
+  ---
+  duration_ms: 26.088
+  type: 'test'
+  ...
+# Subtest: selected target changes still alter zero-resource metadata
+ok 20 - selected target changes still alter zero-resource metadata
+  ---
+  duration_ms: 10.801
+  type: 'test'
+  ...
+# Subtest: restore preflight rejects missing workspace and unavailable domains before mutating metadata
+ok 21 - restore preflight rejects missing workspace and unavailable domains before mutating metadata
+  ---
+  duration_ms: 8.0554
+  type: 'test'
+  ...
+# Subtest: explicit ungrouped restoration skips missing groups, restores available state and is idempotent
+ok 22 - explicit ungrouped restoration skips missing groups, restores available state and is idempotent
+  ---
+  duration_ms: 8.354
+  type: 'test'
+  ...
+# Subtest: real outputs retain the global snapshot and lease barrier while legacy plans stay strict
+ok 23 - real outputs retain the global snapshot and lease barrier while legacy plans stay strict
+  ---
+  duration_ms: 155.019
+  type: 'test'
+  ...
+# Subtest: zero-resource previews still block a globally stale registry to prevent cached overwrite
+ok 24 - zero-resource previews still block a globally stale registry to prevent cached overwrite
+  ---
+  duration_ms: 16.9867
+  type: 'test'
+  ...
+# Subtest: zero-resource commit succeeds after unrelated writes and preserves the foreign conversation
+ok 25 - zero-resource commit succeeds after unrelated writes and preserves the foreign conversation
+  ---
+  duration_ms: 101.7848
+  type: 'test'
+  ...
+# Subtest: explicit descendants alone join a zero-resource target snapshot; forks and foreign sessions stay outside
+ok 26 - explicit descendants alone join a zero-resource target snapshot; forks and foreign sessions stay outside
+  ---
+  duration_ms: 18.9293
   type: 'test'
   ...
 # Subtest: forks are excluded from child deletion
-ok 18 - forks are excluded from child deletion
+ok 27 - forks are excluded from child deletion
   ---
-  duration_ms: 1.8102
+  duration_ms: 2.0097
   type: 'test'
   ...
 # Subtest: restoration broadcasts added summaries rather than removal
-ok 19 - restoration broadcasts added summaries rather than removal
+ok 28 - restoration broadcasts added summaries rather than removal
   ---
-  duration_ms: 0.505
+  duration_ms: 0.4795
   type: 'test'
   ...
 # Subtest: adapter locates stored log through host and blocks historical outputs
-ok 20 - adapter locates stored log through host and blocks historical outputs
+ok 29 - adapter locates stored log through host and blocks historical outputs
   ---
-  duration_ms: 56.4121
+  duration_ms: 37.6484
   type: 'test'
   ...
 # Subtest: plans target image using provider path and keeps original workspace upload
-ok 21 - plans target image using provider path and keeps original workspace upload
+ok 30 - plans target image using provider path and keeps original workspace upload
   ---
-  duration_ms: 61.4737
+  duration_ms: 67.0391
   type: 'test'
   ...
 # Subtest: plans both stored file alias and canonical file object without reading original upload
-ok 22 - plans both stored file alias and canonical file object without reading original upload
+ok 31 - plans both stored file alias and canonical file object without reading original upload
   ---
-  duration_ms: 24.757
+  duration_ms: 79.4288
   type: 'test'
   ...
 # Subtest: retains shared attachment referenced anywhere in full survivor event
-ok 23 - retains shared attachment referenced anywhere in full survivor event
+ok 32 - retains shared attachment referenced anywhere in full survivor event
   ---
-  duration_ms: 11.2022
+  duration_ms: 18.6527
   type: 'test'
   ...
 # Subtest: retains attachment read by provider alias path or canonical provenance reference without an ID token
-ok 24 - retains attachment read by provider alias path or canonical provenance reference without an ID token
+ok 33 - retains attachment read by provider alias path or canonical provenance reference without an ID token
   ---
-  duration_ms: 13.4912
+  duration_ms: 35.7142
   type: 'test'
   ...
 # Subtest: ignores attachment ids merely mentioned in target text and retains exact ids in durable JSON
-ok 25 - ignores attachment ids merely mentioned in target text and retains exact ids in durable JSON
+ok 34 - ignores attachment ids merely mentioned in target text and retains exact ids in durable JSON
   ---
-  duration_ms: 14.0353
+  duration_ms: 42.8944
   type: 'test'
   ...
 # Subtest: plans exclusively owned DeepSeek index and mapped request image cache without computing identities
-ok 26 - plans exclusively owned DeepSeek index and mapped request image cache without computing identities
+ok 35 - plans exclusively owned DeepSeek index and mapped request image cache without computing identities
   ---
-  duration_ms: 28.0922
+  duration_ms: 60.9536
   type: 'test'
   ...
 # Subtest: retains mixed upload index instead of removing other attachments cache records
-ok 27 - retains mixed upload index instead of removing other attachments cache records
+ok 36 - retains mixed upload index instead of removing other attachments cache records
   ---
-  duration_ms: 14.874
+  duration_ms: 35.6037
   type: 'test'
   ...
 # Subtest: blocks corrupt or bounded-out durable reference scan
-ok 28 - blocks corrupt or bounded-out durable reference scan
+ok 37 - blocks corrupt or bounded-out durable reference scan
   ---
-  duration_ms: 16.3713
+  duration_ms: 36.1758
   type: 'test'
   ...
 # Subtest: blocks provider paths pointing outside dedicated store
-ok 29 - blocks provider paths pointing outside dedicated store
+ok 38 - blocks provider paths pointing outside dedicated store
   ---
-  duration_ms: 13.2123
+  duration_ms: 12.3114
   type: 'test'
   ...
 # Subtest: plans real file hardlinks as a complete verified group and rejects external aliases
-ok 30 - plans real file hardlinks as a complete verified group and rejects external aliases
+ok 39 - plans real file hardlinks as a complete verified group and rejects external aliases
   ---
-  duration_ms: 49.355
+  duration_ms: 52.4307
   type: 'test'
   ...
 # Subtest: mixed upload index returns a reversible edit retaining unrelated records
-ok 31 - mixed upload index returns a reversible edit retaining unrelated records
+ok 40 - mixed upload index returns a reversible edit retaining unrelated records
   ---
-  duration_ms: 42.3579
+  duration_ms: 16.1523
   type: 'test'
   ...
 # Subtest: ignores application installation and browser diagnostic JSON while scanning durable stores
-ok 32 - ignores application installation and browser diagnostic JSON while scanning durable stores
+ok 41 - ignores application installation and browser diagnostic JSON while scanning durable stores
   ---
-  duration_ms: 25.0146
+  duration_ms: 28.7961
   type: 'test'
   ...
 # Subtest: blocks symbolic links inside durable reference stores
-ok 33 - blocks symbolic links inside durable reference stores
+ok 42 - blocks symbolic links inside durable reference stores
   ---
-  duration_ms: 11.9861
+  duration_ms: 13.2628
   type: 'test'
   ...
 # Subtest: characterizes installed rc3 file and image storage and keeps a real shared upload
-ok 34 - characterizes installed rc3 file and image storage and keeps a real shared upload
+ok 43 - characterizes installed rc3 file and image storage and keeps a real shared upload
   ---
-  duration_ms: 169.7607
+  duration_ms: 178.3494
   type: 'test'
   ...
 # Subtest: blocks an attachment store reached through a junction outside the home
-ok 35 - blocks an attachment store reached through a junction outside the home
+ok 44 - blocks an attachment store reached through a junction outside the home
   ---
-  duration_ms: 10.2239
+  duration_ms: 14.3362
+  type: 'test'
+  ...
+# Subtest: plugin details opens recovery without any session and excludes other packages
+ok 45 - plugin details opens recovery without any session and excludes other packages
+  ---
+  duration_ms: 5.0389
+  type: 'test'
+  ...
+# Subtest: preview refreshes before expiry and cleans timer on unmount
+ok 46 - preview refreshes before expiry and cleans timer on unmount
+  ---
+  duration_ms: 23.3451
+  type: 'test'
+  ...
+# Subtest: submit never sends an expired plan even if its timer has not run
+ok 47 - submit never sends an expired plan even if its timer has not run
+  ---
+  duration_ms: 5.7446
+  type: 'test'
+  ...
+# Subtest: temporary plan error can be retried and scope change clears preview immediately
+ok 48 - temporary plan error can be retried and scope change clears preview immediately
+  ---
+  duration_ms: 4.2075
+  type: 'test'
+  ...
+# Subtest: successful deletion offers direct restore and explicit ungrouped recovery
+ok 49 - successful deletion offers direct restore and explicit ungrouped recovery
+  ---
+  duration_ms: 9.7038
+  type: 'test'
+  ...
+# Subtest: history acts only on selected operation and refreshes after purge or compact
+ok 50 - history acts only on selected operation and refreshes after purge or compact
+  ---
+  duration_ms: 28.0328
+  type: 'test'
+  ...
+# Subtest: failed commit exposes recovery manager and never displays deleted status
+ok 51 - failed commit exposes recovery manager and never displays deleted status
+  ---
+  duration_ms: 5.2822
+  type: 'test'
+  ...
+# Subtest: late preview response from old scope cannot replace current scope
+ok 52 - late preview response from old scope cannot replace current scope
+  ---
+  duration_ms: 5.8832
+  type: 'test'
+  ...
+# Subtest: commit in-flight guard blocks repeated clicks and allows retry after failure
+ok 53 - commit in-flight guard blocks repeated clicks and allows retry after failure
+  ---
+  duration_ms: 10.1168
+  type: 'test'
+  ...
+# Subtest: failed automatic refresh leaves a retry and no stale commit available
+ok 54 - failed automatic refresh leaves a retry and no stale commit available
+  ---
+  duration_ms: 4.6679
+  type: 'test'
+  ...
+# Subtest: history restore failures stay actionable without false success, and ungrouped is explicit
+ok 55 - history restore failures stay actionable without false success, and ungrouped is explicit
+  ---
+  duration_ms: 7.8825
+  type: 'test'
+  ...
+# Subtest: history purge failure keeps retry for the same operation and never succeeds falsely
+ok 56 - history purge failure keeps retry for the same operation and never succeeds falsely
+  ---
+  duration_ms: 6.8251
+  type: 'test'
+  ...
+# Subtest: deletion and history keep a single action confirmation without typed or acknowledgement inputs
+ok 57 - deletion and history keep a single action confirmation without typed or acknowledgement inputs
+  ---
+  duration_ms: 3.925
+  type: 'test'
+  ...
+# Subtest: history labels localize states and keep full operation IDs only in folded details
+ok 58 - history labels localize states and keep full operation IDs only in folded details
+  ---
+  duration_ms: 9.8267
   type: 'test'
   ...
 # Subtest: native root ownership serializes competitors and nested calls keep one lease
-ok 36 - native root ownership serializes competitors and nested calls keep one lease
+ok 59 - native root ownership serializes competitors and nested calls keep one lease
   ---
-  duration_ms: 156.642
+  duration_ms: 137.888
   type: 'test'
   ...
 # Subtest: real child process blocks on the same native root lock and can enter after release
-ok 37 - real child process blocks on the same native root lock and can enter after release
+ok 60 - real child process blocks on the same native root lock and can enter after release
   ---
-  duration_ms: 377.0867
+  duration_ms: 423.6697
   type: 'test'
   ...
 # Subtest: HTTP mutations wait, GET and cleaner routes bypass, tool ownership outlives response, unload restores listener
-ok 38 - HTTP mutations wait, GET and cleaner routes bypass, tool ownership outlives response, unload restores listener
+ok 61 - HTTP mutations wait, GET and cleaner routes bypass, tool ownership outlives response, unload restores listener
   ---
-  duration_ms: 229.125
+  duration_ms: 224.8894
   type: 'test'
   ...
 # Subtest: waiting cancellation and unload release no live lease and reject undispatched work
-ok 39 - waiting cancellation and unload release no live lease and reject undispatched work
+ok 62 - waiting cancellation and unload release no live lease and reject undispatched work
   ---
-  duration_ms: 10.5967
+  duration_ms: 10.5244
   type: 'test'
   ...
 # Subtest: early HTTP finish or client disconnect cannot release an asynchronous mutation handler
-ok 40 - early HTTP finish or client disconnect cannot release an asynchronous mutation handler
+ok 63 - early HTTP finish or client disconnect cannot release an asynchronous mutation handler
   ---
-  duration_ms: 233.1536
+  duration_ms: 233.3337
   type: 'test'
   ...
 # Subtest: plugin-manager HTTP request can await its own coordinator unload without deadlock
-ok 41 - plugin-manager HTTP request can await its own coordinator unload without deadlock
+ok 64 - plugin-manager HTTP request can await its own coordinator unload without deadlock
   ---
-  duration_ms: 18.4203
+  duration_ms: 15.4753
   type: 'test'
   ...
 # Subtest: HMR unload from another async context does not deadlock the request awaiting it
-ok 42 - HMR unload from another async context does not deadlock the request awaiting it
+ok 65 - HMR unload from another async context does not deadlock the request awaiting it
   ---
-  duration_ms: 82.0035
+  duration_ms: 77.9785
   type: 'test'
   ...
 # Subtest: unsupported bridge leaves host listener intact and NEXT subclass uses the pinned upstream bridge
-ok 43 - unsupported bridge leaves host listener intact and NEXT subclass uses the pinned upstream bridge
+ok 66 - unsupported bridge leaves host listener intact and NEXT subclass uses the pinned upstream bridge
   ---
-  duration_ms: 31.6432
+  duration_ms: 21.8865
   type: 'test'
   ...
 # Subtest: a detached async continuation reacquires ownership after its original scope has ended
-ok 44 - a detached async continuation reacquires ownership after its original scope has ended
+ok 67 - a detached async continuation reacquires ownership after its original scope has ended
   ---
-  duration_ms: 71.3385
+  duration_ms: 85.4689
   type: 'test'
   ...
 # Subtest: fresh ownership validates once before dispatch, and failed validation releases the native lease
-ok 45 - fresh ownership validates once before dispatch, and failed validation releases the native lease
+ok 68 - fresh ownership validates once before dispatch, and failed validation releases the native lease
   ---
-  duration_ms: 9.7727
+  duration_ms: 9.1019
   type: 'test'
   ...
 # Subtest: acquisition times out without dispatching and does not release another operation lease
-ok 46 - acquisition times out without dispatching and does not release another operation lease
+ok 69 - acquisition times out without dispatching and does not release another operation lease
   ---
-  duration_ms: 101.3691
+  duration_ms: 96.5368
   type: 'test'
   ...
 # Subtest: preview is read-only and A preserves unrelated files
-ok 47 - preview is read-only and A preserves unrelated files
+ok 70 - preview is read-only and A preserves unrelated files
   ---
-  duration_ms: 64.5825
+  duration_ms: 117.9524
   type: 'test'
   ...
 # Subtest: unacknowledged request cannot delete
-ok 48 - unacknowledged request cannot delete
+ok 71 - unacknowledged request cannot delete
   ---
-  duration_ms: 10.226
+  duration_ms: 36.8758
   type: 'test'
   ...
 # Subtest: changed bytes invalidate plan even if size is unchanged
-ok 49 - changed bytes invalidate plan even if size is unchanged
+ok 72 - changed bytes invalidate plan even if size is unchanged
   ---
-  duration_ms: 16.4619
+  duration_ms: 49.1101
   type: 'test'
   ...
 # Subtest: closing an idle target never bypasses stale-plan checks and failure republishes its retained row
-ok 50 - closing an idle target never bypasses stale-plan checks and failure republishes its retained row
+ok 73 - closing an idle target never bypasses stale-plan checks and failure republishes its retained row
   ---
-  duration_ms: 30.9665
+  duration_ms: 34.725
   type: 'test'
   ...
 # Subtest: active writer blocks transaction before mutation
-ok 51 - active writer blocks transaction before mutation
+ok 74 - active writer blocks transaction before mutation
   ---
-  duration_ms: 34.6438
+  duration_ms: 40.1945
   type: 'test'
   ...
 # Subtest: registry failure compensates files and membership
-ok 52 - registry failure compensates files and membership
+ok 75 - registry failure compensates files and membership
   ---
-  duration_ms: 53.6004
+  duration_ms: 65.7861
   type: 'test'
   ...
 # Subtest: plan is single-use
-ok 53 - plan is single-use
+ok 76 - plan is single-use
   ---
-  duration_ms: 32.2083
+  duration_ms: 41.1304
   type: 'test'
   ...
 # Subtest: expired plan is rejected
-ok 54 - expired plan is rejected
+ok 77 - expired plan is rejected
   ---
-  duration_ms: 10.7496
+  duration_ms: 10.7381
   type: 'test'
   ...
 # Subtest: invalid ID never reaches adapter
-ok 55 - invalid ID never reaches adapter
+ok 78 - invalid ID never reaches adapter
   ---
-  duration_ms: 6.6353
+  duration_ms: 9.3048
   type: 'test'
   ...
 # Subtest: unknown modes are rejected
-ok 56 - unknown modes are rejected
+ok 79 - unknown modes are rejected
   ---
-  duration_ms: 6.4483
+  duration_ms: 15.2654
   type: 'test'
   ...
 # Subtest: root directory cannot be a deletion target
-ok 57 - root directory cannot be a deletion target
+ok 80 - root directory cannot be a deletion target
   ---
-  duration_ms: 6.8223
+  duration_ms: 9.3505
   type: 'test'
   ...
 # Subtest: B and C stage only adapter-proven candidates, retaining shared files
-ok 58 - B and C stage only adapter-proven candidates, retaining shared files
+ok 81 - B and C stage only adapter-proven candidates, retaining shared files
   ---
-  duration_ms: 64.565
+  duration_ms: 72.8281
   type: 'test'
   ...
 # Subtest: blocker in deep mode prevents even conversation deletion
-ok 59 - blocker in deep mode prevents even conversation deletion
+ok 82 - blocker in deep mode prevents even conversation deletion
   ---
-  duration_ms: 10.5257
+  duration_ms: 10.5537
   type: 'test'
   ...
 # Subtest: incorrect confirmation cannot consume a valid plan
-ok 60 - incorrect confirmation cannot consume a valid plan
+ok 83 - incorrect confirmation cannot consume a valid plan
   ---
-  duration_ms: 13.6573
+  duration_ms: 7.8347
   type: 'test'
   ...
 # Subtest: permanent deletion uses the acknowledged server-owned plan without a typed word
-ok 61 - permanent deletion uses the acknowledged server-owned plan without a typed word
+ok 84 - permanent deletion uses the acknowledged server-owned plan without a typed word
   ---
-  duration_ms: 31.5133
+  duration_ms: 38.6848
   type: 'test'
   ...
 # Subtest: confirmed permanent deletion cannot be restored
-ok 62 - confirmed permanent deletion cannot be restored
+ok 85 - confirmed permanent deletion cannot be restored
   ---
-  duration_ms: 34.2511
+  duration_ms: 41.551
   type: 'test'
   ...
 # Subtest: restore preflights all occupied paths before moving any file
-ok 63 - restore preflights all occupied paths before moving any file
+ok 86 - restore preflights all occupied paths before moving any file
   ---
-  duration_ms: 26.3314
+  duration_ms: 40.4802
   type: 'test'
   ...
 # Subtest: two cleaner instances share a data-root transaction lock
-ok 64 - two cleaner instances share a data-root transaction lock
+ok 87 - two cleaner instances share a data-root transaction lock
   ---
-  duration_ms: 7.3849
+  duration_ms: 7.9828
   type: 'test'
   ...
 # Subtest: a symlink candidate is refused before mutation
-ok 65 - a symlink candidate is refused before mutation # SKIP Windows symlink privilege unavailable
+ok 88 - a symlink candidate is refused before mutation # SKIP Windows symlink privilege unavailable
   ---
-  duration_ms: 7.0196
+  duration_ms: 6.2498
   type: 'test'
   ...
 # Subtest: pre-purge permanent transaction can recover after interrupted staging
-ok 66 - pre-purge permanent transaction can recover after interrupted staging
+ok 89 - pre-purge permanent transaction can recover after interrupted staging
   ---
-  duration_ms: 16.4062
+  duration_ms: 31.161
   type: 'test'
   ...
 # Subtest: missing original and staged files cannot be reported restored
-ok 67 - missing original and staged files cannot be reported restored
+ok 90 - missing original and staged files cannot be reported restored
   ---
-  duration_ms: 25.5249
+  duration_ms: 36.4779
   type: 'test'
   ...
 # Subtest: directory junction ancestors are refused
-ok 68 - directory junction ancestors are refused
+ok 91 - directory junction ancestors are refused
   ---
-  duration_ms: 6.7785
+  duration_ms: 9.6027
   type: 'test'
   ...
 # Subtest: hard-linked file is not treated as exclusive ownership
-ok 69 - hard-linked file is not treated as exclusive ownership
+ok 92 - hard-linked file is not treated as exclusive ownership
   ---
-  duration_ms: 8.5138
+  duration_ms: 11.5268
   type: 'test'
   ...
 # Subtest: another process holds lock and abandoned owner can be removed offline
-ok 70 - another process holds lock and abandoned owner can be removed offline
+ok 93 - another process holds lock and abandoned owner can be removed offline
   ---
-  duration_ms: 229.9275
+  duration_ms: 236.2158
   type: 'test'
   ...
 # Subtest: verified attachment hardlink group is quarantined and restored together
-ok 71 - verified attachment hardlink group is quarantined and restored together
+ok 94 - verified attachment hardlink group is quarantined and restored together
   ---
-  duration_ms: 51.6128
+  duration_ms: 56.9839
   type: 'test'
   ...
 # Subtest: shared upload index is pruned and restored in the same transaction
-ok 72 - shared upload index is pruned and restored in the same transaction
+ok 95 - shared upload index is pruned and restored in the same transaction
   ---
-  duration_ms: 46.9105
+  duration_ms: 50.0138
   type: 'test'
   ...
 # Subtest: registry failure restores a partially rewritten upload index
-ok 73 - registry failure restores a partially rewritten upload index
+ok 96 - registry failure restores a partially rewritten upload index
   ---
-  duration_ms: 43.8704
+  duration_ms: 44.4518
   type: 'test'
   ...
 # Subtest: recovery rejects modified quarantine files and a replacement at a missing staged path
-ok 74 - recovery rejects modified quarantine files and a replacement at a missing staged path
+ok 97 - recovery rejects modified quarantine files and a replacement at a missing staged path
   ---
-  duration_ms: 58.3717
+  duration_ms: 67.4952
   type: 'test'
   ...
 # Subtest: real cross-volume output uses same-volume quarantine and restores without copying
-ok 75 - real cross-volume output uses same-volume quarantine and restores without copying
+ok 98 - real cross-volume output uses same-volume quarantine and restores without copying
   ---
-  duration_ms: 45.1703
+  duration_ms: 61.2067
   type: 'test'
   ...
 # Subtest: HTTP rejects anonymous requests
-ok 76 - HTTP rejects anonymous requests
+ok 99 - HTTP rejects anonymous requests
   ---
-  duration_ms: 50.2608
+  duration_ms: 51.254
   type: 'test'
   ...
 # Subtest: HTTP rejects cross-origin requests despite valid login
-ok 77 - HTTP rejects cross-origin requests despite valid login
+ok 100 - HTTP rejects cross-origin requests despite valid login
   ---
-  duration_ms: 12.3925
+  duration_ms: 12.537
   type: 'test'
   ...
 # Subtest: HTTP rejects wrong method and media type
-ok 78 - HTTP rejects wrong method and media type
+ok 101 - HTTP rejects wrong method and media type
   ---
-  duration_ms: 29.3159
+  duration_ms: 12.8483
   type: 'test'
   ...
 # Subtest: HTTP rejects malformed JSON and oversized input
-ok 79 - HTTP rejects malformed JSON and oversized input
+ok 102 - HTTP rejects malformed JSON and oversized input
   ---
-  duration_ms: 24.2445
+  duration_ms: 21.4338
   type: 'test'
   ...
 # Subtest: authenticated same-origin JSON request succeeds
-ok 80 - authenticated same-origin JSON request succeeds
+ok 103 - authenticated same-origin JSON request succeeds
   ---
-  duration_ms: 11.6245
+  duration_ms: 12.8339
+  type: 'test'
+  ...
+# Subtest: restore, purge and compact remain authenticated, same-origin and explicitly acknowledged
+ok 104 - restore, purge and compact remain authenticated, same-origin and explicitly acknowledged
+  ---
+  duration_ms: 41.1426
+  type: 'test'
+  ...
+# Subtest: recovery operations list exposes action capabilities under the existing authentication gate
+ok 105 - recovery operations list exposes action capabilities under the existing authentication gate
+  ---
+  duration_ms: 12.8587
+  type: 'test'
+  ...
+# Subtest: replacement followed by an Agent update loses output ownership permanently
+ok 106 - replacement followed by an Agent update loses output ownership permanently
+  ---
+  duration_ms: 48.901
+  type: 'test'
+  ...
+# Subtest: reading an externally rewritten output revokes its ownership before a later edit
+ok 107 - reading an externally rewritten output revokes its ownership before a later edit
+  ---
+  duration_ms: 19.8312
+  type: 'test'
+  ...
+# Subtest: consecutive Agent edits retain output ownership
+ok 108 - consecutive Agent edits retain output ownership
+  ---
+  duration_ms: 27.9497
+  type: 'test'
+  ...
+# Subtest: a genuine create after an output was removed establishes new ownership
+ok 109 - a genuine create after an output was removed establishes new ownership
+  ---
+  duration_ms: 32.8996
+  type: 'test'
+  ...
+# Subtest: failed identity observation revokes only that output and preserves the tool result
+ok 110 - failed identity observation revokes only that output and preserves the tool result
+  ---
+  duration_ms: 28.9908
+  type: 'test'
+  ...
+# Subtest: native edit path/before/after results retain continuous ownership without becoming unknown
+ok 111 - native edit path/before/after results retain continuous ownership without becoming unknown
+  ---
+  duration_ms: 21.1803
+  type: 'test'
+  ...
+# Subtest: native edit after replacement and read never adopts the user file or makes provenance unknown
+ok 112 - native edit after replacement and read never adopts the user file or makes provenance unknown
+  ---
+  duration_ms: 23.6193
+  type: 'test'
+  ...
+# Subtest: edit results claiming create never grant ownership
+ok 113 - edit results claiming create never grant ownership
+  ---
+  duration_ms: 20.8029
+  type: 'test'
+  ...
+# Subtest: incomplete native edit shapes stay unknown
+ok 114 - incomplete native edit shapes stay unknown
+  ---
+  duration_ms: 13.7508
   type: 'test'
   ...
 # Subtest: failure to record provenance must not turn a successful tool into failure
-ok 81 - failure to record provenance must not turn a successful tool into failure
+ok 115 - failure to record provenance must not turn a successful tool into failure
   ---
-  duration_ms: 7.9859
+  duration_ms: 8.9857
+  type: 'test'
+  ...
+# Subtest: permanent terminal record contains no body, projections, ids, paths or recovery units
+ok 116 - permanent terminal record contains no body, projections, ids, paths or recovery units
+  ---
+  duration_ms: 173.632
+  type: 'test'
+  ...
+# Subtest: successful restoration also compacts its obsolete recovery payload
+ok 117 - successful restoration also compacts its obsolete recovery payload
+  ---
+  duration_ms: 144.2165
+  type: 'test'
+  ...
+# Subtest: missing workspace is rejected before moving files, remains pending, and explicit ungrouped retry succeeds
+ok 118 - missing workspace is rejected before moving files, remains pending, and explicit ungrouped retry succeeds
+  ---
+  duration_ms: 182.453
+  type: 'test'
+  ...
+# Subtest: a registry failure after file restoration is pending and can be retried without overwriting
+ok 119 - a registry failure after file restoration is pending and can be retried without overwriting
+  ---
+  duration_ms: 180.9896
+  type: 'test'
+  ...
+# Subtest: an interrupted permanent purge can resume after some or all exact staged paths are already absent
+ok 120 - an interrupted permanent purge can resume after some or all exact staged paths are already absent
+  ---
+  duration_ms: 288.2081
+  type: 'test'
+  ...
+# Subtest: purge and compaction cannot turn an ordinary recoverable deletion into a permanent one
+ok 121 - purge and compaction cannot turn an ordinary recoverable deletion into a permanent one
+  ---
+  duration_ms: 197.652
+  type: 'test'
+  ...
+# Subtest: legacy terminal compaction removes only metadata and never touches restored live files
+ok 122 - legacy terminal compaction removes only metadata and never touches restored live files
+  ---
+  duration_ms: 235.7339
+  type: 'test'
+  ...
+# Subtest: resume purge refuses a staged path changed to an unrelated file
+ok 123 - resume purge refuses a staged path changed to an unrelated file
+  ---
+  duration_ms: 111.5153
+  type: 'test'
+  ...
+# Subtest: permanent deletion removes the complete known hardlink group without relaxing alias checks
+ok 124 - permanent deletion removes the complete known hardlink group without relaxing alias checks
+  ---
+  duration_ms: 189.8308
+  type: 'test'
+  ...
+# Subtest: real Windows purge sharing violation remains actionable and resume clears the blocker
+ok 125 - real Windows purge sharing violation remains actionable and resume clears the blocker
+  ---
+  duration_ms: 564.3345
   type: 'test'
   ...
 # Subtest: capture the original handle, preserve caller ownership, preview without closing, release only selected idle agent
-ok 82 - capture the original handle, preserve caller ownership, preview without closing, release only selected idle agent
+ok 126 - capture the original handle, preserve caller ownership, preview without closing, release only selected idle agent
   ---
-  duration_ms: 2.9944
+  duration_ms: 3.1451
   type: 'test'
   ...
 # Subtest: running, maintenance, queued input and unsent uploads are never automatically closed
-ok 83 - running, maintenance, queued input and unsent uploads are never automatically closed
+ok 127 - running, maintenance, queued input and unsent uploads are never automatically closed
   ---
-  duration_ms: 1.334
+  duration_ms: 1.0717
   type: 'test'
   ...
 # Subtest: uncaptured existing owner is refused and uninstall restores the original factory methods
-ok 84 - uncaptured existing owner is refused and uninstall restores the original factory methods
+ok 128 - uncaptured existing owner is refused and uninstall restores the original factory methods
   ---
-  duration_ms: 0.6264
+  duration_ms: 0.6009
   type: 'test'
   ...
 # Subtest: all selected owners are checked before closing any; failures leave ownership observable
-ok 85 - all selected owners are checked before closing any; failures leave ownership observable
+ok 129 - all selected owners are checked before closing any; failures leave ownership observable
   ---
-  duration_ms: 0.8063
+  duration_ms: 0.7967
   type: 'test'
   ...
 # Subtest: already loaded rc3 agent closes through its original labeled lifecycle effect
-ok 86 - already loaded rc3 agent closes through its original labeled lifecycle effect
+ok 130 - already loaded rc3 agent closes through its original labeled lifecycle effect
   ---
-  duration_ms: 1.9029
+  duration_ms: 2.3912
   type: 'test'
   ...
-1..86
-# tests 86
+1..130
+# tests 130
 # suites 0
-# pass 85
+# pass 129
 # fail 0
 # cancelled 0
 # skipped 1
 # todo 0
-# duration_ms 1721.5573
+# duration_ms 2797.8247

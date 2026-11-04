@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "version": "1.0.0-rc.10",
+  "finishedAt": "2026-11-04T03:18:56.213Z",
+  "scope": "Real isolated NEXT primitives with mocked cleaner API only; no storage mutations",
+  "checks": [
+    "preview automatically refreshed before expiry",
+    "expired click refreshed preview without commit",
+    "long preview scrolls with visible footer; no typed or extra acknowledgement",
+    "direct restore with explicit ungrouped retry and actual restored status",
+    "history retries incomplete purge and compacts only selected operation"
+  ],
+  "screenshots": [
+    "evidence/screenshots/rc10-next-fixed-footer.png"
+  ]
+}

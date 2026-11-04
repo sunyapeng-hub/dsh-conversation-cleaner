@@ -20,6 +20,16 @@ export function installProvenance(ctx,adapter) {
       try{record=JSON.parse(await fs.readFile(file,'utf8'));}catch(e){if(e.code!=='ENOENT')throw e;}
       if(!record){const events=await adapter.events(id);record={complete:!events.some(e=>e.type==='tool/call' && e.data.callId!==exec.callId),unknown:false,outputs:[],references:[],seenCallIds:[]};}
       if(!['read','write','edit'].includes(exec.name))record.unknown=true;
+      // Keep creation ownership only while the previous file identity is still
+      // present. A later update must not adopt a user's replacement at that path.
+      const continuous=[];
+      for(const out of record.outputs){
+        try{
+          const stat=await safeFile(session.header.cwd,out.path);
+          if(JSON.stringify(fileIdentity(stat))===JSON.stringify(out.identity))continuous.push(out);
+        }catch{/* An absent or unsafe file no longer has proven ownership. */}
+      }
+      record.outputs=continuous;
       // Persist uncertainty before dispatch: a crash must never turn an unfinished write into proven ownership.
       const previousComplete=record.complete;record.complete=false;
       await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,JSON.stringify(record));
@@ -27,11 +37,17 @@ export function installProvenance(ctx,adapter) {
       const output=result.value;
       if(result.isError)record.unknown=true;
       if(['write','edit'].includes(exec.name) && !result.isError){
-        if(!output || typeof output.path!=='string' || !['create','update'].includes(output.operation))record.unknown=true;
+        let operation=output?.operation;
+        if(exec.name==='edit'){
+          // Native edit reports a before/after diff, never file creation.
+          const nativeUpdate=operation===undefined && typeof output?.before==='string' && typeof output?.after==='string';
+          operation=operation==='update' || nativeUpdate?'update':undefined;
+        }
+        if(!output || typeof output.path!=='string' || !['create','update'].includes(operation))record.unknown=true;
         else{
           const stat=await safeFile(session.header.cwd,output.path);
           const existing=record.outputs.find(o=>o.path===output.path);
-          if(output.operation==='create' || existing){const row={path:output.path,identity:fileIdentity(stat)};if(existing)Object.assign(existing,row);else record.outputs.push(row);}
+          if(operation==='create' || existing){const row={path:output.path,identity:fileIdentity(stat)};if(existing)Object.assign(existing,row);else record.outputs.push(row);}
           if(!record.references.includes(output.path))record.references.push(output.path);
         }
       }else if(exec.name==='read') {

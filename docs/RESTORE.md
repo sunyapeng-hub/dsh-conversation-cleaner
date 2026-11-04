@@ -1,29 +1,39 @@
 # 隔离恢复与中断处理
 
-默认隔离区为 `.conversation-cleaner/operations/<operationId>/`。跨磁盘产出使用原目录旁的 `.dsh-conversation-cleaner-quarantine/<operationId>/`，位置记入同一 journal。均使用同卷 rename。
+默认隔离区为 `.conversation-cleaner/operations/<operationId>/`。跨磁盘产出使用原目录旁的 `.dsh-conversation-cleaner-quarantine/<operationId>/`，位置记入同一 journal，均使用同卷 rename。这是删除功能恢复区，不是新增的开发备份。
 
-这是删除功能恢复区，不是新增的开发备份。
+## 直接恢复
 
-## 恢复
+默认删除成功后，点击弹窗中的「恢复」。只有恢复完成才显示「已恢复」；失败会保留错误和重试入口。
 
-展开成功弹窗的“恢复信息”，复制操作 ID，在已登录 DSH/NEXT 页面的开发者工具执行：
+关闭成功弹窗后仍可恢复：
 
-```javascript
-await fetch('/dsh-conversation-cleaner/v1/restore', {
-  method: 'POST',
-  headers: { 'content-type': 'application/json' },
-  body: JSON.stringify({ operationId: '替换为操作 ID', acknowledged: true })
-}).then(response => response.json())
-```
+1. 会话行 `···` → **删除记录与恢复**；或打开 **插件 → DSH Conversation Cleaner 本包详情 → 删除记录与恢复**。后者在会话列表删空后仍可使用，只出现在本插件详情。
+2. 选择对应记录，核对标题、时间和状态；完整操作 ID 位于折叠详情。
+3. 点击「恢复」。操作只针对选中的一条记录。
 
-恢复核对全部文件的设备、inode、大小、修改时间、普通文件类型和预期硬链接数。拒绝丢失、被替换或改写的隔离文件，不覆盖原路径新文件。恢复文件及索引后更新归属证明并刷新列表；两个宿主的三种模式均实际验证过。
+恢复前会检查原工作区是否仍存在。缺失时先显示原因，不搬移文件；需要时再点击 **恢复为未分组对话**。该选项仅跳过缺失的原工作区，保留仍存在的成员关系及置顶、归档状态。
+
+恢复核对全部文件的设备、inode、大小、修改时间、普通文件类型和预期硬链接数。拒绝丢失、被替换或改写的隔离文件，不覆盖原路径新文件。恢复文件及索引后更新归属证明并刷新列表。中断或失败的恢复保留可重试状态，不会仅因文件已经搬回就报告成功。
 
 可恢复事务的引用参与后续深度清理。旧事务没有引用记录时，先恢复再深度清理；更早且缺少文件身份的 journal 不自动迁移为可信恢复记录。
 
+## 继续永久清理与清理旧残留
+
+选择永久删除后点击「永久删除」即确认，不再输入文字或另勾风险确认。进入永久清理阶段后无法恢复。
+
+永久清理因文件占用或进程退出而未完成时，在「删除记录与恢复」中选择显示「清理未完成」的记录，解除占用后点击 **继续永久清理**。继续操作只处理原先已明确永久删除的剩余精确隔离文件；文件被替换或身份不符时拒绝，不会删除替代文件，也不会将普通可恢复记录改为永久删除。
+
+新版本在永久删除或恢复完成后，仅保留不含正文、原路径和恢复载荷的最小操作摘要。旧版本的已恢复、已永久删除记录可能仍有旧载荷；选择该记录并点击 **清理旧残留**，只移除其旧恢复材料，不操作已恢复的活跃会话与文件。升级不会自动清理或改写这些真实历史记录，操作摘要仍保留。
+
+不使用系统回收站，不承诺擦除云端、备份或其他设备副本。
+
 ## 意外退出
 
-1. 完全退出访问该根的所有 DSH/NEXT。
-2. 对死亡进程留下的事务锁执行：
+正常情况下，重启后从上述界面选择未完成记录并重试。若死亡进程遗留事务锁：
+
+1. 完全退出访问该数据根的所有 DSH/NEXT。
+2. 执行：
 
 ```powershell
 node tools/offline-unlock.mjs '实际 DSH 数据根目录' --all-hosts-stopped
@@ -31,18 +41,36 @@ node tools/offline-unlock.mjs '实际 DSH 数据根目录' --all-hosts-stopped
 
 工具检查 owner PID 已退出，只移除锁文件与空锁目录，保留 journal 和隔离内容。owner 缺失或损坏时拒绝强行解锁。
 
-3. 重启后查询未完成事务，再按上述接口恢复：
+3. 重启，打开「删除记录与恢复」。可恢复记录选择「恢复」；清理未完成记录选择「继续永久清理」。
+
+出现恢复失败、文件占用或身份不符时保留恢复材料，不删除目录后重试。
+
+## 同源接口诊断
+
+优先使用界面。必要时可在已登录 DSH/NEXT 页面的开发者工具查询记录：
 
 ```javascript
 await fetch('/dsh-conversation-cleaner/v1/operations', {
-  method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}'
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: '{}'
 }).then(response => response.json())
 ```
 
-出现 `RECOVERY_REQUIRED`、路径占用或身份不符时保留恢复材料，不删除目录后重试。
+返回 `pending` 和 `operations`；每条记录的 `restorable`、`canResumePurge`、`canCompact` 表示当前可执行操作。仅可恢复或进行中的记录含标题，终态记录不返回标题。
 
-## 永久删除
+按精确操作 ID 恢复：
 
-选择永久删除后点击“永久删除”即可，不再输入文字或单独勾选风险。进入 `PURGING` / `PERMANENT` 后拒绝恢复；尚未清空隔离文件的中断允许恢复。永久清空途中失败须依据 journal 人工继续清理剩余精确隔离文件，不自动改变删除策略。
+```javascript
+await fetch('/dsh-conversation-cleaner/v1/restore', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ operationId: '替换为完整操作 ID', acknowledged: true })
+}).then(response => response.json())
+```
 
-不使用系统回收站，不承诺擦除云端、备份或其他设备副本。
+仅在用户明确选择未分组恢复时添加 `ungrouped: true`。继续永久清理使用 `purge`，旧终态载荷清理使用 `compact`，两者请求体均为 `{ operationId: '完整操作 ID', acknowledged: true }`。`purge` 只继续已进入永久清理的记录；`compact` 只清理旧的已恢复或已永久删除载荷。应核对响应的 `ok` 和错误码，不能把 HTTP 请求已发出视为操作成功。
+
+## 验证范围
+
+rc.10 的三种删除范围与重启恢复已在 Windows NEXT 2.0.20-next / Core 0.2.1-rc.3、官方 DSH Web 0.2.1-rc.3 的隔离数据上验证。使用宿主私有 API 和 Cordis 4.0.5 精确适配；其他宿主版本、macOS/Linux 与任意第三方插件组合未完整验收。新增故障回归覆盖以最终交付记录为准，正式用户数据未执行真实删除。

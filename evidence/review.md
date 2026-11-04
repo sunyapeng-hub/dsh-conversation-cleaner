@@ -1,16 +1,13 @@
-# Independent review and fixes
+# rc10 independent review and repair closure
 
-Read-only reviewer findings were addressed in runtime code and regression tests. No reviewer edits or additional development backups were made.
+Six RC9 audit defects are closed in runtime code and red/green regressions. No new development backup or checksum workflow was introduced.
 
-- Scan survivors across cwd; verify durable call IDs; treat unsupported tools/PTC as unknown; canonicalize read paths.
-- Serialize participating hosts through native root leases; keep every required cold-session lease; protect unsent upload receipts for exempt blank drafts.
-- Await real matched HTTP route completion, including early response/abort; restore hooks without an HMR unload/request waiting cycle. Native rc.7 uninstall/reinstall passed.
-- Include attachment alias/canonical paths and provenance references; require a complete hardlink group and preserve external aliases.
-- Protect dependencies recorded by recoverable operations; old transactions missing reference metadata block deep cleanup.
-- Recover pre-purge permanent intent; refuse missing or changed files and occupied destinations. Validate every unit identity before and after recovery; refresh restored output identity.
-- Use owner PID/offline stale-lock handling, tested with real process exit. Use same-volume side quarantine for cross-volume output, tested on actual C:/F: volumes.
-- Compare cached/persisted registry before writes. Detect physical logs omitted from host listing; a real corrupt compressed survivor test now returns 422.
+- Provenance continuity is checked before native read/write/edit; independent replacement or external edit loses ownership. Actual native edit schema was verified against installed first-party sources.
+- Terminal journals use a minimal whitelist; explicit legacy cleanup never touches restored live files. Active recovery retains necessary payload.
+- A/B0/C0 does not bind unrelated event revisions; actual resources still require complete corpus references and cold leases.
+- Preview refresh and submit expiry guards preserve the single action confirmation.
+- Restore preflight precedes moves; failure states remain retryable; ungrouped fallback requires an explicit user action.
+- Permanent intent can resume precise remaining staged files, including interrupted hardlink groups; replaced targets and external aliases refuse.
+- Direct recovery is available after deletion, in session menus and in this plugin's own details even with no session rows.
 
-Validation: six real host/mode gates plus restart/restore, actual running-agent refusal, actual staged receipts, two-real-host race, actual permanent confirmation and HTTP rejection; 85/86 automatic tests passed, 1 privilege skip. Limits and unrun UI/index combinations remain explicit in acceptance-report.json.
-
-rc.9 read-only review verified the original owner effect closes scope, persistence and both registries, then releases its scope effect, without a new self-wait cycle. Unique label, exact versions and idle/pending gates remain. The fallback subsequently passed actual rc3/Cordis tests in both hosts; zero-resource C produced no attachment candidates/index edits.
+An independent read-only reviewer ran 53 targeted tests and three extra hardlink adversarial cases with no blockers. Final native-edit and plugin-details changes were independently checked against real host contracts; 23 targeted tests passed. Final full suite: 129/130 passed, 1 privilege skip, zero failures. Both real hosts have fresh A/B/C restart/restore and 11 native repair checks; real NEXT mocked-API UI checks are separate. See acceptance-report.json for evidence provenance and remaining limits.

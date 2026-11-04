@@ -10,6 +10,7 @@ const api=async(route,body)=>p.evaluate(async({route,body})=>{const r=await fetc
 const previous=JSON.parse(await fs.readFile('evidence/'+tag+'-acceptance.json','utf8'));
 const report={host:web?'DSH Web':'DSH NEXT',startedAt:new Date().toISOString(),cases:[]};
 try{
+ await expect(p.getByRole('button',{name:'Plugins',exact:true})).toBeVisible({timeout:30000});
  await p.waitForFunction(async()=>{try{const r=await fetch('/cleaner-e2e',{method:'POST',headers:{'content-type':'application/json'},body:'{"action":"info"}'});return r.status===200&&(await r.json()).ok;}catch{return false;}},null,{timeout:30000});
  for(const c of previous.cases){assert.equal(c.status,'PASS');const state=(await api('/cleaner-e2e',{action:'state',id:c.id})).data;assert.equal(state.session,false);assert.equal(state.member,false);assert.equal(state.survivor,true);assert.equal(state.keep,c.before.keep);assert.equal(state.output.exists,c.kind==='A');assert.equal(state.orphan.exists,c.kind!=='C');assert.equal(state.shared.exists,true);
   const row={kind:c.kind,id:c.id,restartState:state,restart:'PASS'};report.cases.push(row);

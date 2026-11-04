@@ -129,29 +129,39 @@ export class DshAdapter {
     const coordinated=this.coordinator?.supported===true;
     if(!coordinated&&!this.exclusiveDataRoot)blockers.push('DATA_ROOT_EXCLUSIVITY_REQUIRED');
     if(coordinated){try{await this.checkRegistry();}catch(e){blockers.push(e.code??'REGISTRY_BACKEND_UNSUPPORTED');}}
-    if(mode!=='chat_only') {
-      if(!coordinated)blockers.push('ROOT_COORDINATION_REQUIRED');
-      await this.assertCorpusComplete(all);
-      let decodedBytes=0;
-      for(const row of all) {
-        const events=await this.events(row.header.id),proof=await optionalJson(this.recordPath(row.header.id));
-        decodedBytes+=Buffer.byteLength(JSON.stringify(events));if(decodedBytes>MAX_REFERENCE_BYTES)throw new CleanerError('SCAN_LIMIT',422);
-        rows.push({...row,events,proof});
-        if(ids.includes(row.header.id)&&!completeProof(events,proof))blockers.push('PROVENANCE_UNKNOWN');
-      }
-      // A B-plan with no owned output only removes the selected conversation.
-      // Unrelated legacy ownership gaps cannot make a nonexistent file shared.
-      otherProofIncomplete=rows.some(row=>!ids.includes(row.header.id)&&!completeProof(row.events,row.proof));
-    }else{
-      for(const row of all.filter(r=>ids.includes(r.header.id)))rows.push({...row,events:await this.events(row.header.id)});
+    // Establish the selected resource set before consulting foreign logs or
+    // stores. A conversation-only transaction has no global reference dependency.
+    let decodedBytes=0;
+    const readRow=async stored=>{
+      const events=await this.events(stored.header.id);
+      decodedBytes+=Buffer.byteLength(JSON.stringify(events));if(decodedBytes>MAX_REFERENCE_BYTES)throw new CleanerError('SCAN_LIMIT',422);
+      const proof=mode==='chat_only'?undefined:await optionalJson(this.recordPath(stored.header.id));
+      const row={...stored,events,proof};rows.push(row);return row;
+    };
+    for(const id of ids) {
+      const stored=id===snapshot.header.id?snapshot:all.find(row=>row.header.id===id)??await this.persistence.stat(id);
+      if(!stored)throw new CleanerError('SESSION_NOT_FOUND',404);
+      const row=await readRow(stored);
+      if(mode!=='chat_only'&&!completeProof(row.events,row.proof))blockers.push('PROVENANCE_UNKNOWN');
     }
-    const recoveryRows=mode==='chat_only'?[]:await this.quarantinedReferences();
-    const survivors=rows.filter(r=>!ids.includes(r.header.id)).concat(recoveryRows);
+    const targets=rows.slice();
+    const counted=mode==='full'?await planAttachments(this.ctx,{root:this.root,targets,survivors:[],targetIds:ids,countOnly:true}):undefined;
+    const hasOwnedOutputs=mode!=='chat_only'&&targets.some(row=>row.proof?.outputs?.length);
+    const requiresReferenceLease=hasOwnedOutputs||(mode==='full'&&counted.attachmentCount!==0);
+    let recoveryRows=[];
+    if(mode!=='chat_only'&&!coordinated)blockers.push('ROOT_COORDINATION_REQUIRED');
+    if(requiresReferenceLease) {
+      await this.assertCorpusComplete(all);
+      for(const stored of all.filter(row=>!ids.includes(row.header.id)))await readRow(stored);
+      otherProofIncomplete=rows.some(row=>!ids.includes(row.header.id)&&!completeProof(row.events,row.proof));
+      recoveryRows=await this.quarantinedReferences();
+    }
+    const survivors=rows.filter(row=>!ids.includes(row.header.id)).concat(recoveryRows);
     for(const id of ids) {
       if(this.ctx.get('sessions')?.get(id)){
         const code=this.releaseBridge?this.releaseBridge.blocker(id):'SESSION_BUSY';if(code)blockers.push(code);
       }else if(!locked&&this.persistence.hasPendingSession?.(id))blockers.push('SESSION_BUSY');
-      const stored=all.find(s=>s.header.id===id) ?? await this.persistence.stat(id);
+      const stored=targets.find(row=>row.header.id===id);
       const location=this.persistence.locate(stored.header);
       if(!location?.path || !inside(this.persistence.root,location.path))throw new CleanerError('HOST_LOCATION_UNSAFE',422);
       candidates.push(...await leaves(path.dirname(location.path),this.persistence.root));
@@ -175,16 +185,15 @@ export class DshAdapter {
     }
     let attachmentCount=null,indexEdits=[];
     if(mode==='full') {
-      const attachmentPlan=await planAttachments(this.ctx,{root:this.root,targets:rows.filter(r=>ids.includes(r.header.id)),survivors:survivors.concat(this.stagedReferences()),targetIds:ids});
+      const attachmentPlan=counted.attachmentCount===0?counted:await planAttachments(this.ctx,{root:this.root,targets,survivors:survivors.concat(this.stagedReferences()),targetIds:ids});
       candidates.push(...attachmentPlan.candidates);preserved.push(...attachmentPlan.preserved);blockers.push(...attachmentPlan.blockers);indexEdits=attachmentPlan.indexEdits;attachmentCount=attachmentPlan.attachmentCount;
     }
-    const hasOwnedOutputs=rows.some(row=>ids.includes(row.header.id)&&row.proof?.outputs?.length);
     if(otherProofIncomplete&&(hasOwnedOutputs||(mode==='full'&&attachmentCount!==0)))blockers.push('OTHER_SESSION_PROVENANCE_UNKNOWN');
     const controller=this.ctx.get('sessionController');
     const summary=controller?.list?(await controller.list({},new AbortController().signal)).items.find(s=>s.sessionId===sessionId):undefined;
-    const corpus=all.map(r=>({id:r.header.id,revision:r.revision,sizeBytes:r.sizeBytes,header:r.header}));
+    const corpus=(requiresReferenceLease?all:targets).map(r=>({id:r.header.id,revision:r.revision,sizeBytes:r.sizeBytes,header:r.header}));
     const recoveryReferences=rows.filter(r=>ids.includes(r.header.id)).map(row=>{const references=[],pending=[row.events,row.proof?.references??[]];while(pending.length){const node=pending.pop();if(typeof node==='string')references.push(node);else if(node&&typeof node==='object')pending.push(...Object.values(node));}return {id:row.header.id,cwd:row.header.cwd,references:[...new Set(references)]};});
-    return {session:{id:snapshot.header.id,title:summary?.title??snapshot.header.title??sessionId,cwd:snapshot.header.cwd??'',logBytes:snapshot.sizeBytes??null,attachmentCount},attachmentCount,ids,children:children.map(h=>({id:h.id,cwd:h.cwd})),candidates,indexEdits,preserved,blockers:[...new Set(blockers)],metadata:{...this.metadata(ids),requiresReferenceLease:(mode==='full'&&attachmentCount!==0)||candidates.some(c=>c.kind==='output'),headers:headers.filter(h=>ids.includes(h.id)),corpus,recoveryReferences}};
+    return {session:{id:snapshot.header.id,title:summary?.title??snapshot.header.title??sessionId,cwd:snapshot.header.cwd??'',logBytes:snapshot.sizeBytes??null,attachmentCount},attachmentCount,ids,children:children.map(h=>({id:h.id,cwd:h.cwd})),candidates,indexEdits,preserved,blockers:[...new Set(blockers)],metadata:{...this.metadata(ids),requiresReferenceLease,headers:targets.map(row=>row.header),corpus,recoveryReferences}};
   }
   async releaseTargets(ids) {await this.releaseBridge?.release(ids);}
   async acquire(ids,plan={}) {
@@ -226,11 +235,17 @@ export class DshAdapter {
   async forget(ids) {
     for(const id of ids){for(const w of this.registry.list())if(w.sessionIds.includes(id))await w.detachSession(id);await this.registry.unpinSession(id);await this.registry.unarchiveSession(id);const domain=this.ctx.get('storageDomain')?.get('session_projcache');if(domain)await domain.table('sessions').delete(id);}
   }
-  async restore(ids,metadata) {
-    for(const row of metadata.domains){const domain=this.ctx.get('storageDomain')?.get(row.domain);if(!domain)throw new CleanerError('RESTORE_DOMAIN_UNAVAILABLE');await domain.table(row.table).put(row.id,row.value);}
-    for(const account of metadata.workspace){const w=this.registry.list().find(w=>w.id===account.id);if(!w)throw new CleanerError('RESTORE_WORKSPACE_MISSING');for(const id of account.sessionIds)await w.attachSession(id);}
-    for(const id of metadata.pinned)await this.registry.pinSession(id);
-    for(const id of metadata.archived)await this.registry.archiveSession(id);
+  async preflightRestore(ids,metadata,{ungrouped=false}={}) {
+    const workspaces=this.registry.list();
+    for(const account of metadata.workspace)if(!workspaces.some(w=>w.id===account.id)&&!ungrouped)throw new CleanerError('RESTORE_WORKSPACE_MISSING');
+    for(const row of metadata.domains)if(!this.ctx.get('storageDomain')?.get(row.domain))throw new CleanerError('RESTORE_DOMAIN_UNAVAILABLE');
+  }
+  async restore(ids,metadata,options={}) {
+    await this.preflightRestore(ids,metadata,options);
+    for(const row of metadata.domains){const domain=this.ctx.get('storageDomain').get(row.domain);await domain.table(row.table).put(row.id,row.value);}
+    for(const account of metadata.workspace){const w=this.registry.list().find(w=>w.id===account.id);if(!w)continue;for(const id of account.sessionIds)if(!w.sessionIds.includes(id))await w.attachSession(id);}
+    for(const id of metadata.pinned)if(!this.registry.pinnedSessionIds.includes(id))await this.registry.pinSession(id);
+    for(const id of metadata.archived)if(!this.registry.archivedSessionIds.includes(id))await this.registry.archiveSession(id);
   }
   async refreshProvenance(journal) {
     // Renaming a proven output changes ctime. Preserve its original ownership

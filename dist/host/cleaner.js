@@ -44,6 +44,14 @@ async function writeJournal(file,data) {
   try{await h.writeFile(JSON.stringify(data,null,2));await h.sync();}finally{await h.close();}
   await fs.rename(temp,file);
 }
+const TERMINAL=new Set(['PERMANENT','RESTORED']);
+const TERMINAL_KEYS=new Set(['operationId','state','createdAt','completedAt','mode','files','removed','modified','permanent']);
+function terminalRecord(journal,state) {
+  const removed=journal.units?.filter(u=>u.replacement===undefined).length??journal.removed??0;
+  const modified=journal.units?.filter(u=>u.replacement!==undefined).length??journal.modified??0;
+  return {operationId:journal.operationId,state,createdAt:journal.createdAt,completedAt:journal.completedAt??new Date().toISOString(),mode:journal.mode,files:journal.units?.length??journal.files??removed+modified,removed,modified,permanent:state==='PERMANENT'};
+}
+const hasPayload=journal=>Object.keys(journal).some(key=>!TERMINAL_KEYS.has(key));
 
 export class Cleaner {
   constructor(adapter,{ttl=120000,maxBytes=32*1024*1024}={}) {
@@ -81,16 +89,74 @@ export class Cleaner {
     await fs.writeFile(path.join(lock,'owner.json'),JSON.stringify({pid:process.pid,createdAt:new Date().toISOString()}),{flag:'wx',mode:0o600});
     return async()=>{await fs.unlink(path.join(lock,'owner.json'));await fs.rmdir(lock);};
   }
-  async pending() {
+  async operations() {
     const dir=path.join(this.base,'operations');
-    let names;try{names=await fs.readdir(dir);}catch(e){if(e.code==='ENOENT')return [];throw e;}
-    const pending=[];
+    let names;try{names=await fs.readdir(dir);}catch(e){if(e.code==='ENOENT')return {pending:[],operations:[]};throw e;}
+    const pending=[],operations=[];
     for(const name of names) {
       if(!/^[a-f0-9-]{36}$/.test(name))continue;
-      const journal=JSON.parse(await fs.readFile(path.join(dir,name,'journal.json'),'utf8'));
+      const {journal}=await this.readOperation(name);
       if(!['VERIFIED','RESTORED','PERMANENT'].includes(journal.state))pending.push(name);
+      const restorable=!['PURGING','PERMANENT','RESTORED'].includes(journal.state);
+      operations.push({operationId:name,state:journal.state,createdAt:journal.createdAt,mode:journal.mode,...(!TERMINAL.has(journal.state)?{title:journal.summary?.title}:{}),files:journal.units?.length??journal.files??0,restorable,canResumePurge:journal.state==='PURGING',canCompact:TERMINAL.has(journal.state)&&hasPayload(journal),error:journal.lastError});
     }
-    return pending;
+    operations.sort((a,b)=>(b.createdAt??'').localeCompare(a.createdAt??''));
+    return {pending,operations};
+  }
+  async pending() {return (await this.operations()).pending;}
+  async readOperation(operationId) {
+    if(typeof operationId!=='string'||!/^[a-f0-9-]{36}$/.test(operationId))throw new CleanerError('INVALID_OPERATION',400);
+    const journalFile=path.join(this.base,'operations',operationId,'journal.json');
+    await safeFile(this.base,journalFile);
+    const journal=JSON.parse(await fs.readFile(journalFile,'utf8'));
+    if(journal.operationId!==operationId)throw new CleanerError('INVALID_OPERATION',400);
+    return {journalFile,journal};
+  }
+  async finishPurge(journal,journalFile) {
+    try {
+      const remaining=[];
+      for(const [index,unit]of journal.units.entries()) {
+        const side=path.join(path.dirname(unit.path),'.dsh-conversation-cleaner-quarantine');
+        const expected=path.join(this.base,'operations',journal.operationId,String(index)),cross=path.join(side,journal.operationId,String(index));
+        if(path.resolve(unit.staged)!==path.resolve(expected)&&path.resolve(unit.staged)!==path.resolve(cross))throw new CleanerError('UNSAFE_PURGE_PATH');
+        if(unit.stageRoot&&![this.base,side].some(root=>path.resolve(root)===path.resolve(unit.stageRoot)))throw new CleanerError('UNSAFE_PURGE_PATH');
+        if(await exists(unit.staged))remaining.push(unit);
+      }
+      const groupKey=unit=>JSON.stringify(unit.identity?.slice(0,2));
+      const links=new Map();for(const unit of remaining)links.set(groupKey(unit),(links.get(groupKey(unit))??0)+1);
+      const validate=async unit=>{
+        const root=path.resolve(unit.staged)===path.resolve(path.join(this.base,'operations',journal.operationId,String(journal.units.indexOf(unit))))?this.base:path.join(path.dirname(unit.path),'.dsh-conversation-cleaner-quarantine');
+        const stat=await safeFile(root,unit.staged,links.get(groupKey(unit)));
+        if(!Array.isArray(unit.identity)||unit.identity.length!==5||JSON.stringify([stat.dev,stat.ino,stat.size,stat.mtimeMs])!==JSON.stringify(unit.identity.slice(0,4)))throw new CleanerError('PURGE_FILE_CHANGED');
+      };
+      for(const unit of remaining)await validate(unit);
+      for(const unit of remaining){await validate(unit);await fs.unlink(unit.staged);links.set(groupKey(unit),links.get(groupKey(unit))-1);}
+      const compact=terminalRecord(journal,'PERMANENT');await writeJournal(journalFile,compact);return compact;
+    }catch(error){
+      journal.state='PURGING';journal.lastError=error.code??'PURGE_FAILED';await writeJournal(journalFile,journal);
+      if(['UNSAFE_PURGE_PATH','PURGE_FILE_CHANGED','UNSAFE_LINK','UNSAFE_FILE'].includes(error.code))throw error;
+      throw Object.assign(new CleanerError('PURGE_INCOMPLETE'),{operationId:journal.operationId});
+    }
+  }
+  purge(operationId) {return this.adapter.coordinator?this.adapter.coordinator.run(()=>this.executePurge(operationId)):this.executePurge(operationId);}
+  async executePurge(operationId) {
+    const unlock=await this.lock();
+    try{
+      const {journal,journalFile}=await this.readOperation(operationId);
+      if(journal.state==='PERMANENT'){for(const unit of journal.units??[])if(await exists(unit.staged))throw new CleanerError('COMPACTION_REMAINDERS');const compact=terminalRecord(journal,'PERMANENT');await writeJournal(journalFile,compact);return {operationId,state:'PERMANENT',restorable:false};}
+      if(journal.state!=='PURGING'||journal.permanent!==true)throw new CleanerError('NOT_PURGING');
+      await this.finishPurge(journal,journalFile);return {operationId,state:'PERMANENT',restorable:false};
+    }finally{await unlock();}
+  }
+  compact(operationId) {return this.adapter.coordinator?this.adapter.coordinator.run(()=>this.executeCompact(operationId)):this.executeCompact(operationId);}
+  async executeCompact(operationId) {
+    const unlock=await this.lock();
+    try{
+      const {journal,journalFile}=await this.readOperation(operationId);
+      if(!TERMINAL.has(journal.state))throw new CleanerError('NOT_TERMINAL');
+      for(const unit of journal.units??[])if(await exists(unit.staged))throw new CleanerError('COMPACTION_REMAINDERS');
+      await writeJournal(journalFile,terminalRecord(journal,journal.state));return {operationId,state:journal.state,compacted:true};
+    }finally{await unlock();}
   }
   commit(input={}) {return this.adapter.coordinator?this.adapter.coordinator.run(()=>this.executeCommit(input)):this.executeCommit(input);}
   async executeCommit({planId,confirmation,acknowledged,permanent=false}={}) {
@@ -116,7 +182,7 @@ export class Cleaner {
       const operationId=randomUUID(), dir=path.join(this.base,'operations',operationId);
       await fs.mkdir(dir,{recursive:true,mode:0o700});
       const journalFile=path.join(dir,'journal.json');
-      const journal={operationId,state:'STAGING',createdAt:new Date().toISOString(),ids:plan.ids,mode:plan.mode,metadata:plan.metadata,units:plan.units.map((u,i)=>{const stageRoot=u.crossVolume?path.join(path.dirname(u.path),'.dsh-conversation-cleaner-quarantine'):this.base;return {path:u.path,root:u.root,kind:u.kind,expectedLinks:u.expectedLinks,identity:u.identity,replacement:u.replacement?.toString('base64'),stageRoot,staged:u.crossVolume?path.join(stageRoot,operationId,String(i)):path.join(dir,String(i)),moved:false};}),permanent};
+      const journal={operationId,state:'STAGING',createdAt:new Date().toISOString(),ids:plan.ids,mode:plan.mode,summary:{title:plan.session.title},metadata:plan.metadata,units:plan.units.map((u,i)=>{const stageRoot=u.crossVolume?path.join(path.dirname(u.path),'.dsh-conversation-cleaner-quarantine'):this.base;return {path:u.path,root:u.root,kind:u.kind,expectedLinks:u.expectedLinks,identity:u.identity,replacement:u.replacement?.toString('base64'),stageRoot,staged:u.crossVolume?path.join(stageRoot,operationId,String(i)):path.join(dir,String(i)),moved:false};}),permanent};
       await writeJournal(journalFile,journal);
       try {
         for(let i=0;i<journal.units.length;i++) {
@@ -138,13 +204,12 @@ export class Cleaner {
         journal.state='VERIFIED';await writeJournal(journalFile,journal);
       }catch(error) {
         journal.state='ROLLING_BACK';await writeJournal(journalFile,journal);
-        try{await this.restoreFiles(journal);await this.adapter.refreshProvenance?.(journal);await this.adapter.restore(plan.ids,plan.metadata);journal.state='RESTORED';await writeJournal(journalFile,journal);}catch(rollback){journal.state='RECOVERY_REQUIRED';journal.error=rollback.message;await writeJournal(journalFile,journal);throw new CleanerError('RECOVERY_REQUIRED: '+operationId,500);}
+        try{await this.restoreFiles(journal);await this.adapter.refreshProvenance?.(journal);await this.adapter.restore(plan.ids,plan.metadata);journal.state='RESTORED';await writeJournal(journalFile,terminalRecord(journal,'RESTORED'));}catch(rollback){journal.state='RECOVERY_REQUIRED';journal.lastError=rollback.code??'ROLLBACK_FAILED';await writeJournal(journalFile,journal);throw new CleanerError('RECOVERY_REQUIRED: '+operationId,500);}
         throw error;
       }
       if(permanent) {
         journal.state='PURGING';await writeJournal(journalFile,journal);
-        for(const unit of journal.units)await fs.unlink(unit.staged);
-        journal.state='PERMANENT';await writeJournal(journalFile,journal);
+        await this.finishPurge(journal,journalFile);journal.state='PERMANENT';
       }
       let refreshWarning;
       try{await this.adapter.broadcast(plan.ids);}catch(e){refreshWarning=e.message;}
@@ -179,19 +244,29 @@ export class Cleaner {
     for(const unit of [...journal.units].reverse())if(await exists(unit.staged)){if(unit.replacement!==undefined&&await exists(unit.path))await fs.unlink(unit.path);await fs.rename(unit.staged,unit.path);}
     for(const unit of journal.units)await validate(unit,unit.root,unit.path);
   }
-  restore(operationId) {return this.adapter.coordinator?this.adapter.coordinator.run(()=>this.executeRestore(operationId)):this.executeRestore(operationId);}
-  async executeRestore(operationId) {
+  restore(operationId,options={}) {return this.adapter.coordinator?this.adapter.coordinator.run(()=>this.executeRestore(operationId,options)):this.executeRestore(operationId,options);}
+  async executeRestore(operationId,{ungrouped=false}={}) {
+    if(typeof ungrouped!=='boolean')throw new CleanerError('INVALID_REQUEST',400);
     if(typeof operationId!=='string'||!/^[a-f0-9-]{36}$/.test(operationId))throw new CleanerError('INVALID_OPERATION',400);
     const unlock=await this.lock();let release;
     try {
-      const journalFile=path.join(this.base,'operations',operationId,'journal.json');
-      const journal=JSON.parse(await fs.readFile(journalFile,'utf8'));
+      const {journalFile,journal}=await this.readOperation(operationId);
       if(['PURGING','PERMANENT'].includes(journal.state))throw new CleanerError('NOT_RESTORABLE');
       if(journal.state==='RESTORED')throw new CleanerError('ALREADY_RESTORED');
-      release=await this.adapter.acquire(journal.ids,{restore:true,metadata:journal.metadata});
-      await this.restoreFiles(journal);await this.adapter.refreshProvenance?.(journal);await this.adapter.restore(journal.ids,journal.metadata);
-      journal.state='RESTORED';await writeJournal(journalFile,journal);
-      await this.adapter.broadcast(journal.ids,{restored:true});return {operationId,state:'RESTORED'};
+      journal.state='RESTORING';delete journal.lastError;await writeJournal(journalFile,journal);
+      try{
+        await this.adapter.preflightRestore?.(journal.ids,journal.metadata,{ungrouped});
+        await this.adapter.releaseTargets?.(journal.ids);
+        release=await this.adapter.acquire(journal.ids,{restore:true,metadata:journal.metadata});
+        await this.restoreFiles(journal);await this.adapter.refreshProvenance?.(journal);await this.adapter.restore(journal.ids,journal.metadata,{ungrouped});
+        journal.state='RESTORED';await writeJournal(journalFile,terminalRecord(journal,'RESTORED'));
+      }catch(error){
+        journal.state='RESTORE_FAILED';journal.lastError=error.code??'RESTORE_FAILED';await writeJournal(journalFile,journal);
+        try{await this.adapter.broadcast(journal.ids,{restored:true});}catch{}
+        throw error;
+      }
+      let refreshWarning;try{await this.adapter.broadcast(journal.ids,{restored:true});}catch(error){refreshWarning=error.message;}
+      return {operationId,state:'RESTORED',refreshWarning};
     }finally{try{await release?.();}finally{await unlock();}}
   }
 }

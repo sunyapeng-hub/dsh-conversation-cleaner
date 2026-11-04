@@ -46,7 +46,7 @@ function validateIndex(doc) {
  * indexEdits are server-only {path,root,before:Buffer,after:Buffer} snapshots;
  * applying/quarantining them belongs to the same transaction as candidates.
  */
-export async function planAttachments(ctx,{root,targets,survivors,targetIds,maxBytes=256*1024*1024}) {
+export async function planAttachments(ctx,{root,targets,survivors,targetIds,countOnly=false,maxBytes=256*1024*1024}) {
  root=path.resolve(root);
  const result={candidates:[],preserved:[],blockers:[],attachmentCount:0,indexEdits:[]};
  const block=code=>{if(!result.blockers.includes(code))result.blockers.push(code);};
@@ -65,7 +65,7 @@ export async function planAttachments(ctx,{root,targets,survivors,targetIds,maxB
    });
   }
   result.attachmentCount=refs.size;
-  if(!refs.size)return result;
+  if(!refs.size||countOnly)return result;
   const store=ctx.get?.('attachments')??ctx.attachments;
   const storeRoot=path.join(root,'attachments','v1'),cacheRoot=path.join(root,'cache','attachments');
   if(!store||path.resolve(store.root??'')!==storeRoot||typeof store.imageHostPath!=='function'||typeof store.fileHostPath!=='function')throw problem('ATTACHMENT_LOCAL_STORE_REQUIRED');

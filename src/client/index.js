@@ -8,7 +8,7 @@ window.__ModuleLoader__.load({
     const reasons={SESSION_BUSY:['会话仍被宿主持有，请先关闭或切换会话后重试。','The session is still held by a host. Close or switch away, then retry.'],PROVENANCE_UNKNOWN:['历史会话没有完整文件归属记录，无法执行产出文件清理。','The session has no complete file ownership evidence.'],OTHER_SESSION_PROVENANCE_UNKNOWN:['同一工作区的其他会话缺少完整归属记录。','Another workspace session has incomplete ownership evidence.'],ATTACHMENT_REFERENCE_BARRIER_UNAVAILABLE:['当前宿主没有附件全局引用锁，无法证明附件可以安全删除。','This host has no global attachment reference barrier.'],PLAN_CHANGED:['文件或会话信息已变化，请重新预览。','Files or session metadata changed. Refresh the preview.'],PLAN_EXPIRED:['预览已过期，请重新预览。','The preview expired. Refresh it.'],RECOVERY_REQUIRED:['存在未完成事务，请先按恢复文档处理。','An interrupted operation requires recovery first.']};
     Object.assign(reasons,{
       SESSION_BUSY:['会话正在运行、有待处理内容或被其他宿主占用。','The conversation has active or pending work, or is owned by another host.'],
-      SESSION_RELEASE_UNAVAILABLE:['此会话在插件就绪前已加载，请重启宿主后重试。','This conversation was loaded before the plugin was ready. Restart the host and retry.'],
+      SESSION_RELEASE_UNAVAILABLE:['宿主未提供此会话的完整关闭接口，暂不能删除。','The host has no complete close interface for this conversation. Deletion is unavailable.'],
       OTHER_SESSION_PROVENANCE_UNKNOWN:['其他会话缺少完整归属记录。','Other conversations have incomplete ownership evidence.'],
       DATA_ROOT_EXCLUSIVITY_REQUIRED:['此开发包仅支持独占数据目录；请先按安装文档配置单宿主维护环境。','This development build requires an exclusive data root. See installation instructions.'],
       OUTPUT_REFERENCE_BARRIER_UNAVAILABLE:['宿主缺少产出文件的全局引用锁，本次产出文件清理不可执行。','The host has no global output reference barrier; output deletion is unavailable.'],
@@ -28,41 +28,77 @@ window.__ModuleLoader__.load({
     reasons.ATTACHMENT_SCAN_LIMIT=['附件引用扫描超过大小或对象数量额度，未执行删除。','The attachment reference scan exceeds its size or object limit. Nothing was deleted.'];
     Object.assign(en,{remove:'Delete',permanentRemove:'Permanently delete',permanent:'Permanently delete (cannot be restored)',done:'Deleted',loading:'Checking…',list:'Details',recoveryInfo:'Recovery details',a:'Workspace files and attachments stay.',b:'Only proven, unshared generated files are removed.',c:'Also remove orphan attachments; shared content stays.'});
     Object.assign(zh,{chat_only:'仅对话',full:'对话 + 产出 + 孤儿附件',remove:'删除',permanentRemove:'永久删除',permanent:'永久删除（无法恢复）',done:'已删除',loading:'正在检查…',list:'详情',recoveryInfo:'恢复信息',a:'保留工作区文件和附件。',b:'仅清理有归属证明、未被共享的产出文件。',c:'另清理孤儿附件，共享内容保留。'});
-    let request=null;const listeners=new Set();
+    Object.assign(en,{history:'Deletion history and recovery',restoreAction:'Restore',restored:'Restored',ungrouped:'Restore as ungrouped conversation',resumePurge:'Continue permanent deletion',compact:'Clean old remnants',noOperations:'No deletion history.',operation:'Deletion record',refreshHistory:'Refresh',recoveryDone:'Operation completed',historyHelp:'Choose one record to restore, continue an interrupted permanent deletion, or clear old completed remnants.'});
+    Object.assign(zh,{history:'删除记录与恢复',restoreAction:'恢复',restored:'已恢复',ungrouped:'恢复为未分组对话',resumePurge:'继续永久清理',compact:'清理旧残留',noOperations:'暂无删除记录。',operation:'删除记录',refreshHistory:'刷新',recoveryDone:'操作已完成',historyHelp:'选择一条记录，恢复对话、继续中断的永久清理，或清理旧的已完成残留。'});
+    Object.assign(reasons,{
+      RECOVERY_REQUIRED:['存在未完成操作，请打开删除记录与恢复。','An interrupted operation needs attention. Open deletion history and recovery.'],
+      RESTORE_FAILED:['恢复未完成，可在删除记录与恢复中重试。','Restore did not finish. Retry in deletion history and recovery.'],
+      RESTORE_WORKSPACE_MISSING:['原工作区已不存在，可恢复为未分组对话。','The original workspace no longer exists. You can restore as an ungrouped conversation.'],
+      PURGE_INCOMPLETE:['永久清理未完成，可在删除记录与恢复中继续。','Permanent deletion did not finish. Continue in deletion history and recovery.']
+    });
+    Object.assign(en,{recoverable:'Recoverable',purgeUnfinished:'Deletion incomplete',restoreFailed:'Restore failed',permanentlyDeleted:'Permanently deleted',processing:'In progress'});
+    Object.assign(zh,{recoverable:'可恢复',purgeUnfinished:'清理未完成',restoreFailed:'恢复失败',permanentlyDeleted:'已永久删除',processing:'处理中'});
+    const recoveryErrors=new Set(['RECOVERY_REQUIRED','RESTORE_FAILED','RESTORE_WORKSPACE_MISSING','PURGE_INCOMPLETE']);
+    let request=null,requestNonce=0;const listeners=new Set();
     const notify=()=>listeners.forEach(f=>f(request));
     async function post(action,body,signal) {
       const res=await fetch('/dsh-conversation-cleaner/v1/'+action,{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal});
       const data=await res.json();if(!res.ok || !data.ok)throw new Error(data.code??data.message??String(res.status));return data;
     }
+    function openHistory(operationId) {request={view:'history',operationId,nonce:++requestNonce};notify();}
     function Menu({sessionId,displayTitle,useMenuOpenState,t}) {
       const [,setOpen]=useMenuOpenState();
-      return h(ui.MenuItemButton,{danger:true,separatorBefore:true,onSelect:()=>{setOpen(false);request={sessionId,title:displayTitle||(t('menu')==='删除对话'?'未命名对话':'Untitled conversation'),nonce:Date.now()};notify();}},t('menu'));
+      return h(React.Fragment,null,
+        h(ui.MenuItemButton,{danger:true,separatorBefore:true,onSelect:()=>{setOpen(false);request={sessionId,title:displayTitle||(t('menu')==='删除对话'?'未命名对话':'Untitled conversation'),nonce:++requestNonce};notify();}},t('menu')),
+        h(ui.MenuItemButton,{onSelect:()=>{setOpen(false);openHistory();}},h('span',{className:'dcc-menu-history'},t('history'))));
     }
     function Dialog({t}) {
       const [selected,setSelected]=React.useState(request);
       React.useEffect(()=>{listeners.add(setSelected);return()=>listeners.delete(setSelected);},[]);
-      return selected?h(DialogBody,{key:selected.nonce,selected,t}):null;
+      return selected?h(selected.view==='history'?RecoveryDialog:DialogBody,{key:selected.nonce,selected,t}):null;
     }
     function DialogBody({selected,t}) {
       const [mode,setMode]=React.useState('chat_only'),[children,setChildren]=React.useState(false),[plan,setPlan]=React.useState(null),[busy,setBusy]=React.useState(false),[error,setError]=React.useState(''),[revision,setRevision]=React.useState(0),[permanent,setPermanent]=React.useState(false),[result,setResult]=React.useState(null);
       const inFlight=React.useRef(false),chinese=t('menu')==='删除对话';
       const reason=code=>reasons[code]?.[chinese?0:1]??code;
       React.useEffect(()=>{
-        const controller=new AbortController();setPlan(null);setError('');
-        post('plan',{sessionId:selected.sessionId,mode,includeDescendants:children},controller.signal).then(setPlan).catch(e=>{if(e.name!=='AbortError')setError(e.message);});
-        return()=>controller.abort();
-      },[mode,children,revision]);
+        if(result)return;
+        const controller=new AbortController();let active=true;setPlan(null);setError('');
+        post('plan',{sessionId:selected.sessionId,mode,includeDescendants:children},controller.signal).then(value=>{
+          if(active){if(value.expiresAt>Date.now())setPlan(value);else setError('PLAN_EXPIRED');}
+        }).catch(e=>{if(active&&e.name!=='AbortError')setError(e.message);});
+        return()=>{active=false;controller.abort();};
+      },[mode,children,revision,!!result]);
+      React.useEffect(()=>{
+        if(!plan||result)return;
+        const remaining=plan.expiresAt-Date.now();
+        const timer=setTimeout(()=>{if(!inFlight.current){setPlan(null);setRevision(r=>r+1);}},Math.max(0,remaining-Math.min(1000,remaining/10)));
+        return()=>clearTimeout(timer);
+      },[plan,!!result]);
       const close=()=>{if(!inFlight.current){request=null;notify();}};
-      const ready=!!plan&&!plan.blockers.length&&!error;
+      const ready=!!plan&&plan.expiresAt>Date.now()&&!plan.blockers.length&&!error;
       const submit=async()=>{
-        if(inFlight.current||!ready)return;
-        inFlight.current=true;setBusy(true);
+        if(inFlight.current||!plan||plan.blockers.length||error)return;
+        if(plan.expiresAt<=Date.now()){setPlan(null);setRevision(r=>r+1);return;}
+        inFlight.current=true;setBusy(true);setError('');
         try{setResult(await post('commit',{planId:plan.planId,confirmation:plan.confirmation,acknowledged:true,permanent}));}
+        catch(e){setPlan(null);setError(e.message);}
+        finally{inFlight.current=false;setBusy(false);}
+      };
+      const restore=async(ungrouped=false)=>{
+        if(inFlight.current||!result?.restorable)return;
+        inFlight.current=true;setBusy(true);setError('');
+        try{await post('restore',{operationId:result.operationId,acknowledged:true,...(ungrouped?{ungrouped:true}:{})});setResult({...result,restorable:false,restored:true});}
         catch(e){setError(e.message);}
         finally{inFlight.current=false;setBusy(false);}
       };
+      const recoveryLink=recoveryErrors.has(error)&&h('button',{type:'button',className:'dcc-refresh',disabled:busy,onClick:()=>openHistory(result?.operationId)},t('history'));
       const fmt=n=>n==null?t('unknown'):new Intl.NumberFormat().format(n)+' B';
-      const body=result?h('div',{className:'dcc-success'},h('p',{role:'status'},t('done')),result.restorable&&h('details',null,h('summary',null,t('recoveryInfo')),h('p',null,t('quarantine')),h('code',null,result.operationId))):h(React.Fragment,null,
+      const body=result?h('div',{className:'dcc-success'},h('p',{role:'status'},t(result.restored?'restored':'done')),
+        result.restorable&&h('button',{type:'button',className:'dcc-refresh',disabled:busy,onClick:()=>restore()},t('restoreAction')),
+        error&&h('p',{className:'dcc-error',role:'alert'},reason(error)),
+        error==='RESTORE_WORKSPACE_MISSING'&&h('button',{type:'button',className:'dcc-refresh',disabled:busy,onClick:()=>restore(true)},t('ungrouped')),recoveryLink,
+        result.restorable&&h('details',null,h('summary',null,t('recoveryInfo')),h('p',null,t('quarantine')),h('code',null,result.operationId))):h(React.Fragment,null,
         h('p',{className:'dcc-sub'},selected.title),
         h('fieldset',{disabled:busy,className:'dcc-modes'},h('legend',null,t('scope')),['chat_only','chat_and_outputs','full'].map(value=>h('label',{key:value,className:'dcc-mode'},h('input',{type:'radio',name:'dcc-mode',value,checked:mode===value,onChange:()=>{setPlan(null);setMode(value);}}),t(value)))),
         h('p',{className:'dcc-help'},t({chat_only:'a',chat_and_outputs:'b',full:'c'}[mode])),
@@ -72,18 +108,62 @@ window.__ModuleLoader__.load({
           h('dl',{className:'dcc-meta'},h('dt',null,t('id')),h('dd',null,selected.sessionId),h('dt',null,t('cwd')),h('dd',null,plan.session.cwd),h('dt',null,t('logs')),h('dd',null,fmt(plan.session.logBytes)),h('dt',null,t('outputs')),h('dd',null,mode==='chat_only'?t('unknown'):String(plan.counts.outputs)),h('dt',null,t('attachments')),h('dd',null,mode==='full'?String(plan.session.attachmentCount):t('unknown'))),
           h('ul',{className:'dcc-list'},plan.candidates.map(u=>h('li',{key:u.path},h('code',null,u.path),' · '+fmt(u.size))),plan.preserved.map(u=>h('li',{key:u.path},t('keep')+': ',h('code',null,u.path),' — '+reason(u.reason))))),
         plan?.blockers?.length>0&&h('div',{className:'dcc-warning',role:'alert'},plan.blockers.map(code=>h('p',{key:code},reason(code)))),
-        error&&h('p',{className:'dcc-error',role:'alert'},reason(error)),
+        error&&h('p',{className:'dcc-error',role:'alert'},reason(error)),recoveryLink,
         !busy&&(error||plan?.blockers?.length>0)&&h('button',{type:'button',className:'dcc-refresh',onClick:()=>setRevision(r=>r+1)},t('retry')),
         h('label',{className:'dcc-check'},h('input',{type:'checkbox',checked:permanent,disabled:busy,onChange:e=>setPermanent(e.target.checked)}),t('permanent'))
       );
       return h(ui.Modal,{open:true,onClose:close,title:t('title'),closeLabel:t('close'),className:'dcc-modal',contentClassName:'dcc-content',footer:h('div',{className:'dcc-footer'},h('button',{type:'button',disabled:busy,onClick:close},t(result?'close':'cancel')),!result&&h('button',{type:'button',className:'dcc-danger',disabled:busy||!ready,onClick:submit},t(busy?'busy':permanent?'permanentRemove':'remove')))},body);
     }
-    const css=`.dcc-modal{width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 32px);display:flex;flex-direction:column;min-height:0;overflow:hidden}.dcc-modal *{box-sizing:border-box}.dcc-modal .dcc-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}.dcc-content>:last-child{margin-top:18px}.dcc-modal>:last-child{flex:0 0 auto}.dcc-sub{margin:0 0 16px;overflow-wrap:anywhere;font-weight:500}.dcc-modes{border:0;padding:0;margin:0}.dcc-modes legend{font-size:12px;opacity:.65;margin-bottom:6px}.dcc-mode{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid transparent;border-radius:7px;font-size:13px;cursor:pointer}.dcc-mode:has(input:checked){background:color-mix(in srgb,currentColor 5%,transparent);border-color:color-mix(in srgb,currentColor 12%,transparent)}.dcc-mode input,.dcc-check input{accent-color:#d6423a;margin:0;flex-shrink:0}.dcc-help{font-size:12px;opacity:.65;line-height:1.6;margin:8px 0 14px}.dcc-details,.dcc-success details{font-size:12px;margin:12px 0}.dcc-details summary,.dcc-success summary{cursor:pointer;opacity:.75}.dcc-meta{display:grid;grid-template-columns:100px minmax(0,1fr);gap:7px;margin:12px 0}.dcc-meta dt{opacity:.6}.dcc-meta dd{margin:0;overflow-wrap:anywhere}.dcc-list{padding-left:18px;overflow-wrap:anywhere}.dcc-list li{padding:4px 0}.dcc-check{display:flex;align-items:center;gap:8px;font-size:12px;margin:16px 0 0;line-height:1.5;opacity:.8}.dcc-warning,.dcc-error{font-size:12px;line-height:1.6;color:#d55d45;overflow-wrap:anywhere;margin:12px 0}.dcc-warning p{margin:5px 0}.dcc-footer{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}.dcc-footer button,.dcc-refresh{font:inherit;font-size:12px;border:1px solid color-mix(in srgb,currentColor 18%,transparent);border-radius:7px;background:transparent;color:inherit;padding:8px 16px;cursor:pointer}.dcc-footer .dcc-danger{background:#d6423a;border-color:#d6423a;color:#fff}.dcc-footer button:disabled{opacity:.4;cursor:not-allowed}.dcc-success{font-size:13px;overflow-wrap:anywhere}.dcc-refresh{padding:5px 10px}`;
+    function RecoveryDialog({selected,t}) {
+      const [operations,setOperations]=React.useState(null),[operationId,setOperationId]=React.useState(selected.operationId??''),[error,setError]=React.useState(''),[busy,setBusy]=React.useState(false),[revision,setRevision]=React.useState(0),[status,setStatus]=React.useState('');
+      const inFlight=React.useRef(false),chinese=t('menu')==='删除对话';
+      const reason=code=>reasons[code]?.[chinese?0:1]??code;
+      React.useEffect(()=>{
+        const controller=new AbortController();let active=true;setError('');
+        post('operations',{},controller.signal).then(data=>{if(active){setOperations(data.operations);setOperationId(id=>data.operations.some(op=>op.operationId===id)?id:(data.pending?.[0]??data.operations[0]?.operationId??''));}}).catch(e=>{if(active&&e.name!=='AbortError')setError(e.message);});
+        return()=>{active=false;controller.abort();};
+      },[revision]);
+      const operation=operations?.find(op=>op.operationId===operationId);
+      const operationLabel=op=>{
+        const time=new Date(op.createdAt).toLocaleString(chinese?'zh-CN':'en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+        const state={VERIFIED:'recoverable',QUARANTINED:'recoverable',PURGING:'purgeUnfinished',RESTORE_FAILED:'restoreFailed',RESTORED:'restored',PERMANENT:'permanentlyDeleted'}[op.state]??'processing';
+        return (op.title?op.title+' · '+time:time+' · '+op.operationId.slice(0,8))+' · '+t(state);
+      };
+      const close=()=>{if(!inFlight.current){request=null;notify();}};
+      const run=async(action,ungrouped=false)=>{
+        if(inFlight.current||!operation)return;
+        if(action==='restore'&&!operation.restorable||action==='purge'&&!operation.canResumePurge||action==='compact'&&!operation.canCompact)return;
+        inFlight.current=true;setBusy(true);setError('');setStatus('');
+        try{await post(action,{operationId:operation.operationId,acknowledged:true,...(ungrouped?{ungrouped:true}:{})});setStatus(t(action==='restore'?'restored':'recoveryDone'));setRevision(r=>r+1);}
+        catch(e){setError(e.message);}
+        finally{inFlight.current=false;setBusy(false);}
+      };
+      const actions=h('div',{className:'dcc-footer'},h('button',{type:'button',disabled:busy,onClick:close},t('close')),
+        operation?.restorable&&h('button',{type:'button',disabled:busy,onClick:()=>run('restore')},t('restoreAction')),
+        error==='RESTORE_WORKSPACE_MISSING'&&operation?.restorable&&h('button',{type:'button',disabled:busy,onClick:()=>run('restore',true)},t('ungrouped')),
+        operation?.canResumePurge&&h('button',{type:'button',className:'dcc-danger',disabled:busy,onClick:()=>run('purge')},t('resumePurge')),
+        operation?.canCompact&&h('button',{type:'button',disabled:busy,onClick:()=>run('compact')},t('compact')));
+      return h(ui.Modal,{open:true,onClose:close,title:t('history'),closeLabel:t('close'),className:'dcc-modal',contentClassName:'dcc-content',footer:actions},
+        h('p',{className:'dcc-help'},t('historyHelp')),
+        !operations&&!error&&h('p',{role:'status'},t('loading')),
+        operations?.length===0&&h('p',null,t('noOperations')),
+        operations?.length>0&&h('label',{className:'dcc-history-select'},t('operation'),h('select',{value:operationId,disabled:busy,onChange:e=>{setOperationId(e.target.value);setError('');setStatus('');}},operations.map(op=>h('option',{key:op.operationId,value:op.operationId},operationLabel(op))))),
+        operation&&h('p',{className:'dcc-help'},operation.files+' '+t('files')),
+        operation&&h('details',{className:'dcc-details'},h('summary',null,t('list')),h('code',null,operation.operationId)),
+        status&&h('p',{role:'status'},status),error&&h('p',{className:'dcc-error',role:'alert'},reason(error)),
+        h('button',{type:'button',className:'dcc-refresh',disabled:busy,onClick:()=>{setStatus('');setRevision(r=>r+1);}},t('refreshHistory')));
+    }
+    const css=`.dcc-modal{width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 32px);display:flex;flex-direction:column;min-height:0;overflow:hidden}.dcc-modal *{box-sizing:border-box}.dcc-modal .dcc-content{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}.dcc-content>:last-child{margin-top:18px}.dcc-modal>:last-child{flex:0 0 auto}.dcc-sub{margin:0 0 16px;overflow-wrap:anywhere;font-weight:500}.dcc-modes{border:0;padding:0;margin:0}.dcc-modes legend{font-size:12px;opacity:.65;margin-bottom:6px}.dcc-mode{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid transparent;border-radius:7px;font-size:13px;cursor:pointer}.dcc-mode:has(input:checked){background:color-mix(in srgb,currentColor 5%,transparent);border-color:color-mix(in srgb,currentColor 12%,transparent)}.dcc-mode input,.dcc-check input{accent-color:#d6423a;margin:0;flex-shrink:0}.dcc-help{font-size:12px;opacity:.65;line-height:1.6;margin:8px 0 14px}.dcc-details,.dcc-success details{font-size:12px;margin:12px 0}.dcc-details summary,.dcc-success summary{cursor:pointer;opacity:.75}.dcc-meta{display:grid;grid-template-columns:100px minmax(0,1fr);gap:7px;margin:12px 0}.dcc-meta dt{opacity:.6}.dcc-meta dd{margin:0;overflow-wrap:anywhere}.dcc-list{padding-left:18px;overflow-wrap:anywhere}.dcc-list li{padding:4px 0}.dcc-check{display:flex;align-items:center;gap:8px;font-size:12px;margin:16px 0 0;line-height:1.5;opacity:.8}.dcc-warning,.dcc-error{font-size:12px;line-height:1.6;color:#d55d45;overflow-wrap:anywhere;margin:12px 0}.dcc-warning p{margin:5px 0}.dcc-footer{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}.dcc-footer button,.dcc-refresh{font:inherit;font-size:12px;border:1px solid color-mix(in srgb,currentColor 18%,transparent);border-radius:7px;background:transparent;color:inherit;padding:8px 16px;cursor:pointer}.dcc-footer .dcc-danger{background:#d6423a;border-color:#d6423a;color:#fff}.dcc-footer button:disabled{opacity:.4;cursor:not-allowed}.dcc-success{font-size:13px;overflow-wrap:anywhere}.dcc-refresh{padding:5px 10px}.dcc-menu-history{font-size:12px;opacity:.7}.dcc-history-select{display:flex;flex-direction:column;gap:8px;font-size:12px}.dcc-history-select select{max-width:100%;font:inherit;padding:8px;border-radius:6px;color:inherit;background:transparent}`;
+    function PluginRecoveryAction({subject,t}) {
+      if(subject.kind!=='bundle'||subject.pkg?.name!==NS)return null;
+      return h('button',{type:'button',className:'dcc-refresh',onClick:()=>openHistory()},t('history'));
+    }
     function apply(ctx) {
       ctx.effect(()=>ctx.locale.register(NS,{en,zh}),'conversation-cleaner locale');
       ctx.effect(()=>{const style=document.createElement('style');style.textContent=css;document.head.append(style);return()=>{style.remove();request=null;listeners.clear();};});
       ctx.slots.inject('sidebar.workspaces.session.menu.item',()=>ctx.slots.register({name:'sidebar.workspaces.session.menu.item',id:NS,order:500,locale:NS},Menu));
       ctx.slots.inject('shell.overlay',()=>ctx.slots.register({name:'shell.overlay',id:NS,locale:NS},Dialog));
+      ctx.slots.inject('plugins.detail.actions',()=>ctx.slots.register({name:'plugins.detail.actions',id:NS,order:500,locale:NS},PluginRecoveryAction));
     }
     return {inject:['slots','locale'],apply};
   }

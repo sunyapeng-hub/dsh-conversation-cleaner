@@ -1,6 +1,6 @@
 # 安装、升级与卸载
 
-当前包：`dsh-conversation-cleaner-1.0.0-rc.9.tgz`。验证范围：Windows、NEXT 2.0.20-next / Core 0.2.1-rc.3，以及官方 DSH Web 0.2.1-rc.3。
+当前包：`dsh-conversation-cleaner-1.0.0-rc.10.tgz`。验证范围：Windows、NEXT 2.0.20-next / Core 0.2.1-rc.3，以及官方 DSH Web 0.2.1-rc.3。
 
 ## NEXT
 
@@ -14,7 +14,7 @@
 ## 官方 DSH
 
 ```powershell
-dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.9.tgz"
+dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.10.tgz"
 dsh --profile web
 ```
 
@@ -25,6 +25,8 @@ dsh --profile web
 升级后正常重启一次。空闲且无待处理内容的本宿主目标在点击删除后自动关闭；预览、取消不关闭。启动前已加载的空闲会话可经原始生命周期关闭函数释放。运行中、维护中、待发送内容或其他进程占用仍拒绝。B 无产出、C 无产出且无附件时只处理选中会话；实际文件和附件清理仍需要完整创建证据和引用核对，未知工具、损坏日志、超限会阻止提交。
 
 共享根要求所有写入 Host 安装兼容插件。其他宿主改变索引后，落后的 Host 会要求重启，避免覆盖新索引。
+
+删除成功后可直接恢复。关闭弹窗后，从会话菜单或「插件 → 本包详情 → 删除记录与恢复」选择记录，恢复、继续永久清理或清理旧终态残留。旧残留不会在升级时自动清理。
 
 ## 卸载与回退
 

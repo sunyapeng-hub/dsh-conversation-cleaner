@@ -27,15 +27,18 @@ export function makeHandler(ctx,cleaner,action) {
       let result;
       if(action==='plan')result=await cleaner.plan({sessionId:body.sessionId,mode:body.mode,includeDescendants:body.includeDescendants});
       else if(action==='commit')result=await cleaner.commit({planId:body.planId,confirmation:body.confirmation,acknowledged:body.acknowledged,permanent:body.permanent});
-      else if(action==='restore'){if(body.acknowledged!==true)throw new CleanerError('ACK_REQUIRED',400);result=await cleaner.restore(body.operationId);}
+      else if(action==='restore'){if(body.acknowledged!==true)throw new CleanerError('ACK_REQUIRED',400);result=await cleaner.restore(body.operationId,{ungrouped:body.ungrouped});}
+      else if(action==='purge'){if(body.acknowledged!==true)throw new CleanerError('ACK_REQUIRED',400);result=await cleaner.purge(body.operationId);}
+      else if(action==='compact'){if(body.acknowledged!==true)throw new CleanerError('ACK_REQUIRED',400);result=await cleaner.compact(body.operationId);}
       else if(action==='diagnostics'){
         if(typeof body.sessionId!=='string'||!/^(session-)?[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(body.sessionId))throw new CleanerError('INVALID_SESSION',400);
         const {version}=JSON.parse(await readFile(new URL('../../package.json',import.meta.url),'utf8'));
         result={version,coordinated:cleaner.adapter.coordinator?.supported===true,release:cleaner.adapter.releaseBridge.describe(body.sessionId)};
       }
-      else result={pending:await cleaner.pending()};
+      else if(action==='operations')result=await cleaner.operations();
+      else throw new CleanerError('INVALID_ACTION',404);
       send(200,{ok:true,...result});
-    }catch(error){send(error.status??500,{ok:false,code:error.code??'IO_ERROR',message:error.message});}
+    }catch(error){send(error.status??500,{ok:false,code:error.code??'IO_ERROR',message:error.message,...(error.operationId?{operationId:error.operationId}:{})});}
   };
 }
 export function apply(ctx,config={}) {
@@ -46,6 +49,6 @@ export function apply(ctx,config={}) {
   adapter.releaseBridge.install();
   coordinator.beforeMutation=()=>adapter.checkRegistry?.();
   installProvenance(ctx,adapter);
-  for(const action of ['plan','commit','restore','operations','diagnostics'])ctx.effect(()=>ctx.webServer.register({kind:'exact',path:prefix+action,handler:makeHandler(ctx,cleaner,action)}),'conversation-cleaner: '+action);
+  for(const action of ['plan','commit','restore','purge','compact','operations','diagnostics'])ctx.effect(()=>ctx.webServer.register({kind:'exact',path:prefix+action,handler:makeHandler(ctx,cleaner,action)}),'conversation-cleaner: '+action);
   ctx.logger?.info?.('conversation-cleaner: host routes ready; data root '+adapter.root+'; coordinated='+coordinator.supported+(coordinator.reason?' ('+coordinator.reason+')':''));
 }

@@ -1,0 +1,71 @@
+{
+  "host": "DSH NEXT",
+  "version": "1.0.0-rc.10",
+  "startedAt": "2026-11-04T03:15:46.955Z",
+  "checks": [
+    {
+      "name": "chat_only ignores unrelated revision; pins/archive/workspace restore; terminal has no payload",
+      "status": "PASS",
+      "operationId": "019bc55e-215d-4fed-9100-d61fa59d761d"
+    },
+    {
+      "name": "chat_and_outputs ignores unrelated revision; pins/archive/workspace restore; terminal has no payload",
+      "status": "PASS",
+      "operationId": "c0c4195e-d568-4df6-ba51-d6651bdd5440"
+    },
+    {
+      "name": "full ignores unrelated revision; pins/archive/workspace restore; terminal has no payload",
+      "status": "PASS",
+      "operationId": "835c42c1-a611-433b-aa59-b5762401b24d"
+    },
+    {
+      "name": "different cwd workspaces coexist and foreign membership remains",
+      "status": "PASS",
+      "selected": "session-b68178c0-9340-4e61-8a9c-9b6847902697",
+      "foreign": "session-d69bd5c7-44b9-4304-9f06-9341a1d548fb"
+    },
+    {
+      "name": "missing workspace restore fails before moving staged files",
+      "status": "PASS",
+      "operationId": "7e5246a7-1363-426b-801f-b13201803b40"
+    },
+    {
+      "name": "actual recovery UI explicitly restores missing-workspace session ungrouped",
+      "status": "PASS"
+    },
+    {
+      "name": "interrupted multi-file purge resumes; no staged payload; pending released",
+      "status": "PASS",
+      "operationId": "fd7cfd8b-a34c-4bb5-b034-ab98c7798d41"
+    },
+    {
+      "name": "another native conversation can delete and restore after resumed purge",
+      "status": "PASS"
+    },
+    {
+      "name": "actual history UI compacts own legacy RESTORED payload",
+      "status": "PASS",
+      "operationId": "835c42c1-a611-433b-aa59-b5762401b24d"
+    },
+    {
+      "name": "actual history UI compacts own legacy PERMANENT payload",
+      "status": "PASS",
+      "operationId": "fd7cfd8b-a34c-4bb5-b034-ab98c7798d41"
+    },
+    {
+      "name": "actual native read/edit preserves independently replaced user output",
+      "status": "PASS",
+      "operationId": "96e912af-9750-4364-be8f-2e86d8e687aa"
+    }
+  ],
+  "screenshots": [
+    "evidence/screenshots/rc10-next-missing-workspace.png",
+    "evidence/screenshots/rc10-next-ungrouped-restored.png",
+    "evidence/screenshots/rc10-next-legacy-restored.png",
+    "evidence/screenshots/rc10-next-legacy-permanent.png",
+    "evidence/screenshots/rc10-next-final.png"
+  ],
+  "dataRoot": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+  "status": "PASS",
+  "finishedAt": "2026-11-04T03:17:02.158Z"
+}

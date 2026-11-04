@@ -1,6 +1,6 @@
 {
   "name": "dsh-conversation-cleaner",
-  "version": "1.0.0-rc.9",
+  "version": "1.0.0-rc.10",
   "private": true,
   "description": "Confirmed conversation cleanup for DSH and DSH NEXT",
   "type": "module",
@@ -17,6 +17,7 @@
     "docs/INSTALL.md",
     "docs/RESTORE.md",
     "docs/RELEASE_NOTES.md",
+    "docs/RELEASE_NOTES_RC10.md",
     "evidence/compatibility.md",
     "evidence/acceptance-report.json",
     "evidence/review.md",

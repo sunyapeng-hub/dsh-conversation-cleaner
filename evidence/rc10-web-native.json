@@ -1,0 +1,71 @@
+{
+  "host": "DSH Web in Microsoft Edge",
+  "version": "1.0.0-rc.10",
+  "startedAt": "2026-11-04T03:15:27.484Z",
+  "checks": [
+    {
+      "name": "chat_only ignores unrelated revision; pins/archive/workspace restore; terminal has no payload",
+      "status": "PASS",
+      "operationId": "a5280391-ebec-4df2-b3e8-099b40c66094"
+    },
+    {
+      "name": "chat_and_outputs ignores unrelated revision; pins/archive/workspace restore; terminal has no payload",
+      "status": "PASS",
+      "operationId": "b00a9e7b-495b-4d8d-abe3-eae9135d3121"
+    },
+    {
+      "name": "full ignores unrelated revision; pins/archive/workspace restore; terminal has no payload",
+      "status": "PASS",
+      "operationId": "e2389e5a-ee3a-4017-8364-cf02722d2e58"
+    },
+    {
+      "name": "different cwd workspaces coexist and foreign membership remains",
+      "status": "PASS",
+      "selected": "session-6205ff34-06db-4d07-a6ed-5dc2428ad347",
+      "foreign": "session-1ddc06d9-df97-4848-ac61-0d4ebd3988f4"
+    },
+    {
+      "name": "missing workspace restore fails before moving staged files",
+      "status": "PASS",
+      "operationId": "29905db4-9259-41c1-9dc7-b65412ec0d18"
+    },
+    {
+      "name": "actual recovery UI explicitly restores missing-workspace session ungrouped",
+      "status": "PASS"
+    },
+    {
+      "name": "interrupted multi-file purge resumes; no staged payload; pending released",
+      "status": "PASS",
+      "operationId": "935702f5-bae2-44a2-bd93-2c46a005365b"
+    },
+    {
+      "name": "another native conversation can delete and restore after resumed purge",
+      "status": "PASS"
+    },
+    {
+      "name": "actual history UI compacts own legacy RESTORED payload",
+      "status": "PASS",
+      "operationId": "e2389e5a-ee3a-4017-8364-cf02722d2e58"
+    },
+    {
+      "name": "actual history UI compacts own legacy PERMANENT payload",
+      "status": "PASS",
+      "operationId": "935702f5-bae2-44a2-bd93-2c46a005365b"
+    },
+    {
+      "name": "actual native read/edit preserves independently replaced user output",
+      "status": "PASS",
+      "operationId": "74ca10c9-035b-4f1e-bc08-85354f7f30b9"
+    }
+  ],
+  "screenshots": [
+    "evidence/screenshots/rc10-web-missing-workspace.png",
+    "evidence/screenshots/rc10-web-ungrouped-restored.png",
+    "evidence/screenshots/rc10-web-legacy-restored.png",
+    "evidence/screenshots/rc10-web-legacy-permanent.png",
+    "evidence/screenshots/rc10-web-final.png"
+  ],
+  "dataRoot": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+  "status": "PASS",
+  "finishedAt": "2026-11-04T03:16:10.006Z"
+}
