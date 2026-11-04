@@ -1,6 +1,6 @@
 {
   "name": "dsh-conversation-cleaner",
-  "version": "1.0.0-rc.10",
+  "version": "1.0.0-rc.11",
   "private": true,
   "description": "Confirmed conversation cleanup for DSH and DSH NEXT",
   "type": "module",
@@ -23,7 +23,8 @@
     "evidence/review.md",
     "tools/offline-unlock.mjs",
     "LICENSE",
-    "NOTICE"
+    "NOTICE",
+    "docs/RELEASE_NOTES_RC11.md"
   ],
   "engines": {
     "node": ">=22.19"

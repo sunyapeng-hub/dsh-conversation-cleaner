@@ -30,6 +30,10 @@ function harness(handler) {
 const plan=(id='plan-1',expiresAt=20000)=>({ok:true,planId:id,confirmation:'confirm-'+id,expiresAt,blockers:[],children:[],counts:{files:1,bytes:3},session:{cwd:'fixture',logBytes:3},candidates:[],preserved:[]});
 const ok={ok:true};
 
+test('retained-resource preview shows its actual scope before confirmation and enables deletion',async()=>{
+ const h=harness(()=>({...plan(),resourcePolicy:'preserve_unverified',warnings:['UNVERIFIED_RESOURCES_PRESERVED'],session:{cwd:'fixture',logBytes:3,attachmentCount:null},counts:{files:1,bytes:3,outputs:0},preserved:[{path:'fixture',reason:'UNVERIFIED_RESOURCES_PRESERVED'}]}));h.open();let tree=await h.settle();h.find(tree,n=>n.type==='input'&&n.props.value==='full').props.onChange();h.body();tree=await h.settle();assert.equal(h.button(h.footer(tree),'删除').props.disabled,false);const notice=h.find(tree,n=>n.props.role==='note');assert.ok(notice);assert.match(h.textOf(notice),/本次仅删除对话，文件和附件保留/);assert.equal(h.find(notice,n=>n.type==='details'),null);assert.doesNotMatch(h.textOf(tree),/null/);assert.match(h.textOf(tree),/unknown/);h.unmount();
+});
+
 test('plugin details opens recovery without any session and excludes other packages',async()=>{
   const h=harness(()=>({ok:true,pending:[],operations:[]}));assert.equal(h.pluginAction('another-plugin'),null);h.openFromPlugin();const tree=await h.settle();assert.equal(h.calls[0].action,'operations');assert.ok(h.button(h.footer(tree),'关闭'));h.unmount();
 });

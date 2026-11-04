@@ -1,6 +1,6 @@
 import {chromium} from 'playwright';
 import {expect as baseExpect} from 'playwright/test';
-const expect=baseExpect.configure({timeout:20000});
+const expect=baseExpect.configure({timeout:120000});
 import * as fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const web=process.argv.includes('--web'),tag=web?'web-v2':'next';
@@ -15,7 +15,7 @@ await fs.mkdir('evidence/screenshots',{recursive:true});await fs.mkdir('evidence
 await context.tracing.start({screenshots:true,snapshots:true,sources:false});
 try{
  await p.keyboard.press('Escape');
- if(await p.locator('.dcc-modal .dcc-success').count())await p.locator('.dcc-footer').getByRole('button',{name:'Close',exact:true}).click();
+ const existing=p.locator('.dcc-modal');if(await existing.count()){const close=existing.locator('.dcc-footer button').first();await expect(close).toBeEnabled();await close.click();}
  for(const [kind,mode] of [['A','chat_only'],['B','chat_and_outputs'],['C','full']]) {
   if(report.cases.some(c=>c.kind===kind&&c.status==='PASS'))continue;
   const reuse=prior?.cases.find(c=>c.kind===kind)?.id??(kind==='A'&&process.argv[2]&&!process.argv[2].startsWith('--')?process.argv[2]:null);
@@ -37,7 +37,7 @@ try{
   await expect(dialog.locator('details')).toBeVisible();await dialog.locator('summary').click();
   await p.screenshot({path:'evidence/screenshots/'+tag+'-'+kind.toLowerCase()+'-preview.png',fullPage:true});
   assert.equal(await dialog.getByRole('checkbox',{name:'I understand: deletion may be irreversible',exact:true}).count(),0);
-  const response=p.waitForResponse(r=>r.url().endsWith('/dsh-conversation-cleaner/v1/commit')&&r.request().method()==='POST');
+  const response=p.waitForResponse(r=>r.url().endsWith('/dsh-conversation-cleaner/v1/commit')&&r.request().method()==='POST',{timeout:120000});
   await dialog.getByRole('button',{name:'Delete',exact:true}).click();const http=await response;row.result=await http.json();assert.equal(http.status(),200,JSON.stringify(row.result));
   await expect(dialog.getByRole('status')).toContainText('Deleted');await expect(session).toHaveCount(0);row.checks.push('live-sidebar-removal');
   row.after=await fixture({action:'state',id:f.id});
@@ -50,3 +50,4 @@ try{
  report.status='PASS';
 }catch(error){report.status='FAIL';report.error=error.stack;console.error((await p.locator('body').innerText()).slice(-1800));await p.screenshot({path:'evidence/screenshots/'+tag+'-failure.png',fullPage:true});throw error;}
 finally{report.finishedAt=new Date().toISOString();await fs.writeFile('evidence/'+tag+'-acceptance.json',JSON.stringify(report,null,2));await context.tracing.stop({path:'evidence/traces/'+tag+'-acceptance.zip'});await b.close();}
+

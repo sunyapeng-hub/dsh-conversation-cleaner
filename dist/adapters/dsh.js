@@ -17,6 +17,8 @@ async function optionalJson(file) {try{return JSON.parse(await fs.readFile(file,
 export function fileIdentity(s) {return [s.dev,s.ino,s.size,s.mtimeMs,s.ctimeMs];}
 const stable=value=>JSON.stringify(value,(_key,item)=>item&&typeof item==='object'&&!Array.isArray(item)?Object.fromEntries(Object.keys(item).sort().map(key=>[key,item[key]])):item);
 const comparable=file=>process.platform==='win32'?path.resolve(file).toLowerCase():path.resolve(file);
+const RESOURCE_UNCERTAINTY=new Set(['PROVENANCE_UNKNOWN','OTHER_SESSION_PROVENANCE_UNKNOWN','OUTPUT_CHANGED','CORPUS_REFERENCE_UNREADABLE','QUARANTINE_REFERENCE_UNKNOWN','STAGED_UPLOADS_UNSUPPORTED']);
+const resourceUncertain=code=>RESOURCE_UNCERTAINTY.has(code)||code?.startsWith('ATTACHMENT_');
 function completeProof(events,proof) {
   const calls=events.filter(e=>e.type==='tool/call');
   if(events.some(e=>e.type.startsWith('tool/ptc-')))return false;
@@ -119,13 +121,31 @@ export class DshAdapter {
     if(domain){const table=domain.table('sessions');for(const id of ids){const value=table.get(id);if(value!==undefined)domains.push({domain:'session_projcache',table:'sessions',id,value});}}
     return {workspace,archived:ids.filter(id=>this.registry.archivedSessionIds.includes(id)),pinned:ids.filter(id=>this.registry.pinnedSessionIds.includes(id)),domains};
   }
-  async inspect(sessionId,{mode='chat_only',includeDescendants=false,locked=false}={}) {
+  async inspect(sessionId,options={}) {
+    if(!options.mode||options.mode==='chat_only')return this.inspectResources(sessionId,options);
+    let info,reasons;
+    try{
+      info=await this.inspectResources(sessionId,options);
+      reasons=info.blockers.filter(resourceUncertain);
+      if(!reasons.length)return info;
+    }catch(error){if(!resourceUncertain(error.code))throw error;reasons=[error.code];}
+    // Missing resource evidence never authorizes guessed file deletion. Build
+    // the ordinary selected-log plan and bind the retained scope into commit.
+    const safe=await this.inspectResources(sessionId,{...options,mode:'chat_only'});
+    const blockers=[...safe.blockers,...(info?.blockers.filter(code=>!resourceUncertain(code))??[])];
+    if(!this.coordinator?.supported)blockers.push('ROOT_COORDINATION_REQUIRED');
+    const warning='UNVERIFIED_RESOURCES_PRESERVED';
+    return {...safe,resourcePolicy:'preserve_unverified',warnings:[warning],
+      preserved:[...(info?.preserved??[]),...(info?.candidates.filter(c=>c.kind!=='session').map(c=>({path:c.path,reason:warning}))??[]),...(safe.session.cwd?[{path:safe.session.cwd,reason:warning}]:[])],
+      blockers:[...new Set(blockers)],metadata:{...safe.metadata,resourcePolicy:{kind:'preserve_unverified',reasons:[...new Set(reasons)].sort()}}};
+  }
+  async inspectResources(sessionId,{mode='chat_only',includeDescendants=false,locked=false}={}) {
     const snapshot=await this.persistence.stat(sessionId);
     if(!snapshot)throw new CleanerError('SESSION_NOT_FOUND',404);
     const all=await this.corpus();
     const headers=all.map(s=>s.header),children=descendants(headers,sessionId);
     const ids=[snapshot.header.id,...(includeDescendants?children.map(h=>h.id):[])];
-    const candidates=[],preserved=[],blockers=[],rows=[];let otherProofIncomplete=false;
+    const candidates=[],preserved=[],blockers=[],rows=[];
     const coordinated=this.coordinator?.supported===true;
     if(!coordinated&&!this.exclusiveDataRoot)blockers.push('DATA_ROOT_EXCLUSIVITY_REQUIRED');
     if(coordinated){try{await this.checkRegistry();}catch(e){blockers.push(e.code??'REGISTRY_BACKEND_UNSUPPORTED');}}
@@ -135,14 +155,15 @@ export class DshAdapter {
     const readRow=async stored=>{
       const events=await this.events(stored.header.id);
       decodedBytes+=Buffer.byteLength(JSON.stringify(events));if(decodedBytes>MAX_REFERENCE_BYTES)throw new CleanerError('SCAN_LIMIT',422);
-      const proof=mode==='chat_only'?undefined:await optionalJson(this.recordPath(stored.header.id));
+      let proof;
+      if(mode!=='chat_only')try{proof=await optionalJson(this.recordPath(stored.header.id));}catch(error){if(error instanceof SyntaxError)throw new CleanerError('PROVENANCE_UNKNOWN');throw error;}
       const row={...stored,events,proof};rows.push(row);return row;
     };
     for(const id of ids) {
       const stored=id===snapshot.header.id?snapshot:all.find(row=>row.header.id===id)??await this.persistence.stat(id);
       if(!stored)throw new CleanerError('SESSION_NOT_FOUND',404);
       const row=await readRow(stored);
-      if(mode!=='chat_only'&&!completeProof(row.events,row.proof))blockers.push('PROVENANCE_UNKNOWN');
+      if(mode!=='chat_only'&&!completeProof(row.events,row.proof))throw new CleanerError('PROVENANCE_UNKNOWN');
     }
     const targets=rows.slice();
     const counted=mode==='full'?await planAttachments(this.ctx,{root:this.root,targets,survivors:[],targetIds:ids,countOnly:true}):undefined;
@@ -152,8 +173,14 @@ export class DshAdapter {
     if(mode!=='chat_only'&&!coordinated)blockers.push('ROOT_COORDINATION_REQUIRED');
     if(requiresReferenceLease) {
       await this.assertCorpusComplete(all);
-      for(const stored of all.filter(row=>!ids.includes(row.header.id)))await readRow(stored);
-      otherProofIncomplete=rows.some(row=>!ids.includes(row.header.id)&&!completeProof(row.events,row.proof));
+      for(const stored of all.filter(row=>!ids.includes(row.header.id))){
+        try{await readRow(stored);}catch(error){
+          if(['SessionPersistenceCorruptionError','SessionFormatUnsupportedError'].includes(error.name))throw new CleanerError('CORPUS_REFERENCE_UNREADABLE');
+          throw error;
+        }
+      }
+      const otherProofIncomplete=rows.some(row=>!ids.includes(row.header.id)&&!completeProof(row.events,row.proof));
+      if(otherProofIncomplete)throw new CleanerError('OTHER_SESSION_PROVENANCE_UNKNOWN');
       recoveryRows=await this.quarantinedReferences();
     }
     const survivors=rows.filter(row=>!ids.includes(row.header.id)).concat(recoveryRows);
@@ -188,7 +215,6 @@ export class DshAdapter {
       const attachmentPlan=counted.attachmentCount===0?counted:await planAttachments(this.ctx,{root:this.root,targets,survivors:survivors.concat(this.stagedReferences()),targetIds:ids});
       candidates.push(...attachmentPlan.candidates);preserved.push(...attachmentPlan.preserved);blockers.push(...attachmentPlan.blockers);indexEdits=attachmentPlan.indexEdits;attachmentCount=attachmentPlan.attachmentCount;
     }
-    if(otherProofIncomplete&&(hasOwnedOutputs||(mode==='full'&&attachmentCount!==0)))blockers.push('OTHER_SESSION_PROVENANCE_UNKNOWN');
     const controller=this.ctx.get('sessionController');
     const summary=controller?.list?(await controller.list({},new AbortController().signal)).items.find(s=>s.sessionId===sessionId):undefined;
     const corpus=(requiresReferenceLease?all:targets).map(r=>({id:r.header.id,revision:r.revision,sizeBytes:r.sizeBytes,header:r.header}));
@@ -248,6 +274,7 @@ export class DshAdapter {
     for(const id of metadata.archived)if(!this.registry.archivedSessionIds.includes(id))await this.registry.archiveSession(id);
   }
   async refreshProvenance(journal) {
+    if(!journal.units.some(unit=>unit.kind==='output'))return;
     // Renaming a proven output changes ctime. Preserve its original ownership
     // after recovery only when inode, size and mtime still match the journal.
     for(const id of journal.ids){const file=this.recordPath(id),proof=await optionalJson(file);if(!proof)continue;let changed=false;

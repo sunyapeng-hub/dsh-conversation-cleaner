@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0-rc.11",
+  "host": "next",
+  "startedAt": "2026-11-04T03:47:01.211Z",
+  "checks": [
+    {
+      "name": "chat_and_outputs actual UI delete and restore succeeds with incomplete historical proof; all file/attachment bytes retained",
+      "status": "PASS",
+      "sessionId": "session-db9cf20d-4416-40bf-895f-f32d2c9810c8",
+      "foreign": "session-32f23595-3e68-4893-bcc0-fcf43a68c46a"
+    },
+    {
+      "name": "full actual UI permanent delete succeeds with incomplete historical proof; all file/attachment bytes retained",
+      "status": "PASS",
+      "sessionId": "session-4ba2c1b9-4880-4876-b4dc-81dda99bf49b",
+      "foreign": "session-df7b218d-0e14-4aab-9362-d2cbe92e7b8d"
+    },
+    {
+      "name": "No interrupted transactions remain",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": [
+    "evidence/screenshots/rc11-next-outputs-recoverable.png",
+    "evidence/screenshots/rc11-next-full-permanent.png"
+  ],
+  "dataRoot": "F:\\Projects\\PLUS Project\\.test-data\\next-normal",
+  "status": "PASS",
+  "finishedAt": "2026-11-04T03:47:25.589Z"
+}

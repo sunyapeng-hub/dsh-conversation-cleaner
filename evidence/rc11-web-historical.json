@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0-rc.11",
+  "host": "web",
+  "startedAt": "2026-11-04T03:47:04.934Z",
+  "checks": [
+    {
+      "name": "chat_and_outputs actual UI delete and restore succeeds with incomplete historical proof; all file/attachment bytes retained",
+      "status": "PASS",
+      "sessionId": "session-c8f76851-96f2-471d-ae90-923e865365f2",
+      "foreign": "session-fd200b66-acd8-4688-bfa9-20dabc41e8b0"
+    },
+    {
+      "name": "full actual UI permanent delete succeeds with incomplete historical proof; all file/attachment bytes retained",
+      "status": "PASS",
+      "sessionId": "session-c3d1a58c-b294-48ee-8f9d-b83b6638012b",
+      "foreign": "session-dc11e6ac-c6b2-45b8-9fbd-d6dfa9e41a99"
+    },
+    {
+      "name": "No interrupted transactions remain",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": [
+    "evidence/screenshots/rc11-web-outputs-recoverable.png",
+    "evidence/screenshots/rc11-web-full-permanent.png"
+  ],
+  "dataRoot": "F:\\Projects\\PLUS Project\\.test-data\\web-v2",
+  "status": "PASS",
+  "finishedAt": "2026-11-04T03:47:19.917Z"
+}

@@ -1,13 +1,9 @@
-# rc10 independent review and repair closure
+# rc11 repair review
 
-Six RC9 audit defects are closed in runtime code and red/green regressions. No new development backup or checksum workflow was introduced.
+The historical-session regression first failed, then passed after a retained-resource plan was added. No new development backup or checksum process was introduced.
 
-- Provenance continuity is checked before native read/write/edit; independent replacement or external edit loses ownership. Actual native edit schema was verified against installed first-party sources.
-- Terminal journals use a minimal whitelist; explicit legacy cleanup never touches restored live files. Active recovery retains necessary payload.
-- A/B0/C0 does not bind unrelated event revisions; actual resources still require complete corpus references and cold leases.
-- Preview refresh and submit expiry guards preserve the single action confirmation.
-- Restore preflight precedes moves; failure states remain retryable; ungrouped fallback requires an explicit user action.
-- Permanent intent can resume precise remaining staged files, including interrupted hardlink groups; replaced targets and external aliases refuse.
-- Direct recovery is available after deletion, in session menus and in this plugin's own details even with no session rows.
+An independent read-only review found two related omissions: malformed provenance could break a log-only restore, and listed foreign corrupt-event logs bypassed the resource uncertainty path. Both received red/green regressions and fixes. The reviewer confirmed the final changes with two independent passing regressions and found no other blocking issue with locking or scope metadata.
 
-An independent read-only reviewer ran 53 targeted tests and three extra hardlink adversarial cases with no blockers. Final native-edit and plugin-details changes were independently checked against real host contracts; 23 targeted tests passed. Final full suite: 129/130 passed, 1 privilege skip, zero failures. Both real hosts have fresh A/B/C restart/restore and 11 native repair checks; real NEXT mocked-API UI checks are separate. See acceptance-report.json for evidence provenance and remaining limits.
+Pure log restoration now skips provenance refresh entirely. Only foreign SessionPersistenceCorruptionError and SessionFormatUnsupportedError are converted to resource uncertainty; selected corruption, lock and unsafe-path failures are not swallowed. Unknown resources remain at their original paths. Preview metadata prevents retained scope from expanding at commit.
+
+Final full automatic suite: 136/137 passed, 1 privilege skip, zero failures. Real NEXT/Web historical UI ordinary/restore/permanent cases and normal A/B/C restart/restore are fresh rc11 evidence. Other previous matrices keep their original version and time. See acceptance-report.json for exact scope.

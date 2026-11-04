@@ -20,13 +20,49 @@ async function fixture(t){
 }
 const call=(callId,name='write',argumentsValue={})=>({type:'tool/call',data:{callId,name,arguments:JSON.stringify(argumentsValue)}});
 async function ownedOutput(f){const output=path.join(f.rows[0].header.cwd,'generated.txt');await fs.writeFile(output,'created');await f.proof(id,{complete:true,unknown:false,seenCallIds:[],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});return output;}
+function retained(plan,reason){assert.deepEqual(plan.blockers,[]);assert.equal(plan.resourcePolicy,'preserve_unverified');assert.deepEqual(plan.warnings,['UNVERIFIED_RESOURCES_PRESERVED']);if(plan.metadata){assert.ok(plan.metadata.resourcePolicy.reasons.includes(reason));assert.equal(plan.metadata.requiresReferenceLease,false);}assert.ok(plan.candidates.every(c=>c.kind==='session'));assert.deepEqual(plan.indexEdits??[],[]);}
+
+test('historical tool sessions commit B/C including permanent deletion while preserving files, attachments and foreign logs',async t=>{
+ const {Cleaner}=await import('../src/host/cleaner.js');
+ const {Context}=await import('../research/installed-next/node_modules/@deepseek-ai/cordis/lib/index.js');
+ const {LocalAttachmentStore}=await import('../research/installed-next/node_modules/@deepseek-ai/dsh-attachment-local/lib/index.js');
+ for(const mode of ['chat_and_outputs','full'])for(const permanent of [false,true]){
+  const f=await fixture(t),output=await ownedOutput(f);await f.add(other);f.coordinator.run=fn=>fn();f.services.workspaceRegistry.unpinSession=async()=>{};f.services.workspaceRegistry.unarchiveSession=async()=>{};
+  const store=new LocalAttachmentStore(new Context(),{dshHome:f.root});f.services.attachments=store;const ref=await store.saveFile({data:Buffer.from('Preserve historical attachment'),name:'historical.txt'}),attachment=store.fileHostPath(ref);
+  f.events.set(id,[call('old-shell','bash'),{type:'user/message',data:{content:[{type:'file',attachment:ref}]}}]);
+  const stat=f.services.sessionPersistence.stat;f.services.sessionPersistence.stat=async sid=>{const row=await stat(sid);if(!row)return;try{await fs.stat(f.services.sessionPersistence.locate(row.header).path);return row;}catch(e){if(e.code!=='ENOENT')throw e;}};
+  const cleaner=new Cleaner(f.adapter),plan=await cleaner.plan({sessionId:id,mode});retained(plan,'PROVENANCE_UNKNOWN');assert.equal(plan.mode,mode);assert.equal(plan.counts.outputs,0);
+  const result=await cleaner.commit({planId:plan.planId,confirmation:plan.confirmation,acknowledged:true,permanent});assert.equal(result.state,permanent?'PERMANENT':'VERIFIED');assert.equal(await fs.readFile(output,'utf8'),'created');assert.equal(await fs.readFile(attachment,'utf8'),'Preserve historical attachment');assert.equal(await fs.readFile(f.services.sessionPersistence.locate(f.rows[1].header).path,'utf8'),'log\n');assert.deepEqual(f.writes,[id]);
+  if(!permanent){await cleaner.restore(result.operationId);assert.ok(await f.services.sessionPersistence.stat(id));}
+ }
+});
+
+test('resource preservation does not bypass selected ownership or stale registry checks',async t=>{
+ const f=await fixture(t);f.events.set(id,[call('old-shell','bash')]);f.live.set(id,{});const busy=await f.adapter.inspect(id,{mode:'full'});assert.ok(busy.blockers.includes('SESSION_BUSY'));assert.equal(busy.resourcePolicy,'preserve_unverified');f.live.clear();
+ const doc=JSON.parse(await fs.readFile(path.join(f.storages,'workspace.json'),'utf8'));doc.global.pinnedSessionIds=[other];await fs.writeFile(path.join(f.storages,'workspace.json'),JSON.stringify(doc));const stale=await f.adapter.inspect(id,{mode:'full'});assert.ok(stale.blockers.includes('REGISTRY_EXTERNAL_CHANGE_RESTART_REQUIRED'));
+});
+
+test('malformed provenance retains resources rather than preventing conversation deletion',async t=>{
+ const f=await fixture(t);f.events.set(id,[call('old-write')]);await f.proof(id,{});await fs.writeFile(f.adapter.recordPath(id),'broken json');retained(await f.adapter.inspect(id,{mode:'full'}),'PROVENANCE_UNKNOWN');
+});
+
+test('restoring a retained-resource deletion never reads or rewrites malformed provenance',async t=>{
+ const {Cleaner}=await import('../src/host/cleaner.js');const f=await fixture(t);f.coordinator.run=fn=>fn();f.services.workspaceRegistry.unpinSession=async()=>{};f.services.workspaceRegistry.unarchiveSession=async()=>{};f.events.set(id,[call('historic')]);await f.proof(id,{});await fs.writeFile(f.adapter.recordPath(id),'broken historical proof');
+ const stat=f.services.sessionPersistence.stat;f.services.sessionPersistence.stat=async sid=>{const row=await stat(sid);if(!row)return;try{await fs.stat(f.services.sessionPersistence.locate(row.header).path);return row;}catch(e){if(e.code!=='ENOENT')throw e;}};
+ const cleaner=new Cleaner(f.adapter),p=await cleaner.plan({sessionId:id,mode:'full'}),result=await cleaner.commit({planId:p.planId,confirmation:p.confirmation,acknowledged:true});await cleaner.restore(result.operationId);assert.ok(await f.services.sessionPersistence.stat(id));assert.equal(await fs.readFile(f.adapter.recordPath(id),'utf8'),'broken historical proof');assert.deepEqual(await cleaner.pending(),[]);
+});
+
+test('a retained-resource preview cannot silently broaden to deleting a newly verified output',async t=>{
+ const {Cleaner}=await import('../src/host/cleaner.js');const f=await fixture(t);f.coordinator.run=fn=>fn();f.events.set(id,[call('created')]);const cleaner=new Cleaner(f.adapter),p=await cleaner.plan({sessionId:id,mode:'chat_and_outputs'});retained(p,'PROVENANCE_UNKNOWN');
+ const output=await ownedOutput(f);await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});await assert.rejects(cleaner.commit({planId:p.planId,confirmation:p.confirmation,acknowledged:true}),e=>e.code==='PLAN_CHANGED');assert.equal(await fs.readFile(output,'utf8'),'created');assert.ok(await f.services.sessionPersistence.stat(id));
+});
 test('coordinated plain historical sessions support B and C and expose the current public title',async t=>{
  const f=await fixture(t);await f.add(other);const b=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.deepEqual(b.blockers,[]);assert.equal(b.session.title,'Authoritative latest title');assert.equal(f.reads.get(id),1);assert.equal(f.reads.has(other),false);
  const c=await f.adapter.inspect(id,{mode:'full'});assert.deepEqual(c.blockers,[]);assert.equal(c.session.attachmentCount,0);assert.equal(c.candidates.length,1);
 });
-test('untracked target operations and full cleanup with actual outputs still block unknown ownership',async t=>{
- const f=await fixture(t);f.events.set(id,[call('target-call')]);const b=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.ok(b.blockers.includes('PROVENANCE_UNKNOWN'));
- f.events.set(id,[call('created')]);const output=path.join(f.rows[0].header.cwd,'generated.txt');await fs.writeFile(output,'created');await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});await f.add(other,{toolEvents:[call('unrecorded','bash')]});const survivor=await f.adapter.inspect(id,{mode:'full'});assert.ok(survivor.blockers.includes('OTHER_SESSION_PROVENANCE_UNKNOWN'));
+test('untracked target operations and unknown survivor ownership preserve resources without blocking selected deletion',async t=>{
+ const f=await fixture(t);f.events.set(id,[call('target-call')]);const b=await f.adapter.inspect(id,{mode:'chat_and_outputs'});retained(b,'PROVENANCE_UNKNOWN');
+ f.events.set(id,[call('created')]);const output=path.join(f.rows[0].header.cwd,'generated.txt');await fs.writeFile(output,'created');await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});await f.add(other,{toolEvents:[call('unrecorded','bash')]});const survivor=await f.adapter.inspect(id,{mode:'full'});retained(survivor,'OTHER_SESSION_PROVENANCE_UNKNOWN');assert.equal(await fs.readFile(output,'utf8'),'created');
 });
 test('full cleanup with zero outputs and zero attachments is only selected-session cleanup',async t=>{
  const f=await fixture(t);await f.add(other,{toolEvents:[call('legacy','bash')]});f.live.set(other,{});
@@ -38,15 +74,15 @@ test('B with no owned outputs ignores unrelated ownership gaps and leases only t
  const plan=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.deepEqual(plan.blockers,[]);assert.equal(plan.candidates.filter(c=>c.kind==='output').length,0);
  const release=await f.adapter.acquire([id],{...plan,mode:'chat_and_outputs'});await release();assert.deepEqual(f.writes,[id]);assert.ok(f.live.has(other));
 });
-test('B with actual owned outputs still requires complete survivor evidence',async t=>{
+test('B with actual outputs preserves them when survivor evidence is incomplete',async t=>{
  const f=await fixture(t),output=path.join(f.rows[0].header.cwd,'generated.txt');await fs.writeFile(output,'created');f.events.set(id,[call('created')]);await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});
- await f.add(other,{toolEvents:[call('legacy','bash')]});const plan=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.ok(plan.blockers.includes('OTHER_SESSION_PROVENANCE_UNKNOWN'));
+ await f.add(other,{toolEvents:[call('legacy','bash')]});const plan=await f.adapter.inspect(id,{mode:'chat_and_outputs'});retained(plan,'OTHER_SESSION_PROVENANCE_UNKNOWN');
 });
 test('complete call ownership in a different cwd preserves structural cross-session references',async t=>{
  const f=await fixture(t);const output=path.join(f.rows[0].header.cwd,'generated.txt');await fs.writeFile(output,'created');f.events.set(id,[call('created')]);await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});
  await f.add(other,{toolEvents:[call('read-other','read',{file_path:output})]});await f.proof(other,{complete:true,unknown:false,seenCallIds:['read-other'],references:[],outputs:[]});
  const shared=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.deepEqual(shared.blockers,[]);assert.ok(shared.preserved.some(p=>p.path===output&&p.reason==='SHARED_OUTPUT'));assert.ok(!shared.candidates.some(c=>c.path===output));
- f.events.set(other,[call('different-call','read')]);const stale=await f.adapter.inspect(id,{mode:'chat_and_outputs'});assert.ok(stale.blockers.includes('OTHER_SESSION_PROVENANCE_UNKNOWN'));
+ f.events.set(other,[call('different-call','read')]);const stale=await f.adapter.inspect(id,{mode:'chat_and_outputs'});retained(stale,'OTHER_SESSION_PROVENANCE_UNKNOWN');
 });
 test('unshared proven generated output is planned while Git tracked output is preserved',async t=>{
  const f=await fixture(t);const cwd=f.rows[0].header.cwd,output=path.join(cwd,'generated.txt');await fs.writeFile(output,'created');f.events.set(id,[call('created')]);await f.proof(id,{complete:true,unknown:false,seenCallIds:['created'],references:[output],outputs:[{path:output,identity:fileIdentity(await fs.stat(output))}]});
@@ -76,7 +112,7 @@ test('staged unsent upload receipts and recoverable quarantined references retai
  const pending=await f.adapter.inspect(id,{mode:'full'});assert.deepEqual(pending.blockers,[]);assert.equal(pending.candidates.filter(c=>c.kind==='attachment').length,0);
  stagedFiles.delete(agent.session);const op=path.join(f.root,'.conversation-cleaner','operations','11111111-1111-4111-8111-111111111111');await fs.mkdir(op,{recursive:true});await fs.writeFile(path.join(op,'journal.json'),JSON.stringify({state:'VERIFIED',metadata:{recoveryReferences:[{id:other,cwd:f.root,references:[ref.attachmentId]}]}}));
  const quarantined=await f.adapter.inspect(id,{mode:'full'});assert.deepEqual(quarantined.blockers,[]);assert.equal(quarantined.candidates.filter(c=>c.kind==='attachment').length,0);
- await fs.writeFile(path.join(op,'journal.json'),JSON.stringify({state:'VERIFIED',metadata:{}}));await assert.rejects(f.adapter.inspect(id,{mode:'full'}),e=>e.code==='QUARANTINE_REFERENCE_UNKNOWN');
+ await fs.writeFile(path.join(op,'journal.json'),JSON.stringify({state:'VERIFIED',metadata:{}}));retained(await f.adapter.inspect(id,{mode:'full'}),'QUARANTINE_REFERENCE_UNKNOWN');
 });
 test('registry comparison detects stale foreign globals and records before any overwrite',async t=>{
  const f=await fixture(t);assert.equal(typeof f.adapter.checkRegistry,'function');await f.adapter.checkRegistry();const file=path.join(f.storages,'workspace.json');const disk=JSON.parse(await fs.readFile(file,'utf8'));disk.global.pinnedSessionIds=[other];await fs.writeFile(file,JSON.stringify(disk));await assert.rejects(f.adapter.checkRegistry(),e=>e.code==='REGISTRY_EXTERNAL_CHANGE_RESTART_REQUIRED');
@@ -87,9 +123,18 @@ test('coordinated cleanup blocks unknown registry backend and snapshots only sel
  f.services.storage.backend.get=()=>undefined;const blocked=await f.adapter.inspect(id);assert.ok(blocked.blockers.includes('REGISTRY_BACKEND_UNSUPPORTED'));
 });
 
-test('deep modes with owned outputs refuse an unreadable physical log omitted by the persistence list',async t=>{
+test('deep modes retain outputs and allow conversation deletion when a foreign physical log is unreadable',async t=>{
  const f=await fixture(t);await ownedOutput(f);const unreadable=path.join(f.services.sessionPersistence.root,'project','unreadable-session');await fs.mkdir(unreadable,{recursive:true});await fs.writeFile(path.join(unreadable,'session.v4.jsonl.zstd'),'invalid compressed data');
- for(const mode of ['chat_and_outputs','full'])await assert.rejects(f.adapter.inspect(id,{mode}),e=>e.code==='CORPUS_REFERENCE_UNREADABLE');const a=await f.adapter.inspect(id,{mode:'chat_only'});assert.deepEqual(a.blockers,[]);
+ for(const mode of ['chat_and_outputs','full'])retained(await f.adapter.inspect(id,{mode}),'CORPUS_REFERENCE_UNREADABLE');const a=await f.adapter.inspect(id,{mode:'chat_only'});assert.deepEqual(a.blockers,[]);
+});
+
+test('listed foreign logs with host corruption or unsupported events preserve resources; selected corruption still refuses',async t=>{
+ const {SessionPersistenceCorruptionError,SessionFormatUnsupportedError}=await import('../research/installed-next/node_modules/@deepseek-ai/dsh-session-persistence/lib/index.js');
+ for(const ErrorType of [SessionPersistenceCorruptionError,SessionFormatUnsupportedError]){
+  const f=await fixture(t);await ownedOutput(f);await f.add(other);let broken=other;const open=f.services.sessionPersistence.open;
+  f.services.sessionPersistence.open=async(sid,access)=>{const handle=await open(sid,access);if(sid===broken)return {...handle,read:async()=>{throw new ErrorType('synthetic corrupt events');}};return handle;};
+  retained(await f.adapter.inspect(id,{mode:'full'}),'CORPUS_REFERENCE_UNREADABLE');broken=id;await assert.rejects(f.adapter.inspect(id,{mode:'full'}),e=>e instanceof ErrorType);
+ }
 });
 
 test('ordinary reference scans support a corpus larger than 32 MiB without dropping survivors',async t=>{

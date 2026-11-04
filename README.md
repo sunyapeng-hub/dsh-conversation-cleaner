@@ -1,6 +1,6 @@
 # DSH Conversation Cleaner
 
-`1.0.0-rc.10`：完成六项审计缺陷修复，增加直接恢复和删除记录管理。预览在过期前自动刷新，提交时再次核对有效期。删除成功后可直接点击「恢复」；即使会话列表已经清空，也能从「插件 → 本包详情 → 删除记录与恢复」进入管理。
+`1.0.0-rc.11`：历史会话缺少文件归属记录时也能删除。B/C 模式在依据不足时明确提示「本次仅删除对话，文件和附件保留」，不再阻止整个操作。不会根据 Shell/PowerShell 输出猜测文件归属；有完整依据的资源清理继续正常执行。
 
 | 范围 | 实际行为 |
 |---|---|
@@ -10,6 +10,8 @@
 
 侧栏会话行 `···` → **删除对话**。选择范围后点击删除即确认，不再输入文字或另勾风险确认。路径、统计和清单收进详情；永久删除直接在选项和按钮上标识。默认使用可恢复隔离区。
 
+缺失或损坏的旧归属记录、不支持的工具调用、无关会话的引用记录不完整等情况，保留工作区文件和附件，仍可删除选中的对话。保留范围直接显示在确认按钮之前；不会悄悄扩大删除范围。会话运行、其他宿主占用、索引冲突及目标日志损坏仍会拒绝操作。
+
 **删除记录与恢复**位于同一会话菜单，也位于本插件详情。选择一条记录后，可恢复对话、继续中断的永久清理，或清理旧的已完成残留；操作仅针对所选记录。原工作区已不存在时，可显式点击「恢复为未分组对话」。完整步骤见[恢复文档](docs/RESTORE.md)。
 
 ## 安装
@@ -17,17 +19,21 @@
 NEXT：插件 → 添加插件，输入本仓库地址或下载包的本地路径；安装后启用并重启。
 
 - [仓库](https://github.com/sunyapeng-hub/dsh-conversation-cleaner)
-- [下载 rc.10](https://github.com/sunyapeng-hub/dsh-conversation-cleaner/raw/refs/heads/main/packages/dsh-conversation-cleaner-1.0.0-rc.10.tgz)
+- [下载 rc.11](https://github.com/sunyapeng-hub/dsh-conversation-cleaner/raw/refs/heads/main/packages/dsh-conversation-cleaner-1.0.0-rc.11.tgz)
 
 官方 DSH：
 
 ```powershell
-dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.10.tgz"
+dsh plugin --profile web add "./dsh-conversation-cleaner-1.0.0-rc.11.tgz"
 ```
 
 NEXT 的 `desktop` profile 由 Electron 管理，使用应用内安装器。升级旧开发包时先卸载再安装，隔离区不会随卸载清空。
 
 ## 本次修复
+
+- rc.11：将资源依据不足改为明确保留，不再把整个会话删除挡住；普通删除、恢复及永久删除均适用。仅删除日志时不再读取损坏的旧归属证明；外部日志的宿主解码异常保留资源处理，目标日志异常仍拒绝。
+
+以下 rc.10 的六项修复继续保留：
 
 - 产出文件在路径被替换或被外部改写后失去创建归属；正常连续 Agent 编辑仍保留归属。适配真实原生 `edit` 工具不含 `operation` 字段的参数。
 - 永久删除和恢复完成的记录移除正文、恢复载荷及原路径，仅保留最小操作摘要。旧终态残留只在用户点击「清理旧残留」时移除，升级不会自动改写历史记录。
@@ -38,7 +44,7 @@ NEXT 的 `desktop` profile 由 Electron 管理，使用应用内安装器。升�
 
 ## 验证与边界
 
-- rc.10 已在 Windows **NEXT 2.0.20-next / Core 0.2.1-rc.3** 和 **官方 DSH Web 0.2.1-rc.3** 完成三种范围的实际删除、重启与恢复验证。新增故障回归的最终覆盖以本次交付验收记录为准；不沿用旧版本的测试数量作为本次结果。
+- rc.11 已在 Windows **NEXT 2.0.20-next / Core 0.2.1-rc.3** 和 **官方 DSH Web 0.2.1-rc.3** 完成三种范围的实际删除、重启与恢复验证。新增故障回归的最终覆盖以本次交付验收记录为准；不沿用旧版本的测试数量作为本次结果。
 - 使用宿主私有 API 和 Cordis 4.0.5 的精确适配。仅声明上述 Windows 版本的结果；其他宿主版本的协调桥接默认拒绝深度清理，未做 macOS/Linux 验收。
 - 空闲目标在点击删除后经原始生命周期关闭；启动前加载的会话也可释放。运行、维护、待发送内容及其他宿主占用仍拒绝。预览和取消不关闭会话。
 - 共享根要求所有写入宿主安装兼容插件。索引缓存落后的宿主拒绝后续修改并要求重启；不协调未安装插件的进程、未知插件存储或任意外部写入者。
@@ -49,7 +55,7 @@ NEXT 的 `desktop` profile 由 Electron 管理，使用应用内安装器。升�
 
 ## 文档与开发
 
-[安装](docs/INSTALL.md) · [恢复](docs/RESTORE.md) · [rc.10 发布说明](docs/RELEASE_NOTES_RC10.md) · [历史发布说明](docs/RELEASE_NOTES.md) · [兼容性](evidence/compatibility.md) · [验收记录](evidence/acceptance-report.json) · [复核修复](evidence/review.md)
+[安装](docs/INSTALL.md) · [恢复](docs/RESTORE.md) · [rc.11 发布说明](docs/RELEASE_NOTES_RC11.md) · [历史发布说明](docs/RELEASE_NOTES.md) · [兼容性](evidence/compatibility.md) · [验收记录](evidence/acceptance-report.json) · [复核修复](evidence/review.md)
 
 ```powershell
 npm ci --ignore-scripts
@@ -60,3 +66,4 @@ npm test
 运行时无第三方依赖，React/UI 来自宿主。集成测试还需本机官方运行时位于 `research/installed-next`；仓库不分发 DSH/Electron 本体。普通用例可独立运行：`node --test tests/core.test.mjs tests/http.test.mjs tests/adapter.test.mjs tests/provenance.test.mjs tests/client-flows.test.mjs`。
 
 遵守 [AGENTS.md](AGENTS.md)：只在最开始备份原始输入包一次，不生成或验证校验和。附件 ID 使用宿主已有标识，不重新计算内容摘要。
+
